@@ -16,8 +16,8 @@
 namespace Katana\Sdk\Component;
 
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Executor\AbstractExecutor;
 use Katana\Sdk\Executor\ExecutorFactory;
-use Katana\Sdk\Executor\ExecutorInterface;
 use Katana\Sdk\Logger\KatanaLogger;
 
 /**
@@ -33,7 +33,7 @@ abstract class AbstractComponent
     protected $input;
 
     /**
-     * @var ExecutorInterface
+     * @var AbstractExecutor
      */
     protected $executor;
 
