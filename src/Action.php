@@ -15,11 +15,12 @@
 
 namespace Katana\Sdk;
 
+use Katana\Sdk\Api\ApiInterface;
 use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Param;
 use Katana\Sdk\Exception\TransportException;
 
-interface Action
+interface Action extends ApiInterface
 {
     /**
      * @return bool

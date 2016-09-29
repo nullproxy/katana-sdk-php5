@@ -15,9 +15,10 @@
 
 namespace Katana\Sdk;
 
+use Katana\Sdk\Api\ApiInterface;
 use Katana\Sdk\Api\TransportReader;
 
-interface Response
+interface Response extends ApiInterface
 {
     /**
      * @param string $version

@@ -15,7 +15,9 @@
 
 namespace Katana\Sdk;
 
-interface Request
+use Katana\Sdk\Api\ApiInterface;
+
+interface Request extends ApiInterface
 {
     /**
      * @param string $method
