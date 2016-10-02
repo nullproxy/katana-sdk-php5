@@ -25,6 +25,7 @@ use Katana\Sdk\Api\Transport;
 use Katana\Sdk\Api\TransportCalls;
 use Katana\Sdk\Api\TransportData;
 use Katana\Sdk\Api\TransportErrors;
+use Katana\Sdk\Api\TransportFiles;
 use Katana\Sdk\Api\TransportLinks;
 use Katana\Sdk\Api\TransportMeta;
 use Katana\Sdk\Api\TransportRelations;
@@ -68,6 +69,13 @@ interface PayloadWriterInterface
      * @return array
      */
     public function writeTransportMeta(TransportMeta $meta, array $output);
+
+    /**
+     * @param TransportFiles $files
+     * @param array $output
+     * @return array
+     */
+    public function writeTransportFiles(TransportFiles $files, array $output);
 
     /**
      * @param File $body

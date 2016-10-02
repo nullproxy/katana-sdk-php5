@@ -132,7 +132,7 @@ class ActionApi extends Api implements Action
      */
     public function hasFile($name)
     {
-        return $this->transport->hasFile($name);
+        return $this->transport->hasFile($this->name, $this->version, $this->actionName, $name);
     }
 
     /**
@@ -141,7 +141,11 @@ class ActionApi extends Api implements Action
      */
     public function getFile($name)
     {
-        return $this->transport->getFile($name);
+        if ($this->transport->hasFile($this->name, $this->version, $this->actionName, $name)) {
+            return $this->transport->getFile($this->name, $this->version, $this->actionName, $name);
+        } else {
+            return $this->newFile($name, '');
+        }
     }
 
     /**

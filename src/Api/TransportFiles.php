@@ -1,0 +1,68 @@
+<?php
+/**
+ * PHP 5 SDK for the KATANA(tm) Platform (http://katana.kusanagi.io)
+ * Copyright (c) 2016-2017 KUSANAGI S.L. All rights reserved.
+ *
+ * Distributed under the MIT license
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code
+ *
+ * @link      https://github.com/kusanagi/katana-sdk-php5
+ * @license   http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright Copyright (c) 2016-2017 KUSANAGI S.L. (http://kusanagi.io)
+ */
+
+namespace Katana\Sdk\Api;
+
+/**
+ * Support Transport Api class that encapsulates a list of relations.
+ * @package Katana\Sdk\Api
+ */
+class TransportFiles
+{
+    /**
+     * @var array
+     */
+    private $files = [];
+
+    /**
+     * @param array $files
+     */
+    public function __construct(array $files = [])
+    {
+        $this->files = $files;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAll()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @param string $name
+     * @return File
+     */
+    public function get($service, $version, $action, $name)
+    {
+        return $this->files[$service][$version][$action][$name];
+    }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @param string $name
+     * @return bool
+     */
+    public function has($service, $version, $action, $name)
+    {
+        return isset($this->files[$service][$version][$action][$name]);
+    }
+}

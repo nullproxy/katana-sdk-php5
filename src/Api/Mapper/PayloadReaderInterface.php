@@ -24,6 +24,7 @@ use Katana\Sdk\Api\Transport;
 use Katana\Sdk\Api\TransportCalls;
 use Katana\Sdk\Api\TransportData;
 use Katana\Sdk\Api\TransportErrors;
+use Katana\Sdk\Api\TransportFiles;
 use Katana\Sdk\Api\TransportLinks;
 use Katana\Sdk\Api\TransportMeta;
 use Katana\Sdk\Api\TransportRelations;
@@ -53,6 +54,12 @@ interface PayloadReaderInterface
      * @return TransportMeta
      */
     public function getTransportMeta(array $raw);
+
+    /**
+     * @param array $raw
+     * @return TransportFiles
+     */
+    public function getTransportFiles(array $raw);
 
     /**
      * @param array $raw

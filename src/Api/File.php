@@ -71,7 +71,7 @@ class File
         $this->name = $name;
         $this->path = $path;
 
-        if (!$mime) {
+        if ($path && !$mime) {
             $mime = $mime ?: mime_content_type($path);
         }
 

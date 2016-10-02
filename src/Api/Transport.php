@@ -33,9 +33,9 @@ class Transport
     private $body;
 
     /**
-     * @var File[]
+     * @var TransportFiles
      */
-    private $files = [];
+    private $files;
 
     /**
      * @var TransportData
@@ -76,6 +76,7 @@ class Transport
     {
         return new Transport(
             new TransportMeta('', '', '', [], 0),
+            new TransportFiles([]),
             new TransportData(),
             new TransportRelations(),
             new TransportLinks(),
@@ -87,6 +88,7 @@ class Transport
 
     /**
      * @param TransportMeta $meta
+     * @param TransportFiles $files
      * @param TransportData $data
      * @param TransportRelations $relations
      * @param TransportLinks $links
@@ -94,20 +96,20 @@ class Transport
      * @param TransportTransactions $transactions
      * @param TransportErrors $errors
      * @param File|null $body
-     * @param array $files
      */
     public function __construct(
         TransportMeta $meta,
+        TransportFiles $files,
         TransportData $data,
         TransportRelations $relations,
         TransportLinks $links,
         TransportCalls $calls,
         TransportTransactions $transactions,
         TransportErrors $errors,
-        File $body = null,
-        array $files = []
+        File $body = null
     ) {
         $this->meta = $meta;
+        $this->files = $files;
         $this->data = $data;
         $this->relations = $relations;
         $this->links = $links;
@@ -115,9 +117,6 @@ class Transport
         $this->transactions = $transactions;
         $this->errors = $errors;
         $this->body = $body;
-        $this->files = array_map(function ($fileData, $fileName) {
-            return new File($fileName, $fileData['path'], $fileData['mime']);
-        }, $files, array_keys($files));
     }
 
     /**
@@ -217,12 +216,15 @@ class Transport
     }
 
     /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
      * @param string $name
      * @return bool
      */
-    public function hasFile($name)
+    public function hasFile($service, $version, $action, $name)
     {
-        return isset($this->files[$name]);
+        return $this->files->has($service, $version, $action, $name);
     }
 
     /**
@@ -230,16 +232,27 @@ class Transport
      */
     public function hasFiles()
     {
-        return !empty($this->files);
+        return !empty($this->files->getAll());
     }
 
     /**
+     * @return TransportFiles
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
      * @param string $name
      * @return File
      */
-    public function getFile($name)
+    public function getFile($service, $version, $action, $name)
     {
-        return $this->files[$name];
+        return $this->files->get($service, $version, $action, $name);
     }
 
     /**
