@@ -32,6 +32,7 @@ use Katana\Sdk\Api\Transport;
 use Katana\Sdk\Api\TransportCalls;
 use Katana\Sdk\Api\TransportData;
 use Katana\Sdk\Api\TransportErrors;
+use Katana\Sdk\Api\TransportFiles;
 use Katana\Sdk\Api\TransportLinks;
 use Katana\Sdk\Api\TransportMeta;
 use Katana\Sdk\Api\TransportRelations;
@@ -156,6 +157,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     {
         return new Transport(
             $this->getTransportMeta($raw),
+            $this->getTransportFiles($raw),
             $this->getTransportData($raw),
             $this->getTransportRelations($raw),
             $this->getTransportLinks($raw),
@@ -174,6 +176,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     public function writeTransport(Transport $transport, array $output)
     {
         $output = $this->writeTransportMeta($transport->getMeta(), $output);
+        $output = $this->writeTransportFiles($transport->getFiles(), $output);
         $output = $this->writeTransportData($transport->getData(), $output);
         $output = $this->writeTransportRelations($transport->getRelations(), $output);
         $output = $this->writeTransportLinks($transport->getLinks(), $output);
@@ -222,6 +225,65 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
 
         if ($meta->hasProperties()) {
             $output['command_reply']['result']['transport']['meta']['properties'] = $meta->getProperties();
+        }
+
+        return $output;
+    }
+
+    /**
+     * @param array $raw
+     * @return TransportFiles
+     */
+    public function getTransportFiles(array $raw)
+    {
+        if (isset($raw['command']['arguments']['transport']['files'])) {
+            $data = $raw['command']['arguments']['transport']['files'];
+        } else {
+            $data = [];
+        }
+
+        foreach ($data as $service => $serviceFiles) {
+            foreach ($serviceFiles as $version => $versionFiles) {
+                foreach ($versionFiles as $action => $actionFiles) {
+                    foreach ($actionFiles as $name => $fileData) {
+                        $data[$service][$version][$action][$name] = new File(
+                            $name,
+                            $fileData['path'],
+                            $fileData['mime'],
+                            $fileData['filename'],
+                            $fileData['size'],
+                            $fileData['token']
+                        );
+                    }
+                }
+            }
+        }
+
+        return new TransportFiles($data);
+    }
+
+    /**
+     * @param TransportFiles $files
+     * @param array $output
+     * @return array
+     */
+    public function writeTransportFiles(TransportFiles $files, array $output)
+    {
+        foreach ($files->getAll() as $service => $serviceFiles) {
+            foreach ($serviceFiles as $version => $versionFiles) {
+                foreach ($versionFiles as $action => $actionFiles) {
+                    /** @var File $file */
+                    foreach ($actionFiles as $name => $file) {
+                        $output['command_reply']['response']['transport']['files'][$service][$version][$action][$name] = [
+                            'path' => $file->getPath(),
+                            'mime' => $file->getMime(),
+                            'filename' => $file->getFilename(),
+                            'size' => $file->getSize(),
+                            'token' => $file->getToken(),
+                        ];
+                    }
+                }
+            }
         }
 
         return $output;
