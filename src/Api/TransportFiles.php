@@ -65,4 +65,15 @@ class TransportFiles
     {
         return isset($this->files[$service][$version][$action][$name]);
     }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @param File $file
+     */
+    public function add($service, $version, $action, File $file)
+    {
+        $this->files[$service][$version][$action][$file->getName()] = $file;
+    }
 }

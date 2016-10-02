@@ -240,12 +240,14 @@ class ActionApi extends Api implements Action
      * @param $version
      * @param $action
      * @param Param[] $params
+     * @param File[] $files
      */
     public function call(
         $service,
         $version,
         $action,
-        array $params = []
+        array $params = [],
+        array $files = []
     ) {
         $this->transport->addCall(new Call(
             new ServiceOrigin($this->name, $this->version),
@@ -254,6 +256,10 @@ class ActionApi extends Api implements Action
             $action,
             $params
         ));
+
+        foreach ($files as $file) {
+            $this->transport->addFile($service, $version, $action, $file);
+        }
     }
 
     /**

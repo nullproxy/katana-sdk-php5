@@ -247,6 +247,17 @@ class Transport
      * @param string $service
      * @param string $version
      * @param string $action
+     * @param File $file
+     */
+    public function addFile($service, $version, $action, File $file)
+    {
+        $this->files->add($service, $version, $action, $file);
+    }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
      * @param string $name
      * @return File
      */
