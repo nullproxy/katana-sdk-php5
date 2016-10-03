@@ -33,6 +33,7 @@ interface Response extends ApiInterface
 
     /**
      * @param string $version
+     * @return bool
      */
     public function setProtocolVersion($version);
 
@@ -60,6 +61,7 @@ interface Response extends ApiInterface
     /**
      * @param int $code
      * @param string $text
+     * @return bool
      */
     public function setStatus($code, $text);
 
@@ -83,6 +85,7 @@ interface Response extends ApiInterface
     /**
      * @param string $header
      * @param string $value
+     * @return bool
      */
     public function setHeader($header, $value);
 
@@ -98,6 +101,7 @@ interface Response extends ApiInterface
 
     /**
      * @param string $content
+     * @return bool
      */
     public function setBody($content);
 

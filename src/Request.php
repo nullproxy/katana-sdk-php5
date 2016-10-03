@@ -156,6 +156,7 @@ interface Request extends ApiInterface
 
     /**
      * @param string $service
+     * @return bool
      */
     public function setServiceName($service);
 
@@ -166,6 +167,7 @@ interface Request extends ApiInterface
 
     /**
      * @param string $version
+     * @return bool
      */
     public function setServiceVersion($version);
 
@@ -176,6 +178,7 @@ interface Request extends ApiInterface
 
     /**
      * @param string $action
+     * @return bool
      */
     public function setActionName($action);
 
