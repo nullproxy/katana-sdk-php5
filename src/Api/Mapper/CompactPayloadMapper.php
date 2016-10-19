@@ -196,7 +196,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportMeta(array $raw)
     {
-        $rawMeta = $raw['c']['a']['t']['m'];
+        $rawMeta = $raw['c']['a']['T']['m'];
 
         return new TransportMeta(
             $rawMeta['v'],
@@ -215,7 +215,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function writeTransportMeta(TransportMeta $meta, array $output)
     {
-        $output['cr']['r']['t']['m'] = [
+        $output['cr']['r']['T']['m'] = [
             'v' => $meta->getVersion(),
             'i' => $meta->getId(),
             'd' => $meta->getDatetime(),
@@ -224,7 +224,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
         ];
 
         if ($meta->hasProperties()) {
-            $output['cr']['r']['t']['m']['p'] = $meta->getProperties();
+            $output['cr']['r']['T']['m']['p'] = $meta->getProperties();
         }
 
         return $output;
@@ -236,8 +236,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportFiles(array $raw)
     {
-        if (isset($raw['c']['a']['t']['f'])) {
-            $data = $raw['c']['a']['t']['f'];
+        if (isset($raw['c']['a']['T']['f'])) {
+            $data = $raw['c']['a']['T']['f'];
         } else {
             $data = [];
         }
@@ -274,7 +274,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 foreach ($versionFiles as $action => $actionFiles) {
                     /** @var File $file */
                     foreach ($actionFiles as $name => $file) {
-                        $output['cr']['r']['t']['f'][$service][$version][$action][$name] = [
+                        $output['cr']['r']['T']['f'][$service][$version][$action][$name] = [
                             'p' => $file->getPath(),
                             'm' => $file->getMime(),
                             'f' => $file->getFilename(),
@@ -295,11 +295,11 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportBody(array $raw)
     {
-        if (!isset($raw['c']['a']['t']['b'])) {
+        if (!isset($raw['c']['a']['T']['b'])) {
             return null;
         }
 
-        $rawBody = $raw['c']['a']['t']['b'];
+        $rawBody = $raw['c']['a']['T']['b'];
 
         return new File(
             'body',
@@ -318,7 +318,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function writeTransportBody(File $body, array $output)
     {
-        $output['cr']['r']['t']['b'] = [
+        $output['cr']['r']['T']['b'] = [
             'p' => $body->getPath(),
             'm' => $body->getMime(),
             'f' => $body->getFilename(),
@@ -335,8 +335,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportData(array $raw)
     {
-        if (isset($raw['c']['a']['t']['d'])) {
-            $data = $raw['c']['a']['t']['d'];
+        if (isset($raw['c']['a']['T']['d'])) {
+            $data = $raw['c']['a']['T']['d'];
         } else {
             $data = [];
         }
@@ -352,7 +352,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function writeTransportData(TransportData $data, array $output)
     {
         if ($data->get()) {
-            $output['cr']['r']['t']['d'] = $data->get();
+            $output['cr']['r']['T']['d'] = $data->get();
         }
 
         return $output;
@@ -364,8 +364,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportRelations(array $raw)
     {
-        if (isset($raw['c']['a']['t']['r'])) {
-            $relations = $raw['c']['a']['t']['r'];
+        if (isset($raw['c']['a']['T']['r'])) {
+            $relations = $raw['c']['a']['T']['r'];
         } else {
             $relations = [];
         }
@@ -381,7 +381,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function writeTransportRelations(TransportRelations $relations, array $output)
     {
         if ($relations->get()) {
-            $output['cr']['r']['t']['r'] = $relations->get();
+            $output['cr']['r']['T']['r'] = $relations->get();
         }
 
         return $output;
@@ -393,8 +393,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportLinks(array $raw)
     {
-        if (isset($raw['c']['a']['t']['l'])) {
-            $links = $raw['c']['a']['t']['l'];
+        if (isset($raw['c']['a']['T']['l'])) {
+            $links = $raw['c']['a']['T']['l'];
         } else {
             $links = [];
         }
@@ -410,7 +410,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function writeTransportLinks(TransportLinks $links, array $output)
     {
         if ($links->get()) {
-            $output['cr']['r']['t']['l'] = $links->get();
+            $output['cr']['r']['T']['l'] = $links->get();
         }
 
         return $output;
@@ -422,8 +422,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportCalls(array $raw)
     {
-        if (isset($raw['c']['a']['t']['c'])) {
-            $rawCalls = $raw['c']['a']['t']['c'];
+        if (isset($raw['c']['a']['T']['c'])) {
+            $rawCalls = $raw['c']['a']['T']['c'];
         } else {
             $rawCalls = [];
         }
@@ -462,9 +462,11 @@ class CompactPayloadMapper implements PayloadMapperInterface
 
             if ($call->getParams()) {
                 $callData['p'] = array_map([$this, 'writeParam'], $call->getParams());
+            } else {
+                $callData['p'] = [];
             }
 
-            $output['cr']['r']['t']['c'][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
+            $output['cr']['r']['T']['c'][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
         }
 
         return $output;
@@ -476,8 +478,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportTransactions(array $raw)
     {
-        if (isset($raw['c']['a']['t']['t'])) {
-            $rawTransactions = $raw['c']['a']['t']['t'];
+        if (isset($raw['c']['a']['T']['t'])) {
+            $rawTransactions = $raw['c']['a']['T']['t'];
         } else {
             $rawTransactions = [];
         }
@@ -514,7 +516,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 $transactionData['p'] = array_map([$this, 'writeParam'], $transaction->getParams());
             }
 
-            $output['cr']['r']['t']['t'][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
+            $output['cr']['r']['T']['t'][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
         }
 
         return $output;
@@ -526,8 +528,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportErrors(array $raw)
     {
-        if (isset($raw['c']['a']['t']['e'])) {
-            $rawErrors = $raw['c']['a']['t']['e'];
+        if (isset($raw['c']['a']['T']['e'])) {
+            $rawErrors = $raw['c']['a']['T']['e'];
         } else {
             $rawErrors = [];
         }
@@ -558,7 +560,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function writeTransportErrors(TransportErrors $errors, array $output)
     {
         foreach ($errors->get() as $error) {
-            $output['cr']['r']['t']['e'][$error->getService()][$error->getVersion()][] = [
+            $output['cr']['r']['T']['e'][$error->getService()][$error->getVersion()][] = [
                 'm' => $error->getMessage(),
                 'c' => $error->getCode(),
                 's' => $error->getStatus(),

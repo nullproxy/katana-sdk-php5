@@ -44,13 +44,6 @@ class CliInput
     private $version;
 
     /**
-     * Name of the action for Service Components only
-     *
-     * @var string
-     */
-    private $action;
-
-    /**
      * Version of the Katana platform
      *
      * @var string
@@ -89,7 +82,6 @@ class CliInput
             'component' => new CliOption('c', 'component', CliOption::VALUE_SINGLE),
             'name' => new CliOption('n', 'name', CliOption::VALUE_SINGLE),
             'version' => new CliOption('v', 'version', CliOption::VALUE_SINGLE),
-            'action' => new CliOption('a', 'action', CliOption::VALUE_SINGLE),
             'platform-version' => new CliOption('p', 'platform-version', CliOption::VALUE_SINGLE),
             'socket' => new CliOption('s', 'socket', CliOption::VALUE_SINGLE),
             'debug' => new CliOption('D', 'debug', CliOption::VALUE_NONE),
@@ -120,7 +112,6 @@ class CliInput
             $optionValues['component'],
             $optionValues['name'],
             $optionValues['version'],
-            $optionValues['action'],
             $optionValues['platform-version'],
             $optionValues['socket'],
             $optionValues['debug'],
@@ -134,7 +125,6 @@ class CliInput
      * @param string $component
      * @param string $name
      * @param string $version
-     * @param string $action
      * @param string $platformVersion
      * @param string $socket
      * @param bool $debug
@@ -145,7 +135,6 @@ class CliInput
         $component,
         $name,
         $version,
-        $action,
         $platformVersion,
         $socket = '',
         $debug = false,
@@ -155,9 +144,9 @@ class CliInput
         $this->component = $component;
         $this->name = $name;
         $this->version = $version;
-        $this->action = $action;
         $this->platformVersion = $platformVersion;
-        $this->socket = $socket ?: "@katana-$component-$name-$action";
+        $socketVersion = preg_replace('/[^a-z0-9]/i', '-', $version);
+        $this->socket = $socket ?: "@katana-$component-$name-$socketVersion";
         $this->debug = $debug;
         $this->variables = $variables;
         if ($input && file_exists($input)) {
@@ -179,14 +168,6 @@ class CliInput
     public function getVersion()
     {
         return $this->version;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
     }
 
     /**

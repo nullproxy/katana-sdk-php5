@@ -16,6 +16,7 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
+use Katana\Sdk\Api\Factory\ServiceApiFactory;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
 use Katana\Sdk\Component\AbstractComponent;
 
@@ -27,11 +28,19 @@ use Katana\Sdk\Component\AbstractComponent;
 class Service extends AbstractComponent
 {
     /**
-     * @param callable $callable
+     * @param string $name
+     * @param callable $callback
      */
-    public function runAction(callable $callable)
+    public function action($name, callable $callback)
     {
-        $apiFactory = ApiFactory::getActionFactory(new CompactPayloadMapper());
-        $this->executor->execute($apiFactory, $this->input, $callable);
+        $this->setCallback($name, $callback);
+    }
+
+    /**
+     * @return ServiceApiFactory
+     */
+    protected function getApiFactory()
+    {
+        return ApiFactory::getServiceFactory(new CompactPayloadMapper());
     }
 }

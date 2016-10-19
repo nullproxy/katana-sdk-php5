@@ -21,16 +21,17 @@ use Katana\Sdk\Console\CliInput;
 /**
  * @package Katana\Sdk\Api\Factory
  */
-class ActionApiFactory extends ApiFactory
+class ServiceApiFactory extends ApiFactory
 {
     /**
      * Build an Action Api class instance
      *
+     * @param string $action
      * @param array $data
      * @param CliInput $input
      * @return ActionApi
      */
-    public function build(array $data, CliInput $input)
+    public function build($action, array $data, CliInput $input)
     {
         return new ActionApi(
             dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
@@ -39,7 +40,7 @@ class ActionApiFactory extends ApiFactory
             $input->getPlatformVersion(),
             $input->getVariables(),
             $input->isDebug(),
-            $input->getAction(),
+            $action,
             $this->mapper->getTransport($data),
             $this->mapper->getParams($data)
         );

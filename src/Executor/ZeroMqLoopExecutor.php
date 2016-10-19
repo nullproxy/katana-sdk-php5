@@ -61,22 +61,29 @@ class ZeroMqLoopExecutor extends AbstractExecutor
     /**
      * @param ApiFactory $factory
      * @param CliInput $input
-     * @param callable $callable
+     * @param callable[] $callbacks
      */
     public function execute(
         ApiFactory $factory,
         CliInput $input,
-        callable $callable
+        array $callbacks
     ) {
         $this->socket->on(
-            'message',
-            function ($payload) use ($callable, $factory, $input) {
+            'messages',
+            function ($message) use ($callbacks, $factory, $input) {
+
+                list($action, $payload) = $message;
+
+                if (!isset($callbacks[$action])) {
+                    throw new \Exception('Invalid action');
+                }
+
                 $msg = new MessagePackSerializer();
                 $command = $msg->unserialize($payload);
 
-                $api = $factory->build($command, $input);
+                $api = $factory->build($action, $command, $input);
 
-                $response = $callable($api);
+                $response = $callbacks[$action]($api);
                 if (!$response instanceof Api) {
                     throw new \Exception('Wrong response');
                 }

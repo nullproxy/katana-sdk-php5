@@ -28,17 +28,18 @@ class InputExecutor extends AbstractExecutor
     /**
      * @param ApiFactory $factory
      * @param CliInput $input
-     * @param callable $callable
+     * @param callable[] $callbacks
      */
     public function execute(
         ApiFactory $factory,
         CliInput $input,
-        callable $callable
+        array $callbacks
     ) {
-        $command = json_decode($input->getInput(), true);
-        $action = $factory->build($command, $input);
-        $response = $callable($action);
-
-        $this->responder->sendResponse($response, $this->mapper);
+        // todo: can't be implemented with current spec.
+//        $command = json_decode($input->getInput(), true);
+//        $action = $factory->build($command, $input);
+//        $response = $callable($action);
+//
+//        $this->responder->sendResponse($response, $this->mapper);
     }
 }

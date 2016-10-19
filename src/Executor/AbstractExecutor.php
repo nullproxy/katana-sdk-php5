@@ -52,11 +52,11 @@ abstract class AbstractExecutor
     /**
      * @param ApiFactory $factory
      * @param CliInput $input
-     * @param callable $callable
+     * @param callable[] $callbacks
      */
     abstract public function execute(
         ApiFactory $factory,
         CliInput $input,
-        callable $callable
+        array $callbacks
     );
 }

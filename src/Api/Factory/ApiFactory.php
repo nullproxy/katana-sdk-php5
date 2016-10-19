@@ -34,29 +34,20 @@ abstract class ApiFactory
 
     /**
      * @param PayloadReaderInterface $mapper
-     * @return RequestApiFactory
+     * @return ServiceApiFactory
      */
-    public static function getRequestFactory(PayloadReaderInterface $mapper)
+    public static function getServiceFactory(PayloadReaderInterface $mapper)
     {
-        return new RequestApiFactory($mapper);
+        return new ServiceApiFactory($mapper);
     }
 
     /**
      * @param PayloadReaderInterface $mapper
-     * @return ResponseApiFactory
+     * @return MiddlewareApiFactory
      */
-    public static function getResponseFactory(PayloadReaderInterface $mapper)
+    public static function getMiddlewareFactory(PayloadReaderInterface $mapper)
     {
-        return new ResponseApiFactory($mapper);
-    }
-
-    /**
-     * @param PayloadReaderInterface $mapper
-     * @return ActionApiFactory
-     */
-    public static function getActionFactory(PayloadReaderInterface $mapper)
-    {
-        return new ActionApiFactory($mapper);
+        return new MiddlewareApiFactory($mapper);
     }
 
     /**
@@ -76,9 +67,10 @@ abstract class ApiFactory
      * The CliInput provides general information about the component that was
      * defined when the script was executed.
      *
+     * @param string $action
      * @param array $command
      * @param CliInput $input
      * @return Api
      */
-    abstract public function build(array $command, CliInput $input);
+    abstract public function build($action, array $command, CliInput $input);
 }

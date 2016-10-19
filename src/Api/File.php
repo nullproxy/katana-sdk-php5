@@ -57,16 +57,16 @@ class File
      * @param string $path
      * @param string $mime
      * @param string $filename
-     * @param string $size
+     * @param int $size
      * @param string $token
      */
     public function __construct(
         $name,
         $path,
-        $mime = null,
-        $filename = null,
-        $size = null,
-        $token = null
+        $mime = '',
+        $filename = '',
+        $size = 0,
+        $token = ''
     ) {
         $this->name = $name;
         $this->path = $path;

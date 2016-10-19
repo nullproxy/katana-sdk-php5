@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Component;
 
+use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Executor\AbstractExecutor;
 use Katana\Sdk\Executor\ExecutorFactory;
@@ -42,11 +43,41 @@ abstract class AbstractComponent
      */
     protected $logger;
 
+    /**
+     * @var callback[]
+     */
+    private $callbacks = [];
+
     public function __construct()
     {
         $this->logger = new KatanaLogger();
-        //$this->logger->debug('And it all begins');
         $this->input = CliInput::createFromCli();
         $this->executor = (new ExecutorFactory())->build($this->input);
     }
+
+    /**
+     * @param string $name
+     * @param callable $callback
+     */
+    protected function setCallback($name, callable $callback)
+    {
+        $this->callbacks[$name] = $callback;
+    }
+
+    /**
+     * Run the SDK.
+     */
+    public function run()
+    {
+        $this->executor->execute(
+            $this->getApiFactory(),
+            $this->input,
+            $this->callbacks
+        );
+    }
+
+    /**
+     * @return ApiFactory
+     */
+    abstract protected function getApiFactory();
 }

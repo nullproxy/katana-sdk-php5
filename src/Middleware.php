@@ -16,6 +16,7 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
+use Katana\Sdk\Api\Factory\MiddlewareApiFactory;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
 use Katana\Sdk\Component\AbstractComponent;
 
@@ -27,20 +28,27 @@ use Katana\Sdk\Component\AbstractComponent;
 class Middleware extends AbstractComponent
 {
     /**
-     * @param callable $callable
+     * @param callable $callback
      */
-    public function runRequest(callable $callable)
+    public function request(callable $callback)
     {
-        $apiFactory = ApiFactory::getRequestFactory(new CompactPayloadMapper());
-        $this->executor->execute($apiFactory, $this->input, $callable);
+        $this->setCallback('request', $callback);
     }
 
     /**
-     * @param callable $callable
+     * @param callable $callback
      */
-    public function runResponse(callable $callable)
+    public function response(callable $callback)
     {
-        $apiFactory = ApiFactory::getResponseFactory(new CompactPayloadMapper());
-        $this->executor->execute($apiFactory, $this->input, $callable);
+        $this->setCallback('response', $callback);
     }
+
+    /**
+     * @return MiddlewareApiFactory
+     */
+    protected function getApiFactory()
+    {
+        return ApiFactory::getMiddlewareFactory(new CompactPayloadMapper());
+    }
+
 }

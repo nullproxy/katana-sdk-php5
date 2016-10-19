@@ -58,6 +58,11 @@ class ExecutorFactory
                 $loop->stop();
             });
 
+            $pcntl->on(SIGTERM, function () use ($socket, $loop, $input) {
+                $socket->unbind("ipc://{$input->getSocket()}");
+                $loop->stop();
+            });
+
             $serializer = new MessagePackSerializer();
             $responder = new ZeroMqMultipartResponder($serializer, $socket);
 
