@@ -1,0 +1,5 @@
+/katana/
+/vendor/
+/.katana/
+/.vagrant/
+/.idea/
