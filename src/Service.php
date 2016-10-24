@@ -30,10 +30,13 @@ class Service extends AbstractComponent
     /**
      * @param string $name
      * @param callable $callback
+     * @return $this
      */
     public function action($name, callable $callback)
     {
         $this->setCallback($name, $callback);
+
+        return $this;
     }
 
     /**
