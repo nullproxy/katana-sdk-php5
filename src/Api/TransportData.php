@@ -67,6 +67,6 @@ class TransportData
      */
     public function set($service, $version, $action, array $data)
     {
-        $this->data[$service][$version][$action] = $data;
+        $this->data[$service][$version][$action][] = $data;
     }
 }
