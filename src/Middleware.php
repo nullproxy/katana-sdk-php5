@@ -29,18 +29,24 @@ class Middleware extends AbstractComponent
 {
     /**
      * @param callable $callback
+     * @return $this
      */
     public function request(callable $callback)
     {
         $this->setCallback('request', $callback);
+
+        return $this;
     }
 
     /**
      * @param callable $callback
+     * @return $this
      */
     public function response(callable $callback)
     {
         $this->setCallback('response', $callback);
+
+        return $this;
     }
 
     /**
