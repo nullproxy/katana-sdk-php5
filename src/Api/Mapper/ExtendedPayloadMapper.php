@@ -55,8 +55,8 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     private function getParam(array $param)
     {
         return new Param(
-            $param['location'],
             $param['name'],
+            $param['location'],
             $param['value'],
             $param['type'],
             true
@@ -91,8 +91,8 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         foreach ($raw['command']['arguments']['params'] as $location => $params) {
             foreach ($params as $name => $properties) {
                 $return[] = new Param(
-                    self::PARAM_LOCATIONS[$location],
                     $name,
+                    self::PARAM_LOCATIONS[$location],
                     $properties['value'],
                     $properties['type'],
                     true

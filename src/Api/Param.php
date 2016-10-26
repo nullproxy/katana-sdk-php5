@@ -103,15 +103,15 @@ class Param
     }
 
     /**
-     * @param string $location
      * @param string $name
+     * @param string $location
      * @param string $value
      * @param string $type
      * @param bool $exists
      */
     public function __construct(
-        $location,
         $name,
+        $location = 'query',
         $value = '',
         $type = self::TYPE_STRING,
         $exists = false
