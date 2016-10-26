@@ -47,6 +47,12 @@ interface Action extends ApiInterface
 
     /**
      * @param string $location
+     * @return Param[]
+     */
+    public function getParams($location = null);
+
+    /**
+     * @param string $location
      * @param string $name
      * @param string $value
      * @param string $type

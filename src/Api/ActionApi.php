@@ -115,6 +115,26 @@ class ActionApi extends Api implements Action
     }
 
     /**
+     * @param string $location
+     * @return Param[]
+     */
+    public function getParams($location = null)
+    {
+        if ($location) {
+            return $this->params[$location];
+        }
+
+        $params = [];
+        foreach ($this->params as $location => $locationParams) {
+            foreach ($locationParams as $name => $param) {
+                $params[$name] = $param;
+            }
+        }
+
+        return $params;
+    }
+
+    /**
      * @param string $name
      * @param string $location
      * @param string $value
