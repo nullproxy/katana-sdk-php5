@@ -101,29 +101,29 @@ class ActionApi extends Api implements Action
     }
 
     /**
-     * @param string $location
      * @param string $name
+     * @param string $location
      * @return Param
      */
-    public function getParam($location, $name)
+    public function getParam($name, $location = 'query')
     {
         if (isset($this->params[$location][$name])) {
             return $this->params[$location][$name];
         }
 
-        return new Param($location, $name);
+        return new Param($name, $location);
     }
 
     /**
-     * @param string $location
      * @param string $name
+     * @param string $location
      * @param string $value
      * @param string $type
      * @return Param
      */
-    public function newParam($location, $name, $value = '', $type = Param::TYPE_STRING)
+    public function newParam($name, $location = 'query', $value = '', $type = Param::TYPE_STRING)
     {
-        return new Param($location, $name, $value, $type);
+        return new Param($name, $location, $value, $type);
     }
 
     /**

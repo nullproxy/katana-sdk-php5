@@ -55,8 +55,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
     private function getParam(array $param)
     {
         return new Param(
-            $param['l'],
             $param['n'],
+            $param['l'],
             $param['v'],
             $param['t'],
             true
@@ -91,8 +91,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
         foreach ($raw['c']['a']['p'] as $location => $params) {
             foreach ($params as $name => $properties) {
                 $return[] = new Param(
-                    self::PARAM_LOCATIONS[$location],
                     $name,
+                    self::PARAM_LOCATIONS[$location],
                     $properties['v'],
                     $properties['T'],
                     true
