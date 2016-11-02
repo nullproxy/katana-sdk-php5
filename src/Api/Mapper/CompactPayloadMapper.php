@@ -94,7 +94,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                     $name,
                     self::PARAM_LOCATIONS[$location],
                     $properties['v'],
-                    $properties['T'],
+                    $properties['t'],
                     true
                 );
             }
