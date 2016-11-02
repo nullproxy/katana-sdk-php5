@@ -70,6 +70,11 @@ class CliInput
     private $input = '';
 
     /**
+     * @var string
+     */
+    private $action = '';
+
+    /**
      * Arbitrary variables as key/value string pairs
      *
      * @var array
@@ -87,6 +92,7 @@ class CliInput
             'debug' => new CliOption('D', 'debug', CliOption::VALUE_NONE),
             'var' => new CliOption('V', 'var', CliOption::VALUE_MULTIPLE),
             'input' => new CliOption('i', 'input', CliOption::VALUE_SINGLE),
+            'action' => new CliOption('a', 'action', CliOption::VALUE_SINGLE),
         ];
 
         $shortOpts = '';
@@ -116,7 +122,8 @@ class CliInput
             $optionValues['socket'],
             $optionValues['debug'],
             $optionValues['var'],
-            $optionValues['input']
+            $optionValues['input'],
+            $optionValues['action']
         );
     }
 
@@ -130,6 +137,7 @@ class CliInput
      * @param bool $debug
      * @param array $variables
      * @param string $input
+     * @param string $action
      */
     public function __construct(
         $component,
@@ -139,7 +147,8 @@ class CliInput
         $socket = '',
         $debug = false,
         array $variables = [],
-        $input = ''
+        $input = '',
+        $action = ''
     ) {
         $this->component = $component;
         $this->name = $name;
@@ -152,6 +161,7 @@ class CliInput
         if ($input && file_exists($input)) {
             $this->input = file_get_contents($input);
         }
+        $this->action = $action;
     }
 
     /**
@@ -235,5 +245,13 @@ class CliInput
     public function getInput()
     {
         return $this->input;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
     }
 }
