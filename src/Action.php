@@ -52,15 +52,15 @@ interface Action extends ApiInterface
     public function getParams($location = null);
 
     /**
-     * @param string $location
      * @param string $name
+     * @param string $location
      * @param string $value
      * @param string $type
      * @return Param
      */
     public function newParam(
-        $location,
         $name,
+        $location = 'query',
         $value = '',
         $type = Param::TYPE_STRING
     );
