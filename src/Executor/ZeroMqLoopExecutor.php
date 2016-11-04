@@ -19,6 +19,7 @@ use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Messaging\MessagePackSerializer;
 use Katana\Sdk\Messaging\Responder\ResponderInterface;
 
@@ -44,18 +45,20 @@ class ZeroMqLoopExecutor extends AbstractExecutor
      * @param MessagePackSerializer $serializer
      * @param ResponderInterface $responder
      * @param PayloadWriterInterface $mapper
+     * @param KatanaLogger $logger
      */
     public function __construct(
         $loop,
         $socket,
         MessagePackSerializer $serializer,
         ResponderInterface $responder,
-        PayloadWriterInterface $mapper
+        PayloadWriterInterface $mapper,
+        KatanaLogger $logger
     ) {
         $this->loop = $loop;
         $this->socket = $socket;
         $this->serializer = $serializer;
-        parent::__construct($responder, $mapper);
+        parent::__construct($responder, $mapper, $logger);
     }
 
     /**
