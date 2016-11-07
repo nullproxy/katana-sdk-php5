@@ -78,7 +78,7 @@ class ZeroMqLoopExecutor extends AbstractExecutor
                 list($action, $payload) = $message;
 
                 if (!isset($callbacks[$action])) {
-                    throw new \Exception('Invalid action');
+                    return $this->sendError("Unregistered callback $action");
                 }
 
                 $msg = new MessagePackSerializer();
@@ -88,7 +88,7 @@ class ZeroMqLoopExecutor extends AbstractExecutor
 
                 $response = $callbacks[$action]($api);
                 if (!$response instanceof Api) {
-                    throw new \Exception('Wrong response');
+                    return $this->sendError("Wrong return from callback $action");
                 }
 
                 $this->responder->sendResponse($response, $this->mapper);

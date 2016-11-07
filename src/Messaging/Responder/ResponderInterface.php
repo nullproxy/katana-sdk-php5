@@ -30,4 +30,18 @@ interface ResponderInterface
      * @param PayloadWriterInterface $mapper
      */
     public function sendResponse(Api $api, PayloadWriterInterface $mapper);
+
+    /**
+     * @param PayloadWriterInterface $mapper
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     * @return
+     */
+    public function sendErrorResponse(
+        PayloadWriterInterface $mapper,
+        $message = '',
+        $code = 0,
+        $status = ''
+    );
 }

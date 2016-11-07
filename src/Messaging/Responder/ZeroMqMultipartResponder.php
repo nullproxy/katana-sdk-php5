@@ -120,4 +120,23 @@ class ZeroMqMultipartResponder implements ResponderInterface
             $this->sendRequestResponse($api, $mapper);
         }
     }
+
+    /**
+     * @param PayloadWriterInterface $mapper
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     */
+    public function sendErrorResponse(
+        PayloadWriterInterface $mapper,
+        $message = '',
+        $code = 0,
+        $status = ''
+    ) {
+        $payload = $this->serializer->serialize(
+            $mapper->writeErrorResponse($message, $code, $status)
+        );
+
+        $this->socket->sendmulti(['', $payload]);
+    }
 }

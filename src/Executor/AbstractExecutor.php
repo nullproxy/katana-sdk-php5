@@ -41,7 +41,23 @@ abstract class AbstractExecutor
     /**
      * @var KatanaLogger
      */
-    private $logger;
+    protected $logger;
+
+    /**
+     * Send error message through the responder.
+     *
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     */
+    protected function sendError($message = '', $code = 0, $status = '')
+    {
+        if ($message) {
+            $this->logger->error($message);
+        }
+
+        $this->responder->sendErrorResponse($this->mapper, $message, $code, $status);
+    }
 
     /**
      * @param ResponderInterface $responder
