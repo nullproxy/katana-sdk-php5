@@ -52,7 +52,7 @@ abstract class AbstractComponent
     {
         $this->logger = new KatanaLogger();
         $this->input = CliInput::createFromCli();
-        $this->executor = (new ExecutorFactory())->build($this->input);
+        $this->executor = (new ExecutorFactory($this->logger))->build($this->input);
     }
 
     /**
@@ -69,6 +69,8 @@ abstract class AbstractComponent
      */
     public function run()
     {
+        $actions = implode(', ', array_keys($this->callbacks));
+        $this->logger->info("Component running with callbacks for $actions");
         $this->executor->execute(
             $this->getApiFactory(),
             $this->input,

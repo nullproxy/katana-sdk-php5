@@ -69,4 +69,22 @@ class JsonResponder implements ResponderInterface
             $this->sendRequestResponse($api, $mapper);
         }
     }
+
+    /**
+     * @param PayloadWriterInterface $mapper
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     */
+    public function sendErrorResponse(
+        PayloadWriterInterface $mapper,
+        $message = '',
+        $code = 0,
+        $status = ''
+    ) {
+        echo json_encode(
+            $mapper->writeErrorResponse($message, $code, $status)
+        );
+    }
+
 }

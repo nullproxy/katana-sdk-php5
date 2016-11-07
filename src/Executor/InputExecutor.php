@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Executor;
 
+use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Console\CliInput;
 
@@ -35,11 +36,19 @@ class InputExecutor extends AbstractExecutor
         CliInput $input,
         array $callbacks
     ) {
-        // todo: can't be implemented with current spec.
-//        $command = json_decode($input->getInput(), true);
-//        $action = $factory->build($command, $input);
-//        $response = $callable($action);
-//
-//        $this->responder->sendResponse($response, $this->mapper);
+        $command = json_decode($input->getInput(), true);
+
+        if (!isset($callbacks[$input->getAction()])) {
+            return $this->sendError("Unregistered callback {$input->getAction()}");
+        }
+
+        $action = $factory->build($input->getAction(), $command, $input);
+        $response = $callbacks[$input->getAction()]($action);
+
+        if (!$response instanceof Api) {
+            return $this->sendError("Wrong return from callback $action");
+        }
+
+        $this->responder->sendResponse($response, $this->mapper);
     }
 }

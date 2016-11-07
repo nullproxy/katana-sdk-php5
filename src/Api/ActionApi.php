@@ -121,6 +121,10 @@ class ActionApi extends Api implements Action
     public function getParams($location = null)
     {
         if ($location) {
+            if (!isset($this->params[$location])) {
+                return [];
+            }
+
             return $this->params[$location];
         }
 

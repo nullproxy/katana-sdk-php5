@@ -148,6 +148,30 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         return $this->writeHttpResponse($response->getHttpResponse(), $message);
     }
 
+    /**
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     * @return array
+     */
+    public function writeErrorResponse($message = '', $code = 0, $status = '')
+    {
+        $error = [];
+        if ($message) {
+            $error['message'] = $message;
+        }
+
+        if ($code) {
+            $error['code'] = $code;
+        }
+
+        if ($status) {
+            $error['status'] = $status;
+        }
+
+        return ['error' => $error];
+    }
+
 
     /**
      * @param array $raw

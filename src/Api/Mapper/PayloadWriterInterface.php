@@ -57,6 +57,14 @@ interface PayloadWriterInterface
     public function writeResponseResponse(ResponseApi $response);
 
     /**
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     * @return mixed
+     */
+    public function writeErrorResponse($message = '', $code = 0, $status = '');
+
+    /**
      * @param Transport $transport
      * @param array $output
      * @return array

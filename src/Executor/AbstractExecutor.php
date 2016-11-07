@@ -18,6 +18,7 @@ namespace Katana\Sdk\Executor;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Messaging\Responder\ResponderInterface;
 
 /**
@@ -38,15 +39,39 @@ abstract class AbstractExecutor
     protected $mapper;
 
     /**
-     * @param PayloadWriterInterface $mapper
+     * @var KatanaLogger
+     */
+    protected $logger;
+
+    /**
+     * Send error message through the responder.
+     *
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     */
+    protected function sendError($message = '', $code = 0, $status = '')
+    {
+        if ($message) {
+            $this->logger->error($message);
+        }
+
+        $this->responder->sendErrorResponse($this->mapper, $message, $code, $status);
+    }
+
+    /**
      * @param ResponderInterface $responder
+     * @param PayloadWriterInterface $mapper
+     * @param KatanaLogger $logger
      */
     public function __construct(
         ResponderInterface $responder,
-        PayloadWriterInterface $mapper
+        PayloadWriterInterface $mapper,
+        KatanaLogger $logger
     ) {
         $this->responder = $responder;
         $this->mapper = $mapper;
+        $this->logger = $logger;
     }
 
     /**

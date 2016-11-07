@@ -148,6 +148,29 @@ class CompactPayloadMapper implements PayloadMapperInterface
         return $this->writeHttpResponse($response->getHttpResponse(), $message);
     }
 
+    /**
+     * @param string $message
+     * @param int $code
+     * @param string $status
+     * @return array
+     */
+    public function writeErrorResponse($message = '', $code = 0, $status = '')
+    {
+        $error = [];
+        if ($message) {
+            $error['m'] = $message;
+        }
+
+        if ($code) {
+            $error['c'] = $code;
+        }
+
+        if ($status) {
+            $error['s'] = $status;
+        }
+
+        return ['E' => $error];
+    }
 
     /**
      * @param array $raw
