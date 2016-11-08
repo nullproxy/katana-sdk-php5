@@ -54,6 +54,16 @@ abstract class AbstractComponent
      */
     private $resources = [];
 
+    /**
+     * @var callable
+     */
+    private $startup;
+
+    /**
+     * @var callable
+     */
+    private $shutdown;
+
     public function __construct()
     {
         $this->logger = new KatanaLogger();
@@ -75,6 +85,16 @@ abstract class AbstractComponent
      */
     public function run()
     {
+        if ($this->startup) {
+            $this->logger->debug('Calling startup callback');
+            $return = call_user_func($this->startup, $this);
+            if (!$return instanceof static) {
+                $msg = 'Wrong return for startup';
+                $this->logger->error($msg);
+                throw new ConsoleException($msg);
+            }
+        }
+
         $actions = implode(', ', array_keys($this->callbacks));
         $this->logger->info("Component running with callbacks for $actions");
         $this->executor->execute(
@@ -82,6 +102,16 @@ abstract class AbstractComponent
             $this->input,
             $this->callbacks
         );
+
+        if ($this->shutdown) {
+            $this->logger->debug('Calling shutdown callback');
+            $return = call_user_func($this->shutdown, $this);
+            if (!$return instanceof static) {
+                $msg = 'Wrong return for startup';
+                $this->logger->error($msg);
+                throw new ConsoleException($msg);
+            }
+        }
     }
 
     /**
@@ -133,5 +163,27 @@ abstract class AbstractComponent
     public function hasResource($name)
     {
         return isset($this->resources[$name]);
+    }
+
+    /**
+     * @param callable $startup
+     * @return bool
+     */
+    public function startup(callable $startup)
+    {
+        $this->startup = $startup;
+
+        return true;
+    }
+
+    /**
+     * @param callable $shutdown
+     * @return bool
+     */
+    public function shutdown(callable $shutdown)
+    {
+        $this->shutdown = $shutdown;
+
+        return true;
     }
 }
