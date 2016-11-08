@@ -17,6 +17,7 @@ namespace Katana\Sdk\Component;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Exception\ConsoleException;
 use Katana\Sdk\Executor\AbstractExecutor;
 use Katana\Sdk\Executor\ExecutorFactory;
 use Katana\Sdk\Logger\KatanaLogger;
@@ -47,6 +48,11 @@ abstract class AbstractComponent
      * @var callback[]
      */
     private $callbacks = [];
+
+    /**
+     * @var array
+     */
+    private $resources = [];
 
     public function __construct()
     {
@@ -82,4 +88,50 @@ abstract class AbstractComponent
      * @return ApiFactory
      */
     abstract protected function getApiFactory();
+
+    /**
+     * @param string $name
+     * @param callable $resource
+     * @return bool
+     * @throws ConsoleException
+     */
+    public function setResource($name, callable $resource)
+    {
+        $resource = $resource();
+        if (!$resource) {
+            $msg = "Set resource $name failed";
+            $this->logger->error($msg);
+            throw new ConsoleException($msg);
+        }
+
+        $this->logger->info("Setting $name resource");
+        $this->resources[$name] = $resource;
+
+        return true;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws ConsoleException
+     */
+    public function getResource($name)
+    {
+        if (!$this->hasResource($name)) {
+            $msg = "Resource $name not found";
+            $this->logger->error($msg);
+            throw new ConsoleException($msg);
+        }
+
+        return $this->resources[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasResource($name)
+    {
+        return isset($this->resources[$name]);
+    }
 }
