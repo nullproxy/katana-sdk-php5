@@ -78,6 +78,11 @@ interface Action extends ApiInterface
     public function getFile($name);
 
     /**
+     * @return File[]
+     */
+    public function getFiles();
+
+    /**
      * @param string $name
      * @param string $path
      * @param string $mime
