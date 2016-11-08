@@ -173,6 +173,24 @@ class ActionApi extends Api implements Action
     }
 
     /**
+     * @return File[]
+     */
+    public function getFiles()
+    {
+        $files = [];
+
+        foreach ($this->transport->getFiles()->getAll() as $serviceFiles) {
+            foreach ($serviceFiles as $versionFiles) {
+                foreach ($versionFiles as $actionFiles) {
+                    $files = array_merge($files, array_values($actionFiles));
+                }
+            }
+        }
+
+        return $files;
+    }
+
+    /**
      * @param string $name
      * @param string $path
      * @param string $mime

@@ -269,13 +269,14 @@ class CompactPayloadMapper implements PayloadMapperInterface
             foreach ($serviceFiles as $version => $versionFiles) {
                 foreach ($versionFiles as $action => $actionFiles) {
                     foreach ($actionFiles as $name => $fileData) {
+                        $token = isset($fileData['t']) ? $fileData['t'] : '';
                         $data[$service][$version][$action][$name] = new File(
                             $name,
                             $fileData['p'],
                             $fileData['m'],
                             $fileData['f'],
                             $fileData['s'],
-                            $fileData['t']
+                            $token
                         );
                     }
                 }
