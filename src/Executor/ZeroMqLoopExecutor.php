@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Executor;
 
+use Exception;
 use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
@@ -65,15 +66,17 @@ class ZeroMqLoopExecutor extends AbstractExecutor
      * @param ApiFactory $factory
      * @param CliInput $input
      * @param callable[] $callbacks
+     * @param callable $errorCallback
      */
     public function execute(
         ApiFactory $factory,
         CliInput $input,
-        array $callbacks
+        array $callbacks,
+        callable $errorCallback = null
     ) {
         $this->socket->on(
             'messages',
-            function ($message) use ($callbacks, $factory, $input) {
+            function ($message) use ($callbacks, $factory, $input, $errorCallback) {
 
                 list($action, $payload) = $message;
 
@@ -85,13 +88,9 @@ class ZeroMqLoopExecutor extends AbstractExecutor
                 $command = $msg->unserialize($payload);
 
                 $api = $factory->build($action, $command, $input);
+                $this->executeCallback($api, $action, $callbacks, $errorCallback);
 
-                $response = $callbacks[$action]($api);
-                if (!$response instanceof Api) {
-                    return $this->sendError("Wrong return from callback $action");
-                }
-
-                $this->responder->sendResponse($response, $this->mapper);
+                return true;
             }
         );
 

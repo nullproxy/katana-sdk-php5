@@ -62,6 +62,11 @@ abstract class AbstractComponent
     /**
      * @var callable
      */
+    private $error;
+
+    /**
+     * @var callable
+     */
     private $shutdown;
 
     public function __construct()
@@ -100,7 +105,8 @@ abstract class AbstractComponent
         $this->executor->execute(
             $this->getApiFactory(),
             $this->input,
-            $this->callbacks
+            $this->callbacks,
+            $this->error
         );
 
         if ($this->shutdown) {
@@ -183,6 +189,17 @@ abstract class AbstractComponent
     public function shutdown(callable $shutdown)
     {
         $this->shutdown = $shutdown;
+
+        return true;
+    }
+
+    /**
+     * @param callable $error
+     * @return bool
+     */
+    public function error(callable $error)
+    {
+        $this->error = $error;
 
         return true;
     }

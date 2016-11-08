@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Executor;
 
+use Exception;
+use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
@@ -44,19 +46,56 @@ abstract class AbstractExecutor
     protected $logger;
 
     /**
-     * Send error message through the responder.
-     *
      * @param string $message
      * @param int $code
      * @param string $status
      */
-    protected function sendError($message = '', $code = 0, $status = '')
+    protected function sendError($message, $code = 0, $status = '')
     {
+        $message = "Callback error: $message";
         if ($message) {
             $this->logger->error($message);
         }
 
         $this->responder->sendErrorResponse($this->mapper, $message, $code, $status);
+    }
+
+    /**
+     * @param Api $api
+     * @param string $action
+     * @param array $callbacks
+     * @param callable|null $errorCallback
+     * @return bool
+     */
+    protected function executeCallback(
+        Api $api,
+        $action,
+        array $callbacks,
+        callable $errorCallback = null
+    ) {
+        try {
+            $response = $callbacks[$action]($api);
+        } catch (Exception $response) {
+            // Catch as response to allow return or throw Exception
+        }
+
+        if ($response instanceof Api) {
+            $this->responder->sendResponse($response, $this->mapper);
+
+            return true;
+        }
+
+        if (!$response instanceof Exception) {
+            $response = new Exception('Wrong return from callback');
+        }
+
+        if ($errorCallback) {
+            $errorCallback($response);
+        }
+
+        $this->sendError($response->getMessage());
+
+        return false;
     }
 
     /**
@@ -78,10 +117,12 @@ abstract class AbstractExecutor
      * @param ApiFactory $factory
      * @param CliInput $input
      * @param callable[] $callbacks
+     * @param callable $errorCallback
      */
     abstract public function execute(
         ApiFactory $factory,
         CliInput $input,
-        array $callbacks
+        array $callbacks,
+        callable $errorCallback = null
     );
 }
