@@ -16,6 +16,7 @@
 namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Action;
+use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Exception\TransportException;
 
 class ActionApi extends Api implements Action
@@ -37,6 +38,7 @@ class ActionApi extends Api implements Action
 
     /**
      * Action constructor.
+     * @param AbstractComponent $component
      * @param string $path
      * @param string $name
      * @param string $version
@@ -48,6 +50,7 @@ class ActionApi extends Api implements Action
      * @param Param[] $params
      */
     public function __construct(
+        AbstractComponent $component,
         $path,
         $name,
         $version,
@@ -58,10 +61,19 @@ class ActionApi extends Api implements Action
         Transport $transport,
         array $params = []
     ) {
-        parent::__construct($path, $name, $version, $platformVersion, $variables, $debug);
+        parent::__construct(
+            $component,
+            $path,
+            $name,
+            $version,
+            $platformVersion,
+            $variables,
+            $debug
+        );
+
         $this->actionName = $actionName;
         $this->transport = $transport;
-        /** @var Param $param */
+
         foreach ($params as $param) {
             $this->params[$param->getLocation()][$param->getName()] = $param;
         }

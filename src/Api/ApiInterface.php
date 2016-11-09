@@ -52,4 +52,16 @@ interface ApiInterface
      * @return boolean
      */
     public function isDebug();
+
+    /**
+     * @param string $name
+     * @return boolean
+     */
+    public function hasResource($name);
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getResource($name);
 }

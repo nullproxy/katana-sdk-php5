@@ -37,6 +37,7 @@ class MiddlewareApiFactory extends ApiFactory
     {
         if ($action === 'request') {
             return new RequestApi(
+                $this->component,
                 dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
                 $input->getName(),
                 $input->getVersion(),
@@ -49,6 +50,7 @@ class MiddlewareApiFactory extends ApiFactory
 
         } elseif($action === 'response') {
             return new ResponseApi(
+                $this->component,
                 dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
                 $input->getName(),
                 $input->getVersion(),

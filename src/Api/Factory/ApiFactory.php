@@ -17,6 +17,7 @@ namespace Katana\Sdk\Api\Factory;
 
 use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Mapper\PayloadReaderInterface;
+use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Console\CliInput;
 
 /**
@@ -26,6 +27,11 @@ use Katana\Sdk\Console\CliInput;
 abstract class ApiFactory
 {
     /**
+     * @var AbstractComponent
+     */
+    protected $component;
+
+    /**
      * Read mapper to translate an input into Api instances.
      *
      * @var PayloadReaderInterface
@@ -33,28 +39,38 @@ abstract class ApiFactory
     protected $mapper;
 
     /**
+     * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
      * @return ServiceApiFactory
      */
-    public static function getServiceFactory(PayloadReaderInterface $mapper)
-    {
-        return new ServiceApiFactory($mapper);
+    public static function getServiceFactory(
+        AbstractComponent $component,
+        PayloadReaderInterface $mapper
+    ) {
+        return new ServiceApiFactory($component, $mapper);
     }
 
     /**
+     * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
      * @return MiddlewareApiFactory
      */
-    public static function getMiddlewareFactory(PayloadReaderInterface $mapper)
-    {
-        return new MiddlewareApiFactory($mapper);
+    public static function getMiddlewareFactory(
+        AbstractComponent $component,
+        PayloadReaderInterface $mapper
+    ) {
+        return new MiddlewareApiFactory($component, $mapper);
     }
 
     /**
+     * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
      */
-    final public function __construct(PayloadReaderInterface $mapper)
-    {
+    final public function __construct(
+        AbstractComponent $component,
+        PayloadReaderInterface $mapper
+    ) {
+        $this->component = $component;
         $this->mapper = $mapper;
     }
 

@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Request;
 
 class RequestApi extends Api implements Request
@@ -31,6 +32,7 @@ class RequestApi extends Api implements Request
 
     /**
      * Response constructor.
+     * @param AbstractComponent $component
      * @param string $path
      * @param string $name
      * @param string $version
@@ -41,6 +43,7 @@ class RequestApi extends Api implements Request
      * @param ServiceCall $call
      */
     public function __construct(
+        AbstractComponent $component,
         $path,
         $name,
         $version,
@@ -51,6 +54,7 @@ class RequestApi extends Api implements Request
         ServiceCall $call
     ) {
         parent::__construct(
+            $component,
             $path,
             $name,
             $version,
@@ -326,6 +330,7 @@ class RequestApi extends Api implements Request
     public function newResponse($code, $text)
     {
         return new ResponseApi(
+            $this->component,
             $this->path,
             $this->name,
             $this->version,

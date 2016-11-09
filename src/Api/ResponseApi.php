@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Response;
 use Katana\Sdk\Transport as TransportInterface;
 
@@ -32,6 +33,7 @@ class ResponseApi extends Api implements Response
 
     /**
      * Response constructor.
+     * @param AbstractComponent $component
      * @param string $path
      * @param string $name
      * @param string $version
@@ -42,6 +44,7 @@ class ResponseApi extends Api implements Response
      * @param Transport $transport
      */
     public function __construct(
+        AbstractComponent $component,
         $path,
         $name,
         $version,
@@ -52,6 +55,7 @@ class ResponseApi extends Api implements Response
         Transport $transport
     ) {
         parent::__construct(
+            $component,
             $path,
             $name,
             $version,

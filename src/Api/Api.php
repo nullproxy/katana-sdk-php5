@@ -14,6 +14,7 @@
  */
 
 namespace Katana\Sdk\Api;
+use Katana\Sdk\Component\AbstractComponent;
 
 /**
  * Base class for Api classes.
@@ -22,6 +23,11 @@ namespace Katana\Sdk\Api;
  */
 abstract class Api
 {
+    /**
+     * @var AbstractComponent
+     */
+    protected $component;
+
     /**
      * @var string
      */
@@ -53,6 +59,7 @@ abstract class Api
     protected $debug = false;
 
     /**
+     * @param AbstractComponent $component
      * @param string $path
      * @param string $name
      * @param string $version
@@ -61,6 +68,7 @@ abstract class Api
      * @param bool $debug
      */
     public function __construct(
+        AbstractComponent $component,
         $path,
         $name,
         $version,
@@ -68,6 +76,7 @@ abstract class Api
         array $variables = [],
         $debug = false
     ) {
+        $this->component = $component;
         $this->path = $path;
         $this->name = $name;
         $this->version = $version;
@@ -135,5 +144,23 @@ abstract class Api
     public function isDebug()
     {
         return $this->debug;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasResource($name)
+    {
+        return $this->component->hasResource($name);
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getResource($name)
+    {
+        return $this->component->getResource($name);
     }
 }

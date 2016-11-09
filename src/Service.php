@@ -44,6 +44,6 @@ class Service extends AbstractComponent
      */
     protected function getApiFactory()
     {
-        return ApiFactory::getServiceFactory(new CompactPayloadMapper());
+        return ApiFactory::getServiceFactory($this, new CompactPayloadMapper());
     }
 }
