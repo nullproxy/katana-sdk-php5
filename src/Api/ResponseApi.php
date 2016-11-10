@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Response;
 use Katana\Sdk\Transport as TransportInterface;

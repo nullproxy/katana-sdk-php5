@@ -16,6 +16,8 @@
 namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
+use Katana\Sdk\Api\Protocol\Http\HttpResponse;
+use Katana\Sdk\Api\Protocol\Http\HttpStatus;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Request;
 
