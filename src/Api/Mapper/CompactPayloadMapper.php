@@ -19,7 +19,7 @@ use Katana\Sdk\Api\ActionApi;
 use Katana\Sdk\Api\Call;
 use Katana\Sdk\Api\Error;
 use Katana\Sdk\Api\File;
-use Katana\Sdk\Api\HttpRequest;
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\HttpResponse;
 use Katana\Sdk\Api\HttpStatus;
 use Katana\Sdk\Api\Param;

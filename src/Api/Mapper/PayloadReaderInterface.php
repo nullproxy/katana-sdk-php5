@@ -16,7 +16,7 @@
 namespace Katana\Sdk\Api\Mapper;
 
 use Katana\Sdk\Api\File;
-use Katana\Sdk\Api\HttpRequest;
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\HttpResponse;
 use Katana\Sdk\Api\Param;
 use Katana\Sdk\Api\ServiceCall;

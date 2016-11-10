@@ -13,7 +13,9 @@
  * @copyright Copyright (c) 2016-2017 KUSANAGI S.L. (http://kusanagi.io)
  */
 
-namespace Katana\Sdk\Api;
+namespace Katana\Sdk\Api\Protocol\Http;
+
+use Katana\Sdk\Api\File;
 
 /**
  * Api class for an Http Request
