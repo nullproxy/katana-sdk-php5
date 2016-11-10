@@ -79,10 +79,13 @@ class HttpResponse
 
     /**
      * @param string $version
+     * @return bool
      */
     public function setProtocolVersion($version)
     {
         $this->version = $version;
+
+        return true;
     }
 
     /**
@@ -121,26 +124,13 @@ class HttpResponse
     /**
      * @param int $code
      * @param string $text
+     * @return bool
      */
     public function setStatus($code, $text)
     {
         $this->status = new HttpStatus($code, $text);
-    }
 
-    /**
-     * @return string
-     */
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    /**
-     * @param string $body
-     */
-    public function setBody($body)
-    {
-        $this->body = $body;
+        return true;
     }
 
     /**
@@ -172,9 +162,39 @@ class HttpResponse
     /**
      * @param string $header
      * @param string $value
+     * @return bool
      */
     public function setHeader($header, $value)
     {
         $this->headers[$header] = $value;
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBody()
+    {
+        return !empty($this->body);
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param string $body
+     * @return bool
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+
+        return true;
     }
 }
