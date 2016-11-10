@@ -15,12 +15,19 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
+use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Response;
 use Katana\Sdk\Transport as TransportInterface;
 
 class ResponseApi extends Api implements Response
 {
+    /**
+     * @var HttpRequest
+     */
+    private $request;
+
     /**
      * @var HttpResponse
      */
@@ -40,6 +47,7 @@ class ResponseApi extends Api implements Response
      * @param string $platformVersion
      * @param array $variables
      * @param bool $debug
+     * @param HttpRequest $request
      * @param HttpResponse $response
      * @param Transport $transport
      */
@@ -51,6 +59,7 @@ class ResponseApi extends Api implements Response
         $platformVersion,
         array $variables,
         $debug,
+        HttpRequest $request,
         HttpResponse $response,
         Transport $transport
     ) {
@@ -63,154 +72,17 @@ class ResponseApi extends Api implements Response
             $variables,
             $debug
         );
+        $this->request = $request;
         $this->response = $response;
         $this->transport = $transport;
     }
 
     /**
-     * @param string $version
-     * @return bool
+     * @return HttpRequest
      */
-    public function isProtocolVersion($version)
+    public function getHttpRequest()
     {
-        return $version === $this->response->getProtocolVersion();
-    }
-
-    /**
-     * @return string
-     */
-    public function getProtocolVersion()
-    {
-        return $this->response->getProtocolVersion();
-    }
-
-    /**
-     * @param string $version
-     * @return bool
-     */
-    public function setProtocolVersion($version)
-    {
-        $this->response->setProtocolVersion($version);
-
-        return true;
-    }
-
-    /**
-     * @param string $status
-     * @return bool
-     */
-    public function isStatus($status)
-    {
-        return $this->response->isStatus($status);
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->response->getStatus();
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return $this->response->getStatusCode();
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatusText()
-    {
-        return $this->response->getStatusText();
-    }
-
-    /**
-     * @param int $code
-     * @param string $text
-     * @return bool
-     */
-    public function setStatus($code, $text)
-    {
-        $this->response->setStatus($code, $text);
-
-        return true;
-    }
-
-    /**
-     * @param string $header
-     * @return bool
-     */
-    public function hasHeader($header)
-    {
-        return isset($this->response->getHeaders()[$header]);
-    }
-
-    /**
-     * @param string $header
-     * @return string
-     */
-    public function getHeader($header)
-    {
-        return $this->response->hasHeader($header);
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaders()
-    {
-        return $this->response->getHeaders();
-    }
-
-    /**
-     * @param string $header
-     * @param string $value
-     * @return bool
-     */
-    public function setHeader($header, $value)
-    {
-        $this->response->setHeader($header, $value);
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBody()
-    {
-        return !empty($this->response->getBody());
-    }
-
-    /**
-     * @return string
-     */
-    public function getBody()
-    {
-        return $this->response->getBody();
-    }
-
-    /**
-     * @param string $content
-     * @return bool
-     */
-    public function setBody($content)
-    {
-        $this->response->setBody($content);
-
-        return true;
-    }
-
-    /**
-     * @return TransportInterface
-     */
-    public function getTransport()
-    {
-        return new TransportReader($this->transport);
+        return $this->request;
     }
 
     /**
@@ -219,5 +91,13 @@ class ResponseApi extends Api implements Response
     public function getHttpResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * @return TransportInterface
+     */
+    public function getTransport()
+    {
+        return new TransportReader($this->transport);
     }
 }

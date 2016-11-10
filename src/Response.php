@@ -16,94 +16,21 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\ApiInterface;
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
+use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Api\TransportReader;
 
 interface Response extends ApiInterface
 {
     /**
-     * @param string $version
-     * @return bool
+     * @return HttpRequest
      */
-    public function isProtocolVersion($version);
+    public function getHttpRequest();
 
     /**
-     * @return string
+     * @return HttpResponse
      */
-    public function getProtocolVersion();
-
-    /**
-     * @param string $version
-     * @return bool
-     */
-    public function setProtocolVersion($version);
-
-    /**
-     * @param string $status
-     * @return bool
-     */
-    public function isStatus($status);
-
-    /**
-     * @return string
-     */
-    public function getStatus();
-
-    /**
-     * @return int
-     */
-    public function getStatusCode();
-
-    /**
-     * @return string
-     */
-    public function getStatusText();
-
-    /**
-     * @param int $code
-     * @param string $text
-     * @return bool
-     */
-    public function setStatus($code, $text);
-
-    /**
-     * @param string $header
-     * @return bool
-     */
-    public function hasHeader($header);
-
-    /**
-     * @param string $header
-     * @return string
-     */
-    public function getHeader($header);
-
-    /**
-     * @return array
-     */
-    public function getHeaders();
-
-    /**
-     * @param string $header
-     * @param string $value
-     * @return bool
-     */
-    public function setHeader($header, $value);
-
-    /**
-     * @return bool
-     */
-    public function hasBody();
-
-    /**
-     * @return string
-     */
-    public function getBody();
-
-    /**
-     * @param string $content
-     * @return bool
-     */
-    public function setBody($content);
+    public function getHttpResponse();
 
     /**
      * @return TransportReader

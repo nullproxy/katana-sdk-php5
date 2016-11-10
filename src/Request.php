@@ -16,139 +16,10 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\ApiInterface;
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 
 interface Request extends ApiInterface
 {
-    /**
-     * @param string $method
-     * @return bool
-     */
-    public function isMethod($method);
-
-    /**
-     * @return string
-     */
-    public function getMethod();
-
-    /**
-     * @return string
-     */
-    public function getUrl();
-
-    /**
-     * @return string
-     */
-    public function getUrlScheme();
-
-    /**
-     * @return string
-     */
-    public function getUrlHost();
-
-    /**
-     * @return string
-     */
-    public function getUrlPath();
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function hasQueryParam($name);
-
-    /**
-     * @param string $name
-     * @param string $default
-     * @return string
-     */
-    public function getQueryParam($name, $default = '');
-
-    /**
-     * @param string $name
-     * @param array $default
-     * @return array
-     */
-    public function getQueryParamArray($name, $default = []);
-
-    /**
-     * @return array
-     */
-    public function getQueryParams();
-
-    /**
-     * @return array
-     */
-    public function getQueryParamsArray();
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function hasPostParam($name);
-
-    /**
-     * @param string $name
-     * @param string $default
-     * @return string
-     */
-    public function getPostParam($name, $default = '');
-
-    /**
-     * @param string $name
-     * @param array $default
-     * @return array
-     */
-    public function getPostParamArray($name, $default = []);
-
-    /**
-     * @return array
-     */
-    public function getPostParams();
-
-    /**
-     * @return array
-     */
-    public function getPostParamsArray();
-
-    /**
-     * @param string $version
-     * @return bool
-     */
-    public function isProtocolVersion($version);
-
-    /**
-     * @return string
-     */
-    public function getProtocolVersion();
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasHeader($name);
-
-    /**
-     * @param string $name
-     * @param string $default
-     * @return string
-     */
-    public function getHeader($name, $default = '');
-
-    /**
-     * @return array
-     */
-    public function getHeaders();
-
-    /**
-     * @return bool
-     */
-    public function hasBody();
-
-    /**
-     * @return string
-     */
-    public function getBody();
-
     /**
      * @return string
      */
@@ -188,4 +59,9 @@ interface Request extends ApiInterface
      * @return Response
      */
     public function newResponse($code, $text);
+
+    /**
+     * @return HttpRequest
+     */
+    public function getHttpRequest();
 }
