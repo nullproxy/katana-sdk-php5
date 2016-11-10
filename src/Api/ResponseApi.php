@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Response;
@@ -22,6 +23,11 @@ use Katana\Sdk\Transport as TransportInterface;
 
 class ResponseApi extends Api implements Response
 {
+    /**
+     * @var HttpRequest
+     */
+    private $request;
+
     /**
      * @var HttpResponse
      */
@@ -41,6 +47,7 @@ class ResponseApi extends Api implements Response
      * @param string $platformVersion
      * @param array $variables
      * @param bool $debug
+     * @param HttpRequest $request
      * @param HttpResponse $response
      * @param Transport $transport
      */
@@ -52,6 +59,7 @@ class ResponseApi extends Api implements Response
         $platformVersion,
         array $variables,
         $debug,
+        HttpRequest $request,
         HttpResponse $response,
         Transport $transport
     ) {
@@ -64,8 +72,17 @@ class ResponseApi extends Api implements Response
             $variables,
             $debug
         );
+        $this->request = $request;
         $this->response = $response;
         $this->transport = $transport;
+    }
+
+    /**
+     * @return HttpRequest
+     */
+    public function getHttpRequest()
+    {
+        return $this->request;
     }
 
     /**

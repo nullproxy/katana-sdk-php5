@@ -141,6 +141,7 @@ class RequestApi extends Api implements Request
             $this->platformVersion,
             $this->variables,
             $this->debug,
+            $this->httpRequest,
             new HttpResponse(
                 $this->httpRequest->getProtocolVersion(),
                 new HttpStatus($code, $text),

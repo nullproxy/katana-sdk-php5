@@ -57,6 +57,7 @@ class MiddlewareApiFactory extends ApiFactory
                 $input->getPlatformVersion(),
                 $input->getVariables(),
                 $input->isDebug(),
+                $this->mapper->getHttpRequest($data),
                 $this->mapper->getHttpResponse($data),
                 $this->mapper->getTransport($data)
             );

@@ -16,11 +16,17 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\ApiInterface;
+use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Api\TransportReader;
 
 interface Response extends ApiInterface
 {
+    /**
+     * @return HttpRequest
+     */
+    public function getHttpRequest();
+
     /**
      * @return HttpResponse
      */
