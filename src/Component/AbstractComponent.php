@@ -71,8 +71,8 @@ abstract class AbstractComponent
 
     public function __construct()
     {
-        $this->logger = new KatanaLogger();
         $this->input = CliInput::createFromCli();
+        $this->logger = new KatanaLogger($this->input->isDebug());
         $this->executor = (new ExecutorFactory($this->logger))->build($this->input);
     }
 

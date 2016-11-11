@@ -25,6 +25,19 @@ class KatanaLogger
     const FORMAT = '%TIMESTAMP% [%TYPE%] [SDK] %MESSAGE% %REQUEST_ID%';
 
     /**
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
+     * @param bool $debug
+     */
+    public function __construct($debug = false)
+    {
+        $this->debug = $debug;
+    }
+
+    /**
      * @return bool|string
      */
     private function getTimestamp()
@@ -44,6 +57,10 @@ class KatanaLogger
      */
     private function log($level, $message, $requestId = '')
     {
+        if ($level === 'DEBUG' && !$this->debug) {
+            return;
+        }
+
         $requestId = $requestId? "|$requestId|" : '';
         echo trim(str_replace(
             ['%TIMESTAMP%', '%TYPE%', '%MESSAGE%', '%REQUEST_ID%'],
