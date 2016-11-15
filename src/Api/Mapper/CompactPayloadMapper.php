@@ -17,6 +17,7 @@ namespace Katana\Sdk\Api\Mapper;
 
 use Katana\Sdk\Api\ActionApi;
 use Katana\Sdk\Api\Call;
+use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Error;
 use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
@@ -661,7 +662,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     {
         return new ServiceCall(
             $raw['c']['a']['c']['s'],
-            $raw['c']['a']['c']['v'],
+            new VersionString($raw['c']['a']['c']['v']),
             $raw['c']['a']['c']['a']
         );
     }

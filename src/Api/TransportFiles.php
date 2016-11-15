@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Value\VersionString;
+
 /**
  * Support Transport Api class that encapsulates a list of relations.
  * @package Katana\Sdk\Api
@@ -56,7 +58,7 @@ class TransportFiles
 
     /**
      * @param string $service
-     * @param string $version
+     * @param $version
      * @param string $action
      * @param string $name
      * @return bool
@@ -68,12 +70,12 @@ class TransportFiles
 
     /**
      * @param string $service
-     * @param string $version
+     * @param VersionString $version
      * @param string $action
      * @param File $file
      */
-    public function add($service, $version, $action, File $file)
+    public function add($service, VersionString $version, $action, File $file)
     {
-        $this->files[$service][$version][$action][$file->getName()] = $file;
+        $this->files[$service][$version->getVersion()][$action][$file->getName()] = $file;
     }
 }

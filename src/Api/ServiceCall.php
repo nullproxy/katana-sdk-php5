@@ -14,6 +14,7 @@
  */
 
 namespace Katana\Sdk\Api;
+use Katana\Sdk\Api\Value\VersionString;
 
 /**
  * Support Api class that encapsulates a Service call. *
@@ -28,9 +29,9 @@ class ServiceCall
     private $service = '';
 
     /**
-     * @var string
+     * @var VersionString
      */
-    private $version = '';
+    private $version;
 
     /**
      * @var string
@@ -39,10 +40,10 @@ class ServiceCall
 
     /**
      * @param string $service
-     * @param string $version
+     * @param VersionString $version
      * @param string $action
      */
-    public function __construct($service, $version, $action)
+    public function __construct($service, VersionString $version, $action)
     {
         $this->service = $service;
         $this->version = $version;
@@ -70,13 +71,13 @@ class ServiceCall
      */
     public function getVersion()
     {
-        return $this->version;
+        return $this->version->getVersion();
     }
 
     /**
-     * @param string $version
+     * @param VersionString $version
      */
-    public function setVersion($version)
+    public function setVersion(VersionString $version)
     {
         $this->version = $version;
     }

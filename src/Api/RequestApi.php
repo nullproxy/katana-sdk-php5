@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Api\Protocol\Http\HttpStatus;
@@ -102,7 +103,7 @@ class RequestApi extends Api implements Request
      */
     public function setServiceVersion($version)
     {
-        $this->call->setVersion($version);
+        $this->call->setVersion(new VersionString($version));
 
         return true;
     }
