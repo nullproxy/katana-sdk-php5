@@ -66,7 +66,7 @@ abstract class ApiFactory
      * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
      */
-    final public function __construct(
+    public function __construct(
         AbstractComponent $component,
         PayloadReaderInterface $mapper
     ) {
