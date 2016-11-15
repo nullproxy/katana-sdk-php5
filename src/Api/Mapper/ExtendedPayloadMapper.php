@@ -17,6 +17,7 @@ namespace Katana\Sdk\Api\Mapper;
 
 use Katana\Sdk\Api\ActionApi;
 use Katana\Sdk\Api\Call;
+use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Error;
 use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
@@ -653,7 +654,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     {
         return new ServiceCall(
             $raw['command']['arguments']['call']['service'],
-            $raw['command']['arguments']['call']['version'],
+            new VersionString($raw['command']['arguments']['call']['version']),
             $raw['command']['arguments']['call']['action']
         );
     }

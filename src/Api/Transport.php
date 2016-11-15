@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Api\Value\VersionString;
+
 /**
  * Api class that encapsulates the full Transport
  *
@@ -245,11 +247,11 @@ class Transport
 
     /**
      * @param string $service
-     * @param string $version
+     * @param VersionString $version
      * @param string $action
      * @param File $file
      */
-    public function addFile($service, $version, $action, File $file)
+    public function addFile($service, VersionString $version, $action, File $file)
     {
         $this->files->add($service, $version, $action, $file);
     }

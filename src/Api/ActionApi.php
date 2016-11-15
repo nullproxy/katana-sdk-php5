@@ -16,6 +16,7 @@
 namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Action;
+use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Exception\TransportException;
 
@@ -290,9 +291,9 @@ class ActionApi extends Api implements Action
     }
 
     /**
-     * @param $service
-     * @param $version
-     * @param $action
+     * @param string $service
+     * @param string $version
+     * @param string $action
      * @param Param[] $params
      * @param File[] $files
      */
@@ -303,16 +304,17 @@ class ActionApi extends Api implements Action
         array $params = [],
         array $files = []
     ) {
+        $versionString = new VersionString($version);
         $this->transport->addCall(new Call(
             new ServiceOrigin($this->name, $this->version),
             $service,
-            $version,
+            $versionString,
             $action,
             $params
         ));
 
         foreach ($files as $file) {
-            $this->transport->addFile($service, $version, $action, $file);
+            $this->transport->addFile($service, $versionString, $action, $file);
         }
     }
 
