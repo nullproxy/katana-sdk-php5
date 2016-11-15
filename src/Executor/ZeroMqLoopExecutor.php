@@ -15,8 +15,7 @@
 
 namespace Katana\Sdk\Executor;
 
-use Exception;
-use Katana\Sdk\Api\Api;
+use Closure;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
@@ -39,6 +38,31 @@ class ZeroMqLoopExecutor extends AbstractExecutor
      * @var MessagePackSerializer
      */
     private $serializer;
+
+    /**
+     * @return Closure
+     */
+    private function getErrorHandler()
+    {
+        return function($errno, $errstr) {
+            $msg = "Language error ($errno) $errstr";
+            $this->sendError($msg);
+        };
+    }
+
+    /**
+     * @return Closure
+     */
+    private function getShutdownFunction()
+    {
+        return function () {
+            $error = error_get_last();
+            if ($error) {
+                $msg = "Language error (shutdown) ({$error['type']}) {$error['message']}";
+                $this->sendError($msg);
+            }
+        };
+    }
 
     /**
      * @param mixed $loop
@@ -94,6 +118,9 @@ class ZeroMqLoopExecutor extends AbstractExecutor
             }
         );
 
+        register_shutdown_function($this->getShutdownFunction());
+        $prevErrorHandler = set_error_handler($this->getErrorHandler(), E_ERROR);
         $this->loop->run();
+        set_error_handler($prevErrorHandler);
     }
 }

@@ -48,7 +48,7 @@ class ZeroMqMultipartResponder implements ResponderInterface
         $message = $mapper->writeResponseResponse($response);
         $payload = $this->serializer->serialize($message);
 
-        $this->socket->sendmulti(['', $payload]);
+        $this->socket->sendmulti(["\x00", $payload]);
     }
 
     /**
@@ -60,7 +60,7 @@ class ZeroMqMultipartResponder implements ResponderInterface
         $message = $mapper->writeRequestResponse($request);
         $payload = $this->serializer->serialize($message);
 
-        $this->socket->sendmulti(['', $payload]);
+        $this->socket->sendmulti(["\x00", $payload]);
     }
 
     /**
@@ -137,6 +137,6 @@ class ZeroMqMultipartResponder implements ResponderInterface
             $mapper->writeErrorResponse($message, $code, $status)
         );
 
-        $this->socket->sendmulti(['', $payload]);
+        $this->socket->sendmulti(["\x00", $payload]);
     }
 }
