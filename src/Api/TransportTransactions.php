@@ -89,10 +89,12 @@ class TransportTransactions
                 }, $transaction->getParams()),
             ];
 
+            $type = $transaction->getType() === 'commit' ? 'c' : 'r';
+
             if ($service) {
-                $transactions[$origin->getVersion()][] = $transactionOutput;
+                $transactions[$type][$origin->getVersion()][] = $transactionOutput;
             } else {
-                $transactions[$origin->getName()][$origin->getVersion()][] = $transactionOutput;
+                $transactions[$type][$origin->getName()][$origin->getVersion()][] = $transactionOutput;
             }
         }
 

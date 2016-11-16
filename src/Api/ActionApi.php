@@ -284,14 +284,35 @@ class ActionApi extends Api implements Action
     /**
      * @param string $action
      * @param array $params
+     * @return boolean
      */
-    public function transaction($action, $params = [])
+    public function commit($action, $params = [])
     {
-        $this->transport->addTransaction(new Transaction(
-            new ServiceOrigin($this->name, $this->version),
-            $action,
-            $params
-        ));
+        $this->transport->addTransaction(
+            new Transaction(
+                'commit',
+                new ServiceOrigin($this->name, $this->version),
+                $action,
+                $params
+            )
+        );
+    }
+
+    /**
+     * @param string $action
+     * @param array $params
+     * @return boolean
+     */
+    public function rollback($action, $params = [])
+    {
+        $this->transport->addTransaction(
+            new Transaction(
+                'rollback',
+                new ServiceOrigin($this->name, $this->version),
+                $action,
+                $params
+            )
+        );
     }
 
     /**

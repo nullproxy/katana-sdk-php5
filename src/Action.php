@@ -130,8 +130,16 @@ interface Action extends ApiInterface
     /**
      * @param string $action
      * @param array $params
+     * @return boolean
      */
-    public function transaction($action, $params = []);
+    public function commit($action, $params = []);
+
+    /**
+     * @param string $action
+     * @param array $params
+     * @return boolean
+     */
+    public function rollback($action, $params = []);
 
     /**
      * @param $service

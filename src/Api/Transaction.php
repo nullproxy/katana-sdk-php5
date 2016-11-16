@@ -14,6 +14,7 @@
  */
 
 namespace Katana\Sdk\Api;
+use Katana\Sdk\Exception\InvalidValueException;
 
 /**
  * Support Api class that encapsulates a Transaction.
@@ -22,6 +23,16 @@ namespace Katana\Sdk\Api;
  */
 class Transaction
 {
+    const VALID_TYPES = [
+        'commit',
+        'rollback',
+    ];
+
+    /**
+     * @var string
+     */
+    private $type = '';
+
     /**
      * @var ServiceOrigin
      */
@@ -38,18 +49,33 @@ class Transaction
     private $params = [];
 
     /**
+     * @param string $type
      * @param ServiceOrigin $origin
      * @param string $action
      * @param Param[] $params
+     * @throws InvalidValueException
      */
     public function __construct(
+        $type,
         ServiceOrigin $origin,
         $action,
         array $params = []
     ) {
+        if (!in_array($type, self::VALID_TYPES)) {
+            throw new InvalidValueException("Invalid transaction type $type");
+        }
+        $this->type = $type;
         $this->origin = $origin;
         $this->action = $action;
         $this->params = $params;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**

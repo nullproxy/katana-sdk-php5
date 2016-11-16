@@ -510,15 +510,18 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $transactions = [];
-        foreach ($rawTransactions as $service => $serviceTransactions) {
-            foreach ($serviceTransactions as $version => $versionTransactions) {
-                $transactions += array_map(function ($transactionData) use ($service, $version) {
-                    return new Transaction(
-                        new ServiceOrigin($service, $version),
-                        $transactionData['a'],
-                        isset($transactionData['p'])? array_map([$this, 'getParam'], $transactionData['p']) : []
-                    );
-                }, $versionTransactions);
+        foreach ($rawTransactions as $type => $typeTransactions) {
+            foreach ($typeTransactions as $service => $serviceTransactions) {
+                foreach ($serviceTransactions as $version => $versionTransactions) {
+                    $transactions = array_merge($transactions, array_map(function ($transactionData) use ($type, $service, $version) {
+                        return new Transaction(
+                            $type === 'c' ? 'commit' : 'rollback',
+                            new ServiceOrigin($service, $version),
+                            $transactionData['a'],
+                            isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
+                        );
+                    }, $versionTransactions));
+                }
             }
         }
 
@@ -541,7 +544,9 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 $transactionData['p'] = array_map([$this, 'writeParam'], $transaction->getParams());
             }
 
-            $output['cr']['r']['T']['t'][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
+            $type = $transaction->getType() === 'commit' ? 'c' : 'r';
+
+            $output['cr']['r']['T']['t'][$type][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
         }
 
         return $output;
