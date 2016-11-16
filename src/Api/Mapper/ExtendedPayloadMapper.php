@@ -454,7 +454,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                     return new Call(
                         new ServiceOrigin($service, $version),
                         $callData['name'],
-                        $callData['version'],
+                        new VersionString($callData['version']),
                         $callData['action'],
                         isset($callData['params'])? array_map([$this, 'getParam'], $callData['params']) : []
                     );
