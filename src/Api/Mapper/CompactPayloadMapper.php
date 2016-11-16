@@ -460,7 +460,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                     return new Call(
                         new ServiceOrigin($service, $version),
                         $callData['n'],
-                        $callData['v'],
+                        new VersionString($callData['v']),
                         $callData['a'],
                         isset($callData['p'])? array_map([$this, 'getParam'], $callData['p']) : []
                     );
