@@ -18,6 +18,7 @@ namespace Katana\Sdk;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Factory\MiddlewareApiFactory;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
+use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
 use Katana\Sdk\Component\AbstractComponent;
 
 /**
@@ -50,11 +51,12 @@ class Middleware extends AbstractComponent
     }
 
     /**
+     * @param PayloadMapperInterface $mapper
      * @return MiddlewareApiFactory
      */
-    protected function getApiFactory()
+    protected function getApiFactory(PayloadMapperInterface $mapper)
     {
-        return ApiFactory::getMiddlewareFactory($this, new CompactPayloadMapper());
+        return ApiFactory::getMiddlewareFactory($this, $mapper);
     }
 
 }

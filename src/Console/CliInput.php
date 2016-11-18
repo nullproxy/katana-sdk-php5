@@ -14,6 +14,7 @@
  */
 
 namespace Katana\Sdk\Console;
+use Katana\Sdk\Exception\ConsoleException;
 
 /**
  * Processes cli input
@@ -22,6 +23,11 @@ namespace Katana\Sdk\Console;
  */
 class CliInput
 {
+    const MAPPINGS = [
+        'compact',
+        'extended',
+    ];
+
     /**
      * Type of component
      *
@@ -67,6 +73,11 @@ class CliInput
     /**
      * @var string
      */
+    private $mapping;
+
+    /**
+     * @var string
+     */
     private $input = '';
 
     /**
@@ -91,6 +102,7 @@ class CliInput
             'socket' => new CliOption('s', 'socket', CliOption::VALUE_SINGLE),
             'debug' => new CliOption('D', 'debug', CliOption::VALUE_NONE),
             'var' => new CliOption('V', 'var', CliOption::VALUE_MULTIPLE),
+            'disable-compact-names' => new CliOption('d', 'disable-compact-names', CliOption::VALUE_NONE),
             'input' => new CliOption('i', 'input', CliOption::VALUE_SINGLE),
             'action' => new CliOption('a', 'action', CliOption::VALUE_SINGLE),
         ];
@@ -122,6 +134,7 @@ class CliInput
             $optionValues['socket'],
             $optionValues['debug'],
             $optionValues['var'],
+            $optionValues['disable-compact-names'] ? 'extended' : 'compact',
             $optionValues['input'],
             $optionValues['action']
         );
@@ -147,6 +160,7 @@ class CliInput
         $socket = '',
         $debug = false,
         array $variables = [],
+        $mapping = 'compact',
         $input = '',
         $action = ''
     ) {
@@ -158,6 +172,11 @@ class CliInput
         $this->socket = $socket ?: "@katana-$component-$name-$socketVersion";
         $this->debug = $debug;
         $this->variables = $variables;
+        $this->variables = $variables;
+        if (!in_array($mapping, self::MAPPINGS)) {
+            throw new ConsoleException("Invalid mapping $mapping");
+        }
+        $this->mapping = $mapping;
         if ($input && file_exists($input)) {
             $this->input = file_get_contents($input);
         }
@@ -237,6 +256,14 @@ class CliInput
     public function hasInput()
     {
         return !empty($this->input);
+    }
+
+    /**
+     * @return string
+     */
+    public function getMapping()
+    {
+        return $this->mapping;
     }
 
     /**

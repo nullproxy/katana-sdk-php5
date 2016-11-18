@@ -16,6 +16,9 @@
 namespace Katana\Sdk\Component;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
+use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
+use Katana\Sdk\Api\Mapper\ExtendedPayloadMapper;
+use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Exception\ConsoleException;
 use Katana\Sdk\Executor\AbstractExecutor;
@@ -38,6 +41,11 @@ abstract class AbstractComponent
      * @var AbstractExecutor
      */
     protected $executor;
+
+    /**
+     * @var ApiFactory
+     */
+    protected $apiFactory;
 
     /**
      * @var KatanaLogger
@@ -73,7 +81,14 @@ abstract class AbstractComponent
     {
         $this->input = CliInput::createFromCli();
         $this->logger = new KatanaLogger($this->input->isDebug());
-        $this->executor = (new ExecutorFactory($this->logger))->build($this->input);
+
+        $mapper = $this->input->getMapping() === 'compact'
+            ? new CompactPayloadMapper()
+            : new ExtendedPayloadMapper();
+        $this->apiFactory = $this->getApiFactory($mapper);
+
+        $executorFactory = new ExecutorFactory($mapper, $this->logger);
+        $this->executor = $executorFactory->build($this->input);
     }
 
     /**
@@ -103,7 +118,7 @@ abstract class AbstractComponent
         $actions = implode(', ', array_keys($this->callbacks));
         $this->logger->info("Component running with callbacks for $actions");
         $this->executor->execute(
-            $this->getApiFactory(),
+            $this->apiFactory,
             $this->input,
             $this->callbacks,
             $this->error
@@ -121,9 +136,10 @@ abstract class AbstractComponent
     }
 
     /**
+     * @param PayloadMapperInterface $mapper
      * @return ApiFactory
      */
-    abstract protected function getApiFactory();
+    abstract protected function getApiFactory(PayloadMapperInterface $mapper);
 
     /**
      * @param string $name
