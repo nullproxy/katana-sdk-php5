@@ -16,6 +16,7 @@
 namespace Katana\Sdk\Executor;
 
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
+use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Messaging\MessagePackSerializer;
@@ -34,15 +35,22 @@ use ZMQ;
 class ExecutorFactory
 {
     /**
+     * @var PayloadMapperInterface
+     */
+    protected $mapper;
+
+    /**
      * @var KatanaLogger
      */
     protected $logger;
 
     /**
+     * @param PayloadMapperInterface $mapper
      * @param KatanaLogger $logger
      */
-    public function __construct(KatanaLogger $logger)
+    public function __construct(PayloadMapperInterface $mapper, KatanaLogger $logger)
     {
+        $this->mapper = $mapper;
         $this->logger = $logger;
     }
 
@@ -53,7 +61,7 @@ class ExecutorFactory
     {
         return new InputExecutor(
             new JsonResponder(),
-            new CompactPayloadMapper(),
+            $this->mapper,
             $this->logger
         );
     }
@@ -91,7 +99,7 @@ class ExecutorFactory
             $socket,
             $serializer,
             $responder,
-            new CompactPayloadMapper(),
+            $this->mapper,
             $this->logger
         );
     }

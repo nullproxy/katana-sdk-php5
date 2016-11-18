@@ -18,6 +18,7 @@ namespace Katana\Sdk;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Factory\ServiceApiFactory;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
+use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
 use Katana\Sdk\Component\AbstractComponent;
 
 /**
@@ -40,10 +41,11 @@ class Service extends AbstractComponent
     }
 
     /**
+     * @param PayloadMapperInterface $mapper
      * @return ServiceApiFactory
      */
-    protected function getApiFactory()
+    protected function getApiFactory(PayloadMapperInterface $mapper)
     {
-        return ApiFactory::getServiceFactory($this, new CompactPayloadMapper());
+        return ApiFactory::getServiceFactory($this, $mapper);
     }
 }
