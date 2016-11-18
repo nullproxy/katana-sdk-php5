@@ -107,12 +107,7 @@ abstract class AbstractComponent
     {
         if ($this->startup) {
             $this->logger->debug('Calling startup callback');
-            $return = call_user_func($this->startup, $this);
-            if (!$return instanceof static) {
-                $msg = 'Wrong return for startup';
-                $this->logger->error($msg);
-                throw new ConsoleException($msg);
-            }
+            call_user_func($this->startup, $this);
         }
 
         $actions = implode(', ', array_keys($this->callbacks));
@@ -126,12 +121,7 @@ abstract class AbstractComponent
 
         if ($this->shutdown) {
             $this->logger->debug('Calling shutdown callback');
-            $return = call_user_func($this->shutdown, $this);
-            if (!$return instanceof static) {
-                $msg = 'Wrong return for startup';
-                $this->logger->error($msg);
-                throw new ConsoleException($msg);
-            }
+            call_user_func($this->shutdown, $this);
         }
     }
 
