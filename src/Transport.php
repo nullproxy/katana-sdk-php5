@@ -50,10 +50,17 @@ interface Transport
      * The default value will be returned if the property does not exist
      *
      * @param string $name
-     * @param mixed $default
-     * @return mixed
+     * @param string $default
+     * @return string
      */
     public function getProperty($name, $default = '');
+
+    /**
+     * Get all userland properties as an array
+     *
+     * @return array
+     */
+    public function getProperties();
 
     /**
      * Determine if a file download has been registered for the HTTP response
