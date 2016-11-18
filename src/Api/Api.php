@@ -16,6 +16,8 @@
 namespace Katana\Sdk\Api;
 use Closure;
 use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Schema\Mapping;
+use Katana\Sdk\Schema\ServiceSchema;
 use Katana\Sdk\Logger\KatanaLogger;
 
 /**
@@ -61,6 +63,11 @@ abstract class Api
      * @var bool
      */
     protected $debug = false;
+
+    /**
+     * @var Mapping
+     */
+    protected $mapping;
 
     /**
      * @param KatanaLogger $logger
@@ -169,5 +176,15 @@ abstract class Api
     public function getResource($name)
     {
         return $this->component->getResource($name);
+    }
+
+    /**
+     * @param string $name
+     * @param string $version
+     * @return ServiceSchema
+     */
+    public function getServiceSchema($name, $version)
+    {
+        return $this->mapping->find($name, $version);
     }
 }
