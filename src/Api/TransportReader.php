@@ -59,11 +59,19 @@ class TransportReader implements TransportInterface
     /**
      * @param string $name
      * @param string $default
-     * @return mixed
+     * @return string
      */
     public function getProperty($name, $default = '')
     {
         return $this->transport->getMeta()->getProperty($name) ?: $default;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->transport->getMeta()->getProperties();
     }
 
     /**
