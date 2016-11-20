@@ -20,6 +20,7 @@ use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Api\Protocol\Http\HttpStatus;
 use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Request;
 
 class RequestApi extends Api implements Request
@@ -36,6 +37,7 @@ class RequestApi extends Api implements Request
 
     /**
      * Response constructor.
+     * @param KatanaLogger $logger
      * @param AbstractComponent $component
      * @param string $path
      * @param string $name
@@ -47,6 +49,7 @@ class RequestApi extends Api implements Request
      * @param ServiceCall $call
      */
     public function __construct(
+        KatanaLogger $logger,
         AbstractComponent $component,
         $path,
         $name,
@@ -58,6 +61,7 @@ class RequestApi extends Api implements Request
         ServiceCall $call
     ) {
         parent::__construct(
+            $logger,
             $component,
             $path,
             $name,

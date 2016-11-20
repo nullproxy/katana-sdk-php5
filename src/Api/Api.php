@@ -14,7 +14,9 @@
  */
 
 namespace Katana\Sdk\Api;
+use Closure;
 use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Logger\KatanaLogger;
 
 /**
  * Base class for Api classes.
@@ -23,6 +25,10 @@ use Katana\Sdk\Component\AbstractComponent;
  */
 abstract class Api
 {
+    /**
+     * @var KatanaLogger
+     */
+    protected $logger;
     /**
      * @var AbstractComponent
      */
@@ -59,6 +65,7 @@ abstract class Api
     protected $debug = false;
 
     /**
+     * @param KatanaLogger $logger
      * @param AbstractComponent $component
      * @param string $path
      * @param string $name
@@ -68,6 +75,7 @@ abstract class Api
      * @param bool $debug
      */
     public function __construct(
+        KatanaLogger $logger,
         AbstractComponent $component,
         $path,
         $name,
@@ -76,6 +84,7 @@ abstract class Api
         array $variables = [],
         $debug = false
     ) {
+        $this->logger = $logger;
         $this->component = $component;
         $this->path = $path;
         $this->name = $name;
@@ -162,5 +171,44 @@ abstract class Api
     public function getResource($name)
     {
         return $this->component->getResource($name);
+    }
+
+    public function log($value)
+    {
+        if (!$this->debug) {
+            return false;
+        }
+
+        if (is_null($value)) {
+            $log = 'NULL';
+        } elseif (is_string($value)) {
+            $log = $value;
+        } elseif (is_callable($value)) {
+            if ($value instanceof Closure) {
+                $log = 'function anonymous';
+            } elseif (is_array($value)) {
+                list($class, $method) = $value;
+                if (is_object($class)) {
+                    $class = get_class($class);
+                }
+                $log = "function $class::$method";
+            } else {
+                $log = 'Unknown value type';
+            }
+        } elseif (is_bool($value)) {
+            $log = $value? 'TRUE' : 'FALSE';
+        } elseif (is_float($value)) {
+            $log = rtrim(sprintf('%.9f', $value));
+        } elseif (is_array($value)) {
+            $log = json_encode($value);
+        } elseif (is_int($value) || is_resource($value)) {
+            $log = (string) $value;
+        } else {
+            $log = 'Unknown value type';
+        }
+
+        $this->logger->debug(substr($log, 0, 100000));
+
+        return true;
     }
 }

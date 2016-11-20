@@ -64,4 +64,10 @@ interface ApiInterface
      * @return mixed
      */
     public function getResource($name);
+
+    /**
+     * @param $value
+     * @return boolean
+     */
+    public function log($value);
 }

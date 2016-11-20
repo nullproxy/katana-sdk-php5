@@ -34,6 +34,7 @@ class ServiceApiFactory extends ApiFactory
     public function build($action, array $data, CliInput $input)
     {
         return new ActionApi(
+            $this->logger,
             $this->component,
             dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
             $input->getName(),
