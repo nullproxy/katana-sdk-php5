@@ -46,6 +46,6 @@ class Service extends AbstractComponent
      */
     protected function getApiFactory(PayloadMapperInterface $mapper)
     {
-        return ApiFactory::getServiceFactory($this, $mapper);
+        return ApiFactory::getServiceFactory($this, $mapper, $this->logger);
     }
 }

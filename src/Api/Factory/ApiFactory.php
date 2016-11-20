@@ -19,6 +19,7 @@ use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Mapper\PayloadReaderInterface;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Logger\KatanaLogger;
 
 /**
  * Provides methods to get factories for any Api class.
@@ -39,39 +40,51 @@ abstract class ApiFactory
     protected $mapper;
 
     /**
+     * @var KatanaLogger
+     */
+    protected $logger;
+
+    /**
      * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
+     * @param KatanaLogger $logger
      * @return ServiceApiFactory
      */
     public static function getServiceFactory(
         AbstractComponent $component,
-        PayloadReaderInterface $mapper
+        PayloadReaderInterface $mapper,
+        KatanaLogger $logger
     ) {
-        return new ServiceApiFactory($component, $mapper);
+        return new ServiceApiFactory($component, $mapper, $logger);
     }
 
     /**
      * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
+     * @param KatanaLogger $logger
      * @return MiddlewareApiFactory
      */
     public static function getMiddlewareFactory(
         AbstractComponent $component,
-        PayloadReaderInterface $mapper
+        PayloadReaderInterface $mapper,
+        KatanaLogger $logger
     ) {
-        return new MiddlewareApiFactory($component, $mapper);
+        return new MiddlewareApiFactory($component, $mapper, $logger);
     }
 
     /**
      * @param AbstractComponent $component
      * @param PayloadReaderInterface $mapper
+     * @param KatanaLogger $logger
      */
     public function __construct(
         AbstractComponent $component,
-        PayloadReaderInterface $mapper
+        PayloadReaderInterface $mapper,
+        KatanaLogger $logger
     ) {
         $this->component = $component;
         $this->mapper = $mapper;
+        $this->logger = $logger;
     }
 
     /**

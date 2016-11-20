@@ -56,7 +56,7 @@ class Middleware extends AbstractComponent
      */
     protected function getApiFactory(PayloadMapperInterface $mapper)
     {
-        return ApiFactory::getMiddlewareFactory($this, $mapper);
+        return ApiFactory::getMiddlewareFactory($this, $mapper, $this->logger);
     }
 
 }
