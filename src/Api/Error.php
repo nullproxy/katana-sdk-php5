@@ -60,7 +60,7 @@ class Error
         $this->version = $version;
         $this->message = $message;
         $this->code = $code;
-        $this->status = $status;
+        $this->status = $status ?: '500 Internal Server Error';
     }
 
     /**
