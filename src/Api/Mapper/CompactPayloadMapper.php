@@ -511,18 +511,20 @@ class CompactPayloadMapper implements PayloadMapperInterface
 
         $transactions = [];
         foreach ($rawTransactions as $type => $typeTransactions) {
-            foreach ($typeTransactions as $service => $serviceTransactions) {
-                foreach ($serviceTransactions as $version => $versionTransactions) {
-                    $transactions = array_merge($transactions, array_map(function ($transactionData) use ($type, $service, $version) {
-                        return new Transaction(
-                            $type === 'c' ? 'commit' : 'rollback',
-                            new ServiceOrigin($service, $version),
-                            $transactionData['a'],
-                            isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
-                        );
-                    }, $versionTransactions));
-                }
-            }
+            $transactions = array_merge($transactions, array_map(function ($transactionData) use ($type) {
+                $type = [
+                    'c' => 'commit',
+                    'r' => 'rollback',
+                    'C' => 'complete',
+                ][$type];
+
+                return new Transaction(
+                    $type,
+                    new ServiceOrigin($transactionData['s'], $transactionData['v']),
+                    $transactionData['a'],
+                    isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
+                );
+            }, $typeTransactions));
         }
 
         return new TransportTransactions($transactions);
@@ -537,16 +539,25 @@ class CompactPayloadMapper implements PayloadMapperInterface
     {
         foreach ($transactions->get() as $transaction) {
             $transactionData = [
+                's' => $transaction->getOrigin()->getName(),
+                'v' => $transaction->getOrigin()->getVersion(),
                 'a' => $transaction->getAction(),
             ];
 
             if ($transaction->getParams()) {
                 $transactionData['p'] = array_map([$this, 'writeParam'], $transaction->getParams());
+            } else {
+                // todo: remove when katana makes parameters optional
+                $transactionData['p'] = [];
             }
 
-            $type = $transaction->getType() === 'commit' ? 'c' : 'r';
+            $type = [
+                'commit' => 'c',
+                'rollback' => 'r',
+                'complete' => 'C',
+            ][$transaction->getType()];
 
-            $output['cr']['r']['T']['t'][$type][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
+            $output['cr']['r']['T']['t'][$type][] = $transactionData;
         }
 
         return $output;
