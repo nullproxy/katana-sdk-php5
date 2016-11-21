@@ -502,16 +502,15 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         }
 
         $transactions = [];
-        foreach ($rawTransactions as $service => $serviceTransactions) {
-            foreach ($serviceTransactions as $version => $versionTransactions) {
-                $transactions += array_map(function ($transactionData) use ($service, $version) {
-                    return new Transaction(
-                        new ServiceOrigin($service, $version),
-                        $transactionData['action'],
-                        isset($transactionData['params'])? array_map([$this, 'getParam'], $transactionData['params']) : []
-                    );
-                }, $versionTransactions);
-            }
+        foreach ($rawTransactions as $type => $typeTransactions) {
+            $transactions += array_map(function ($transactionData) use ($type) {
+                return new Transaction(
+                    $type,
+                    new ServiceOrigin($transactionData['service'], $transactionData['version']),
+                    $transactionData['action'],
+                    isset($transactionData['params']) ? array_map([$this, 'getParam'], $transactionData['params']) : []
+                );
+            }, $typeTransactions);
         }
 
         return new TransportTransactions($transactions);
@@ -526,14 +525,21 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     {
         foreach ($transactions->get() as $transaction) {
             $transactionData = [
+                'service' => $transaction->getOrigin()->getName(),
+                'version' => $transaction->getOrigin()->getVersion(),
                 'action' => $transaction->getAction(),
             ];
 
             if ($transaction->getParams()) {
                 $transactionData['params'] = array_map([$this, 'writeParam'], $transaction->getParams());
+            } else {
+                // todo: remove when katana makes parameters optional
+                $transactionData['params'] = [];
             }
 
-            $output['command_reply']['response']['transport']['transactions'][$transaction->getOrigin()->getName()][$transaction->getOrigin()->getVersion()][] = $transactionData;
+            $type = $transaction->getType();
+
+            $output['command_reply']['response']['transport']['transactions'][$type][] = $transactionData;
         }
 
         return $output;
