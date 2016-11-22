@@ -36,4 +36,9 @@ interface Response extends ApiInterface
      * @return TransportReader
      */
     public function getTransport();
+
+    /**
+     * @return string
+     */
+    public function getGatewayProtocol();
 }
