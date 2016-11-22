@@ -656,10 +656,18 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
      */
     public function getServiceCall(array $raw)
     {
+        $params = [];
+        if (isset($raw['command']['arguments']['call']['params'])) {
+            foreach ($raw['command']['arguments']['call']['params'] as $param) {
+                $params[] = $this->getParam($param);
+            }
+        }
+
         return new ServiceCall(
             $raw['command']['arguments']['call']['service'],
             new VersionString($raw['command']['arguments']['call']['version']),
-            $raw['command']['arguments']['call']['action']
+            $raw['command']['arguments']['call']['action'],
+            $params
         );
     }
 
@@ -674,6 +682,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
             'service' => $call->getService(),
             'version' => $call->getVersion(),
             'action' => $call->getAction(),
+            'params' => array_map([$this, 'writeParam'], $call->getParams()),
         ];
 
         return $output;

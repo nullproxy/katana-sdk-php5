@@ -16,9 +16,10 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\ApiInterface;
+use Katana\Sdk\Api\ParamContainerInterface;
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 
-interface Request extends ApiInterface
+interface Request extends ApiInterface, ParamContainerInterface
 {
     /**
      * @return string

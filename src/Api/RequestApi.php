@@ -187,4 +187,51 @@ class RequestApi extends Api implements Request
     {
         return $this->protocol;
     }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasParam($name)
+    {
+        return $this->call->hasParam($name);
+    }
+
+    /**
+     * @param string $name
+     * @return Param
+     */
+    public function getParam($name)
+    {
+        return $this->call->getParam($name);
+    }
+
+    /**
+     * @return Param[]
+     */
+    public function getParams()
+    {
+        return $this->call->getParams();
+    }
+
+    /**
+     * @param string $name
+     * @param string $value
+     * @param string $type
+     * @return Param
+     */
+    public function newParam($name, $value = '', $type = Param::TYPE_STRING)
+    {
+        return $this->call->newParam($name, $value, $type);
+    }
+
+    /**
+     * @param Param $param
+     * @return bool
+     */
+    public function setParam(Param $param)
+    {
+        return $this->call->setParam($param);
+    }
+
 }

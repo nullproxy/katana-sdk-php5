@@ -23,6 +23,8 @@ use Katana\Sdk\Api\Value\VersionString;
  */
 class ServiceCall
 {
+    use ParamContainerTrait;
+
     /**
      * @var string
      */
@@ -42,12 +44,18 @@ class ServiceCall
      * @param string $service
      * @param VersionString $version
      * @param string $action
+     * @param Param[] $params
      */
-    public function __construct($service, VersionString $version, $action)
-    {
+    public function __construct(
+        $service,
+        VersionString $version,
+        $action,
+        array $params
+    ) {
         $this->service = $service;
         $this->version = $version;
         $this->action = $action;
+        $this->params = $this->prepareParams($params);
     }
 
     /**

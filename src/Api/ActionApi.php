@@ -23,6 +23,8 @@ use Katana\Sdk\Logger\KatanaLogger;
 
 class ActionApi extends Api implements Action
 {
+    use ParamAccessorTrait;
+
     /**
      * @var string
      */
@@ -32,11 +34,6 @@ class ActionApi extends Api implements Action
      * @var Transport
      */
     private $transport;
-
-    /**
-     * @var array
-     */
-    private $params = [];
 
     /**
      * Action constructor.
@@ -78,10 +75,7 @@ class ActionApi extends Api implements Action
 
         $this->actionName = $actionName;
         $this->transport = $transport;
-
-        foreach ($params as $param) {
-            $this->params[$param->getLocation()][$param->getName()] = $param;
-        }
+        $this->params = $this->prepareParams($params);
     }
 
     /**
@@ -115,56 +109,6 @@ class ActionApi extends Api implements Action
     public function setProperty($name, $value)
     {
         $this->transport->getMeta()->setProperty($name, $value);
-    }
-
-    /**
-     * @param string $name
-     * @param string $location
-     * @return Param
-     */
-    public function getParam($name, $location = 'query')
-    {
-        if (isset($this->params[$location][$name])) {
-            return $this->params[$location][$name];
-        }
-
-        return new Param($name, $location);
-    }
-
-    /**
-     * @param string $location
-     * @return Param[]
-     */
-    public function getParams($location = null)
-    {
-        if ($location) {
-            if (!isset($this->params[$location])) {
-                return [];
-            }
-
-            return $this->params[$location];
-        }
-
-        $params = [];
-        foreach ($this->params as $location => $locationParams) {
-            foreach ($locationParams as $name => $param) {
-                $params[$name] = $param;
-            }
-        }
-
-        return $params;
-    }
-
-    /**
-     * @param string $name
-     * @param string $location
-     * @param string $value
-     * @param string $type
-     * @return Param
-     */
-    public function newParam($name, $location = 'query', $value = '', $type = Param::TYPE_STRING)
-    {
-        return new Param($name, $location, $value, $type);
     }
 
     /**
