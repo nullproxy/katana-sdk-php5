@@ -36,6 +36,11 @@ class RequestApi extends Api implements Request
     private $call;
 
     /**
+     * @var string
+     */
+    private $protocol;
+
+    /**
      * Response constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
@@ -47,6 +52,7 @@ class RequestApi extends Api implements Request
      * @param bool $debug
      * @param HttpRequest $httpRequest
      * @param ServiceCall $call
+     * @param string $protocol
      */
     public function __construct(
         KatanaLogger $logger,
@@ -58,7 +64,8 @@ class RequestApi extends Api implements Request
         array $variables,
         $debug,
         HttpRequest $httpRequest,
-        ServiceCall $call
+        ServiceCall $call,
+        $protocol
     ) {
         parent::__construct(
             $logger,
@@ -72,6 +79,7 @@ class RequestApi extends Api implements Request
         );
         $this->httpRequest = $httpRequest;
         $this->call = $call;
+        $this->protocol = $protocol;
     }
 
     /**
@@ -171,4 +179,59 @@ class RequestApi extends Api implements Request
     {
         return $this->call;
     }
+
+    /**
+     * @return string
+     */
+    public function getGatewayProtocol()
+    {
+        return $this->protocol;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasParam($name)
+    {
+        return $this->call->hasParam($name);
+    }
+
+    /**
+     * @param string $name
+     * @return Param
+     */
+    public function getParam($name)
+    {
+        return $this->call->getParam($name);
+    }
+
+    /**
+     * @return Param[]
+     */
+    public function getParams()
+    {
+        return $this->call->getParams();
+    }
+
+    /**
+     * @param string $name
+     * @param string $value
+     * @param string $type
+     * @return Param
+     */
+    public function newParam($name, $value = '', $type = Param::TYPE_STRING)
+    {
+        return $this->call->newParam($name, $value, $type);
+    }
+
+    /**
+     * @param Param $param
+     * @return bool
+     */
+    public function setParam(Param $param)
+    {
+        return $this->call->setParam($param);
+    }
+
 }

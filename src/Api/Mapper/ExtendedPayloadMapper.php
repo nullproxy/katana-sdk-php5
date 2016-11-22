@@ -41,14 +41,6 @@ use Katana\Sdk\Api\TransportTransactions;
 
 class ExtendedPayloadMapper implements PayloadMapperInterface
 {
-    const PARAM_LOCATIONS = [
-        'query' => 'query',
-        'path' => 'path',
-        'form-data' => 'form-data',
-        'header' => 'header',
-        'body' => 'body',
-    ];
-
     /**
      * @param array $param
      * @return Param
@@ -57,7 +49,6 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     {
         return new Param(
             $param['name'],
-            $param['location'],
             $param['value'],
             $param['type'],
             true
@@ -71,7 +62,6 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
     private function writeParam(Param $param)
     {
         return [
-            'location' => $param->getLocation(),
             'name' => $param->getName(),
             'version' => $param->getValue(),
             'type' => $param->getType(),
@@ -89,16 +79,13 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         }
 
         $return = [];
-        foreach ($raw['command']['arguments']['params'] as $location => $params) {
-            foreach ($params as $name => $properties) {
-                $return[] = new Param(
-                    $name,
-                    self::PARAM_LOCATIONS[$location],
-                    $properties['value'],
-                    $properties['type'],
-                    true
-                );
-            }
+        foreach ($raw['command']['arguments']['params'] as $param) {
+            $return[] = new Param(
+                $param['name'],
+                $param['value'],
+                $param['type'],
+                true
+            );
         }
 
         return $return;
@@ -637,6 +624,15 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getGatewayProtocol(array $raw)
+    {
+        return $raw['command']['arguments']['meta']['protocol'];
+    }
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw)
@@ -660,10 +656,18 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
      */
     public function getServiceCall(array $raw)
     {
+        $params = [];
+        if (isset($raw['command']['arguments']['call']['params'])) {
+            foreach ($raw['command']['arguments']['call']['params'] as $param) {
+                $params[] = $this->getParam($param);
+            }
+        }
+
         return new ServiceCall(
             $raw['command']['arguments']['call']['service'],
             new VersionString($raw['command']['arguments']['call']['version']),
-            $raw['command']['arguments']['call']['action']
+            $raw['command']['arguments']['call']['action'],
+            $params
         );
     }
 
@@ -678,6 +682,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
             'service' => $call->getService(),
             'version' => $call->getVersion(),
             'action' => $call->getAction(),
+            'params' => array_map([$this, 'writeParam'], $call->getParams()),
         ];
 
         return $output;

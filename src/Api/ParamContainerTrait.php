@@ -13,32 +13,20 @@
  * @copyright Copyright (c) 2016-2017 KUSANAGI S.L. (http://kusanagi.io)
  */
 
-namespace Katana\Sdk;
+namespace Katana\Sdk\Api;
 
-use Katana\Sdk\Api\ApiInterface;
-use Katana\Sdk\Api\Protocol\Http\HttpRequest;
-use Katana\Sdk\Api\Protocol\Http\HttpResponse;
-use Katana\Sdk\Api\TransportReader;
-
-interface Response extends ApiInterface
+trait ParamContainerTrait
 {
-    /**
-     * @return HttpRequest
-     */
-    public function getHttpRequest();
+    use ParamAccessorTrait;
 
     /**
-     * @return HttpResponse
+     * @param Param $param
+     * @return bool
      */
-    public function getHttpResponse();
+    public function setParam(Param $param)
+    {
+        $this->params[$param->getName()] = $param;
 
-    /**
-     * @return TransportReader
-     */
-    public function getTransport();
-
-    /**
-     * @return string
-     */
-    public function getGatewayProtocol();
+        return true;
+    }
 }

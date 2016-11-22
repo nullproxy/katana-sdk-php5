@@ -40,6 +40,11 @@ class ResponseApi extends Api implements Response
     private $transport;
 
     /**
+     * @var string
+     */
+    private $protocol;
+
+    /**
      * Response constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
@@ -52,6 +57,7 @@ class ResponseApi extends Api implements Response
      * @param HttpRequest $request
      * @param HttpResponse $response
      * @param Transport $transport
+     * @param string $protocol
      */
     public function __construct(
         KatanaLogger $logger,
@@ -64,7 +70,8 @@ class ResponseApi extends Api implements Response
         $debug,
         HttpRequest $request,
         HttpResponse $response,
-        Transport $transport
+        Transport $transport,
+        $protocol
     ) {
         parent::__construct(
             $logger,
@@ -79,6 +86,7 @@ class ResponseApi extends Api implements Response
         $this->request = $request;
         $this->response = $response;
         $this->transport = $transport;
+        $this->protocol = $protocol;
     }
 
     /**
@@ -103,5 +111,13 @@ class ResponseApi extends Api implements Response
     public function getTransport()
     {
         return new TransportReader($this->transport);
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayProtocol()
+    {
+        return $this->protocol;
     }
 }

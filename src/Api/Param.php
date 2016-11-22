@@ -40,21 +40,6 @@ class Param
         self::TYPE_STRING,
     ];
 
-    const LOCATIONS = [
-        'path',
-        'query',
-        'form-data',
-        'header',
-        'body',
-    ];
-
-    /**
-     * Path to find the param in the transport
-     *
-     * @var string
-     */
-    protected $location;
-
     /**
      * @var string
      */
@@ -104,39 +89,24 @@ class Param
 
     /**
      * @param string $name
-     * @param string $location
      * @param string $value
      * @param string $type
      * @param bool $exists
      */
     public function __construct(
         $name,
-        $location = 'query',
         $value = '',
         $type = self::TYPE_STRING,
         $exists = false
     ) {
-        if (!in_array($location, self::LOCATIONS)) {
-            $location = 'query';
-        }
-
         if (!in_array($type, self::TYPE_CLASSES)) {
             $type = self::TYPE_STRING;
         }
 
-        $this->location = $location;
         $this->name = $name;
         $this->value = $value;
         $this->type = $type;
         $this->exists = $exists;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLocation()
-    {
-        return $this->location;
     }
 
     /**
@@ -172,28 +142,12 @@ class Param
     }
 
     /**
-     * @param string $location
-     * @return Param
-     */
-    public function copyWithLocation($location)
-    {
-        return new static(
-            $location,
-            $this->name,
-            $this->value,
-            $this->type,
-            $this->exists
-        );
-    }
-
-    /**
      * @param string $name
      * @return Param
      */
     public function copyWithName($name)
     {
         return new static(
-            $this->location,
             $name,
             $this->value,
             $this->type,
@@ -208,7 +162,6 @@ class Param
     public function copyWithType($type)
     {
         return new static(
-            $this->location,
             $this->name,
             $this->value,
             $type,
@@ -223,7 +176,6 @@ class Param
     public function copyWithValue($value)
     {
         return new static(
-            $this->location,
             $this->name,
             $value,
             $this->type,

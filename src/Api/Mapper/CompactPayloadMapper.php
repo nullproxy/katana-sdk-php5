@@ -41,14 +41,6 @@ use Katana\Sdk\Api\TransportTransactions;
 
 class CompactPayloadMapper implements PayloadMapperInterface
 {
-    const PARAM_LOCATIONS = [
-        'q' => 'query',
-        'p' => 'path',
-        'f' => 'form-data',
-        'h' => 'header',
-        'b' => 'body',
-    ];
-
     /**
      * @param array $param
      * @return Param
@@ -57,7 +49,6 @@ class CompactPayloadMapper implements PayloadMapperInterface
     {
         return new Param(
             $param['n'],
-            $param['l'],
             $param['v'],
             $param['t'],
             true
@@ -71,7 +62,6 @@ class CompactPayloadMapper implements PayloadMapperInterface
     private function writeParam(Param $param)
     {
         return [
-            'l' => $param->getLocation(),
             'n' => $param->getName(),
             'v' => $param->getValue(),
             't' => $param->getType(),
@@ -89,16 +79,13 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $return = [];
-        foreach ($raw['c']['a']['p'] as $location => $params) {
-            foreach ($params as $name => $properties) {
-                $return[] = new Param(
-                    $name,
-                    self::PARAM_LOCATIONS[$location],
-                    $properties['v'],
-                    $properties['t'],
-                    true
-                );
-            }
+        foreach ($raw['c']['a']['p'] as $param) {
+            $return[] = new Param(
+                $param['n'],
+                $param['v'],
+                $param['t'],
+                true
+            );
         }
 
         return $return;
@@ -655,6 +642,15 @@ class CompactPayloadMapper implements PayloadMapperInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getGatewayProtocol(array $raw)
+    {
+        return $raw['c']['a']['m']['p'];
+    }
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw)
@@ -678,10 +674,18 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getServiceCall(array $raw)
     {
+        $params = [];
+        if (isset($raw['c']['a']['c']['p'])) {
+            foreach ($raw['c']['a']['c']['p'] as $param) {
+                $params[] = $this->getParam($param);
+            }
+        }
+
         return new ServiceCall(
             $raw['c']['a']['c']['s'],
             new VersionString($raw['c']['a']['c']['v']),
-            $raw['c']['a']['c']['a']
+            $raw['c']['a']['c']['a'],
+            $params
         );
     }
 
@@ -696,6 +700,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
             's' => $call->getService(),
             'v' => $call->getVersion(),
             'a' => $call->getAction(),
+            'p' => array_map([$this, 'writeParam'], $call->getParams()),
         ];
 
         return $output;

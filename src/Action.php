@@ -39,28 +39,24 @@ interface Action extends ApiInterface
     public function setProperty($name, $value);
 
     /**
-     * @param string $location
      * @param string $name
      * @return Param
      */
-    public function getParam($location, $name);
+    public function getParam($name);
 
     /**
-     * @param string $location
      * @return Param[]
      */
-    public function getParams($location = null);
+    public function getParams();
 
     /**
      * @param string $name
-     * @param string $location
      * @param string $value
      * @param string $type
      * @return Param
      */
     public function newParam(
         $name,
-        $location = 'query',
         $value = '',
         $type = Param::TYPE_STRING
     );
