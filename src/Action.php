@@ -142,6 +142,13 @@ interface Action extends ApiInterface
     public function rollback($action, $params = []);
 
     /**
+     * @param string $action
+     * @param array $params
+     * @return boolean
+     */
+    public function complete($action, $params = []);
+
+    /**
      * @param $service
      * @param $version
      * @param $action

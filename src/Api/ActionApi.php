@@ -316,6 +316,23 @@ class ActionApi extends Api implements Action
     }
 
     /**
+     * @param string $action
+     * @param array $params
+     * @return boolean
+     */
+    public function complete($action, $params = [])
+    {
+        $this->transport->addTransaction(
+            new Transaction(
+                'complete',
+                new ServiceOrigin($this->name, $this->version),
+                $action,
+                $params
+            )
+        );
+    }
+
+    /**
      * @param string $service
      * @param string $version
      * @param string $action
