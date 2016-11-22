@@ -36,6 +36,11 @@ class RequestApi extends Api implements Request
     private $call;
 
     /**
+     * @var string
+     */
+    private $protocol;
+
+    /**
      * Response constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
@@ -47,6 +52,7 @@ class RequestApi extends Api implements Request
      * @param bool $debug
      * @param HttpRequest $httpRequest
      * @param ServiceCall $call
+     * @param string $protocol
      */
     public function __construct(
         KatanaLogger $logger,
@@ -58,7 +64,8 @@ class RequestApi extends Api implements Request
         array $variables,
         $debug,
         HttpRequest $httpRequest,
-        ServiceCall $call
+        ServiceCall $call,
+        $protocol
     ) {
         parent::__construct(
             $logger,
@@ -72,6 +79,7 @@ class RequestApi extends Api implements Request
         );
         $this->httpRequest = $httpRequest;
         $this->call = $call;
+        $this->protocol = $protocol;
     }
 
     /**
@@ -170,5 +178,13 @@ class RequestApi extends Api implements Request
     public function getServiceCall()
     {
         return $this->call;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayProtocol()
+    {
+        return $this->protocol;
     }
 }

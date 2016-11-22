@@ -64,4 +64,9 @@ interface Request extends ApiInterface
      * @return HttpRequest
      */
     public function getHttpRequest();
+
+    /**
+     * @return string
+     */
+    public function getGatewayProtocol();
 }

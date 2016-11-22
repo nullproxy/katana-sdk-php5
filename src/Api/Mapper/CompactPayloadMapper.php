@@ -655,6 +655,15 @@ class CompactPayloadMapper implements PayloadMapperInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getGatewayProtocol(array $raw)
+    {
+        return $raw['c']['a']['m']['p'];
+    }
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw)

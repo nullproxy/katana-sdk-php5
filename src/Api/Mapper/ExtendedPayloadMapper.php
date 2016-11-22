@@ -637,6 +637,15 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getGatewayProtocol(array $raw)
+    {
+        return $raw['command']['arguments']['meta']['protocol'];
+    }
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw)
