@@ -26,6 +26,7 @@ class Transaction
     const VALID_TYPES = [
         'commit',
         'rollback',
+        'complete',
     ];
 
     /**
