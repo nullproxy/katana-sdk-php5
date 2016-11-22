@@ -57,7 +57,7 @@ class ZeroMqLoopExecutor extends AbstractExecutor
     {
         return function () {
             $error = error_get_last();
-            if ($error) {
+            if ($error && $error['type'] === E_ERROR) {
                 $msg = "Language error (shutdown) ({$error['type']}) {$error['message']}";
                 $this->sendError($msg);
             }
