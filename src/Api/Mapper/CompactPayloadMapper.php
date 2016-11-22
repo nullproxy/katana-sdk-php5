@@ -41,14 +41,6 @@ use Katana\Sdk\Api\TransportTransactions;
 
 class CompactPayloadMapper implements PayloadMapperInterface
 {
-    const PARAM_LOCATIONS = [
-        'q' => 'query',
-        'p' => 'path',
-        'f' => 'form-data',
-        'h' => 'header',
-        'b' => 'body',
-    ];
-
     /**
      * @param array $param
      * @return Param
@@ -57,7 +49,6 @@ class CompactPayloadMapper implements PayloadMapperInterface
     {
         return new Param(
             $param['n'],
-            $param['l'],
             $param['v'],
             $param['t'],
             true
@@ -71,7 +62,6 @@ class CompactPayloadMapper implements PayloadMapperInterface
     private function writeParam(Param $param)
     {
         return [
-            'l' => $param->getLocation(),
             'n' => $param->getName(),
             'v' => $param->getValue(),
             't' => $param->getType(),
@@ -89,16 +79,13 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $return = [];
-        foreach ($raw['c']['a']['p'] as $location => $params) {
-            foreach ($params as $name => $properties) {
-                $return[] = new Param(
-                    $name,
-                    self::PARAM_LOCATIONS[$location],
-                    $properties['v'],
-                    $properties['t'],
-                    true
-                );
-            }
+        foreach ($raw['c']['a']['p'] as $param) {
+            $return[] = new Param(
+                $param['n'],
+                $param['v'],
+                $param['t'],
+                true
+            );
         }
 
         return $return;
