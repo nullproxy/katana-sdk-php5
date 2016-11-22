@@ -147,6 +147,7 @@ class RequestApi extends Api implements Request
     public function newResponse($code, $text)
     {
         return new ResponseApi(
+            $this->logger,
             $this->component,
             $this->path,
             $this->name,

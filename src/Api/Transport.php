@@ -77,7 +77,7 @@ class Transport
     public static function newEmpty()
     {
         return new Transport(
-            new TransportMeta('', '', '', [], 0),
+            new TransportMeta('', '', '', '', [], 0),
             new TransportFiles([]),
             new TransportData(),
             new TransportRelations(),
