@@ -43,6 +43,13 @@ class TransportMeta
     private $datetime;
 
     /**
+     * The address of the Gateway serving the HTTP request.
+     *
+     * @var string
+     */
+    private $gateway;
+
+    /**
      * Origin service for the request
      *
      * @var array
@@ -69,6 +76,7 @@ class TransportMeta
      * @param string $version
      * @param string $id
      * @param string $datetime
+     * @param string $gateway
      * @param array $origin
      * @param int $level
      * @param array $properties
@@ -77,6 +85,7 @@ class TransportMeta
         $version,
         $id,
         $datetime,
+        $gateway,
         $origin,
         $level,
         array $properties = []
@@ -84,6 +93,7 @@ class TransportMeta
         $this->version = $version;
         $this->id = $id;
         $this->datetime = $datetime;
+        $this->gateway = $gateway;
         $this->origin = $origin;
         $this->level = $level;
         $this->properties = $properties;
@@ -111,6 +121,14 @@ class TransportMeta
     public function getDatetime()
     {
         return $this->datetime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGateway()
+    {
+        return $this->gateway;
     }
 
     /**

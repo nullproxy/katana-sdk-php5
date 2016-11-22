@@ -227,6 +227,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
             $rawMeta['version'],
             $rawMeta['id'],
             $rawMeta['datetime'],
+            $rawMeta['gateway'],
             $rawMeta['origin'],
             $rawMeta['level'],
             isset($rawMeta['properties'])? $rawMeta['properties'] : []
@@ -244,6 +245,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
             'version' => $meta->getVersion(),
             'id' => $meta->getId(),
             'datetime' => $meta->getDatetime(),
+            'gateway' => $meta->getGateway(),
             'origin' => $meta->getOrigin(),
             'level' => $meta->getLevel(),
         ];

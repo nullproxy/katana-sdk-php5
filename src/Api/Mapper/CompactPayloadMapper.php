@@ -226,6 +226,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
             $rawMeta['v'],
             $rawMeta['i'],
             $rawMeta['d'],
+            $rawMeta['g'],
             $rawMeta['o'],
             $rawMeta['l'],
             isset($rawMeta['p'])? $rawMeta['p'] : []
@@ -243,6 +244,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
             'v' => $meta->getVersion(),
             'i' => $meta->getId(),
             'd' => $meta->getDatetime(),
+            'g' => $meta->getGateway(),
             'o' => $meta->getOrigin(),
             'l' => $meta->getLevel(),
         ];
