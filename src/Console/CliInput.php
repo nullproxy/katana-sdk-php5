@@ -92,6 +92,11 @@ class CliInput
      */
     private $variables = [];
 
+    /**
+     * @var bool
+     */
+    private $quiet;
+
     public static function createFromCli()
     {
         $definition = [
@@ -105,6 +110,7 @@ class CliInput
             'disable-compact-names' => new CliOption('d', 'disable-compact-names', CliOption::VALUE_NONE),
             'input' => new CliOption('i', 'input', CliOption::VALUE_SINGLE),
             'action' => new CliOption('a', 'action', CliOption::VALUE_SINGLE),
+            'quiet' => new CliOption('q', 'quiet', CliOption::VALUE_NONE),
         ];
 
         $shortOpts = '';
@@ -136,7 +142,8 @@ class CliInput
             $optionValues['var'],
             $optionValues['disable-compact-names'] ? 'extended' : 'compact',
             $optionValues['input'],
-            $optionValues['action']
+            $optionValues['action'],
+            $optionValues['quiet']
         );
     }
 
@@ -149,8 +156,11 @@ class CliInput
      * @param string $socket
      * @param bool $debug
      * @param array $variables
+     * @param string $mapping
      * @param string $input
      * @param string $action
+     * @param bool $quiet
+     * @throws ConsoleException
      */
     public function __construct(
         $component,
@@ -162,7 +172,8 @@ class CliInput
         array $variables = [],
         $mapping = 'compact',
         $input = '',
-        $action = ''
+        $action = '',
+        $quiet = false
     ) {
         $this->component = $component;
         $this->name = $name;
@@ -181,6 +192,7 @@ class CliInput
             $this->input = file_get_contents($input);
         }
         $this->action = $action;
+        $this->quiet = $quiet;
     }
 
     /**
@@ -280,5 +292,13 @@ class CliInput
     public function getAction()
     {
         return $this->action;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isQuiet()
+    {
+        return $this->quiet;
     }
 }
