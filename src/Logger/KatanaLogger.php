@@ -14,6 +14,7 @@
  */
 
 namespace Katana\Sdk\Logger;
+use Katana\Sdk\Exception\ConsoleException;
 
 /**
  * Logger class
@@ -24,17 +25,33 @@ class KatanaLogger
 {
     const FORMAT = '%TIMESTAMP% [%TYPE%] [SDK] %MESSAGE% %REQUEST_ID%';
 
+    const LOG_DEBUG = 0;
+    const LOG_INFO = 1;
+    const LOG_WARNING = 2;
+    const LOG_ERROR = 3;
+    const LOG_NONE = 4;
+
+    const LOG_LEVELS = [
+        self::LOG_DEBUG => 'DEBUG',
+        self::LOG_INFO => 'INFO',
+        self::LOG_WARNING => 'WARNING',
+        self::LOG_ERROR => 'ERROR',
+        self::LOG_NONE => 'NONE',
+    ];
+
     /**
      * @var bool
      */
-    private $debug = false;
+    private $level = self::LOG_INFO;
 
     /**
-     * @param bool $debug
+     * @param int $level
      */
-    public function __construct($debug = false)
+    public function __construct($level = null)
     {
-        $this->debug = $debug;
+        if ($level !== null) {
+            $this->level = $level;
+        }
     }
 
     /**
@@ -57,14 +74,14 @@ class KatanaLogger
      */
     private function log($level, $message, $requestId = '')
     {
-        if ($level === 'DEBUG' && !$this->debug) {
+        if ($level < $this->level) {
             return;
         }
 
         $requestId = $requestId? "|$requestId|" : '';
         echo trim(str_replace(
             ['%TIMESTAMP%', '%TYPE%', '%MESSAGE%', '%REQUEST_ID%'],
-            [$this->getTimestamp(), $level, $message, $requestId],
+            [$this->getTimestamp(), self::LOG_LEVELS[$level], $message, $requestId],
             self::FORMAT
         )), "\n";
     }
@@ -75,7 +92,7 @@ class KatanaLogger
      */
     public function debug($message, $requestId = '')
     {
-        $this->log('DEBUG', $message, $requestId);
+        $this->log(self::LOG_DEBUG, $message, $requestId);
     }
 
     /**
@@ -84,7 +101,7 @@ class KatanaLogger
      */
     public function info($message, $requestId = '')
     {
-        $this->log('INFO', $message, $requestId);
+        $this->log(self::LOG_INFO, $message, $requestId);
     }
 
     /**
@@ -93,7 +110,7 @@ class KatanaLogger
      */
     public function warning($message, $requestId = '')
     {
-        $this->log('WARNING', $message, $requestId);
+        $this->log(self::LOG_WARNING, $message, $requestId);
     }
 
     /**
@@ -102,6 +119,6 @@ class KatanaLogger
      */
     public function error($message, $requestId = '')
     {
-        $this->log('ERROR', $message, $requestId);
+        $this->log(self::LOG_ERROR, $message, $requestId);
     }
 }

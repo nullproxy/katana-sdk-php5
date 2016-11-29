@@ -80,7 +80,15 @@ abstract class AbstractComponent
     public function __construct()
     {
         $this->input = CliInput::createFromCli();
-        $this->logger = new KatanaLogger($this->input->isDebug());
+
+        if ($this->input->isQuiet()) {
+            $level = KatanaLogger::LOG_NONE;
+        } elseif ($this->input->isDebug()) {
+            $level = KatanaLogger::LOG_DEBUG;
+        } else {
+            $level = KatanaLogger::LOG_INFO;
+        }
+        $this->logger = new KatanaLogger($level);
 
         $mapper = $this->input->getMapping() === 'compact'
             ? new CompactPayloadMapper()
