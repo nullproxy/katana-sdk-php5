@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Component;
 
+use Katana\Sdk\Api\ApiLoggerTrait;
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
 use Katana\Sdk\Api\Mapper\ExtendedPayloadMapper;
@@ -32,6 +33,8 @@ use Katana\Sdk\Logger\KatanaLogger;
  */
 abstract class AbstractComponent
 {
+    use ApiLoggerTrait;
+
     /**
      * @var CliInput
      */

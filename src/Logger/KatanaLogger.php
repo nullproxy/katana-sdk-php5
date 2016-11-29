@@ -40,7 +40,7 @@ class KatanaLogger
     ];
 
     /**
-     * @var bool
+     * @var int
      */
     private $level = self::LOG_INFO;
 
@@ -55,6 +55,14 @@ class KatanaLogger
     }
 
     /**
+     * @return int
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
      * @return bool|string
      */
     private function getTimestamp()
@@ -63,7 +71,7 @@ class KatanaLogger
         return sprintf(
             "%s.%dZ",
             (new \DateTime("@$sec"))->format('Y-m-d\TH:i:s'),
-            round($usec * 100000)
+            round($usec * 1000)
         );
     }
 
