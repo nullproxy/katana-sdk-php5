@@ -46,22 +46,33 @@ class ActionSchema
     private $params = [];
 
     /**
+     * @var FileSchema[]
+     */
+    private $files = [];
+
+    /**
      * @param string $name
      * @param ActionEntity $entity
      * @param HttpActionSchema $http
      * @param bool $deprecated
      * @param ParamSchema[] $params
+     * @param FileSchema[] $files
      */
     public function __construct(
         $name,
         ActionEntity $entity,
         HttpActionSchema $http,
         $deprecated,
-        array $params
+        array $params,
+        array $files
     ) {
         $paramNames = array_map(function (ParamSchema $param) {
             return $param->getName();
         }, $params);
+
+        $fileNames = array_map(function (FileSchema $file) {
+            return $file->getName();
+        }, $files);
 
         $this->name = $name;
         $this->entity = $entity;
@@ -69,6 +80,7 @@ class ActionSchema
         $this->deprecated = $deprecated;
         $this->params = $params;
         $this->params = array_combine($paramNames, $params);
+        $this->files = array_combine($fileNames, $files);
     }
 
     /**
@@ -175,19 +187,35 @@ class ActionSchema
         return $this->params[$name];
     }
 
+    /**
+     * @return FileSchema[]
+     */
     public function getFiles()
     {
-
+        return $this->files;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function hasFile($name)
     {
-
+        return isset($this->files[$name]);
     }
 
+    /**
+     * @param string $name
+     * @return FileSchema
+     * @throws SchemaException
+     */
     public function getFileSchema($name)
     {
+        if (!$this->hasFile($name)) {
+            throw new SchemaException("Cannot resolve schema for file parameter: $name");
+        }
 
+        return $this->files[$name];
     }
 
     /**

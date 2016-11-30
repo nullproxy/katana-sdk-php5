@@ -209,4 +209,37 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         ], $param->getEnum());
         $this->assertEquals(-1, $param->getMultipleOf());
     }
+
+    public function testFileNotFound()
+    {
+        $service = $this->mapping->find('admin', '1.0.0');
+        $action = $service->getActionSchema('check');
+        $this->expectException(SchemaException::class);
+        $this->expectExceptionMessage('Cannot resolve schema for file parameter: foo');
+        $action->getFileSchema('foo');
+    }
+
+    public function testFileMapping()
+    {
+        $service = $this->mapping->find('admin', '1.0.0');
+        $action = $service->getActionSchema('check');
+        $this->assertCount(1, $action->getFiles());
+        $this->assertTrue($action->hasFile('rules'));
+        $this->assertFalse($action->hasFile('foo'));
+
+        $file = $action->getFileSchema('rules');
+        $this->assertEquals('rules', $file->getName());
+        $this->assertEquals('text/plain,text/csv', $file->getMime());
+        $this->assertEquals(true, $file->isRequired());
+        $this->assertEquals(128000, $file->getMax());
+        $this->assertEquals(false, $file->isExclusiveMax());
+        $this->assertEquals(256, $file->getMin());
+        $this->assertEquals(false, $file->isExclusiveMin());
+
+        // Assert http
+        $http = $file->getHttpSchema();
+        $this->assertEquals(true, $http->isAccessible());
+        $this->assertEquals('rules', $http->getParam());
+
+    }
 }

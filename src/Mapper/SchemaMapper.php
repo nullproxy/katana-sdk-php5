@@ -17,11 +17,14 @@ namespace Katana\Sdk\Mapper;
 
 use Katana\Sdk\Schema\ActionEntity;
 use Katana\Sdk\Schema\ActionSchema;
+use Katana\Sdk\Schema\FileSchema;
+use Katana\Sdk\Schema\FileValidation;
 use Katana\Sdk\Schema\ParamExpectation;
 use Katana\Sdk\Schema\ParamSchema;
 use Katana\Sdk\Schema\ParamType;
 use Katana\Sdk\Schema\ParamValidation;
 use Katana\Sdk\Schema\Protocol\HttpActionSchema;
+use Katana\Sdk\Schema\Protocol\HttpFileSchema;
 use Katana\Sdk\Schema\Protocol\HttpParamSchema;
 use Katana\Sdk\Schema\Protocol\HttpServiceSchema;
 use Katana\Sdk\Schema\ServiceSchema;
@@ -102,6 +105,25 @@ class SchemaMapper
                 );
             }
 
+            $files = [];
+            foreach ($this->read($action, 'f', []) as $fileName => $file) {
+                $files[] = new FileSchema(
+                    $fileName,
+                    $this->read($file, 'm', 'text/plain'),
+                    $this->read($file, 'r', false),
+                    new HttpFileSchema(
+                        $this->read($file, 'h.g', true),
+                        $this->read($file, 'h.p', $fileName)
+                    ),
+                    new FileValidation(
+                        $this->read($file, 'mx', PHP_INT_MAX),
+                        $this->read($file, 'ex', false),
+                        $this->read($file, 'mn', 0),
+                        $this->read($file, 'en', false)
+                    )
+                );
+            }
+
             $actions[] = new ActionSchema(
                 $actionName,
                 new ActionEntity(
@@ -118,7 +140,8 @@ class SchemaMapper
                     $this->read($action, 'h.b', 'text/plain')
                 ),
                 $this->read($action, 'D', false),
-                $params
+                $params,
+                $files
             );
         }
 
