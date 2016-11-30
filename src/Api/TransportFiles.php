@@ -73,9 +73,12 @@ class TransportFiles
      * @param VersionString $version
      * @param string $action
      * @param File $file
+     * @return bool
      */
     public function add($service, VersionString $version, $action, File $file)
     {
         $this->files[$service][$version->getVersion()][$action][$file->getName()] = $file;
+
+        return true;
     }
 }

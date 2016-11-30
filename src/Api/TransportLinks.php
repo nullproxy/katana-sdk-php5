@@ -52,9 +52,12 @@ class TransportLinks
      * @param string $namespace
      * @param string $link
      * @param string $uri
+     * @return bool
      */
     public function setLink($namespace, $link, $uri)
     {
         $this->links[$namespace][$link] = $uri;
+
+        return true;
     }
 }

@@ -36,10 +36,13 @@ class TransportErrors
 
     /**
      * @param Error $error
+     * @return bool
      */
     public function add(Error $error)
     {
         $this->errors[] = $error;
+
+        return true;
     }
 
     /**

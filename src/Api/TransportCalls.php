@@ -37,10 +37,13 @@ class TransportCalls
 
     /**
      * @param Call $call
+     * @return bool
      */
     public function add(Call $call)
     {
         $this->calls[] = $call;
+
+        return true;
     }
 
     /**
@@ -84,7 +87,6 @@ class TransportCalls
                 'a' => $call->getAction(),
                 'p' => array_map(function (Param $param) {
                     return [
-                        'l' => $param->getLocation(),
                         'n' => $param->getName(),
                         'v' => $param->getValue(),
                         't' => $param->getType(),
