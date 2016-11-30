@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Schema;
 
+use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Schema\Protocol\HttpActionSchema;
 
 class ActionSchema
@@ -40,21 +41,34 @@ class ActionSchema
     private $deprecated = false;
 
     /**
+     * @var ParamSchema[]
+     */
+    private $params = [];
+
+    /**
      * @param string $name
      * @param ActionEntity $entity
      * @param HttpActionSchema $http
      * @param bool $deprecated
+     * @param ParamSchema[] $params
      */
     public function __construct(
         $name,
         ActionEntity $entity,
         HttpActionSchema $http,
-        $deprecated
+        $deprecated,
+        array $params
     ) {
+        $paramNames = array_map(function (ParamSchema $param) {
+            return $param->getName();
+        }, $params);
+
         $this->name = $name;
         $this->entity = $entity;
         $this->http = $http;
         $this->deprecated = $deprecated;
+        $this->params = $params;
+        $this->params = array_combine($paramNames, $params);
     }
 
     /**
@@ -130,19 +144,35 @@ class ActionSchema
 
     }
 
+    /**
+     * @return ParamSchema[]
+     */
     public function getParams()
     {
-        
+        return $this->params;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function hasParam($name)
     {
-        
+        return isset($this->params[$name]);
     }
 
+    /**
+     * @param string $name
+     * @return ParamSchema
+     * @throws SchemaException
+     */
     public function getParamSchema($name)
     {
+        if (!$this->hasParam($name)) {
+            throw new SchemaException("Cannot resolve schema for parameter: $name");
+        }
 
+        return $this->params[$name];
     }
 
     public function getFiles()

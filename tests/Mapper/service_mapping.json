@@ -24,31 +24,31 @@
               "h": {
                 "i": "path"
               }
-            }
-          },
-          "tags": {
-            "t": "array",
-            "i": "string",
-            "af": "ssv",
-            "xi": 3,
-            "e": true,
-            "em": [
-              "first",
-              "second",
-              "third",
-              "forth",
-              "fifth"
-            ],
-            "h": {
-              "p": "user_tags"
-            }
-          },
-          "identifier": {
-            "t": "string",
-            "p": "^\\d{5}-\\w{5,8}$",
-            "d": "12345-qwer456",
-            "h": {
-              "g": false
+            },
+            "tags": {
+              "t": "array",
+              "i": "string",
+              "af": "ssv",
+              "xi": 3,
+              "e": true,
+              "em": [
+                "first",
+                "second",
+                "third",
+                "forth",
+                "fifth"
+              ],
+              "h": {
+                "p": "user_tags"
+              }
+            },
+            "identifier": {
+              "t": "string",
+              "p": "^\\d{5}-\\w{5,8}$",
+              "d": "12345-qwer456",
+              "h": {
+                "g": false
+              }
             }
           }
         }

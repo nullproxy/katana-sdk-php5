@@ -17,7 +17,12 @@ namespace Katana\Sdk\Mapper;
 
 use Katana\Sdk\Schema\ActionEntity;
 use Katana\Sdk\Schema\ActionSchema;
+use Katana\Sdk\Schema\ParamExpectation;
+use Katana\Sdk\Schema\ParamSchema;
+use Katana\Sdk\Schema\ParamType;
+use Katana\Sdk\Schema\ParamValidation;
 use Katana\Sdk\Schema\Protocol\HttpActionSchema;
+use Katana\Sdk\Schema\Protocol\HttpParamSchema;
 use Katana\Sdk\Schema\Protocol\HttpServiceSchema;
 use Katana\Sdk\Schema\ServiceSchema;
 
@@ -60,6 +65,43 @@ class SchemaMapper
 
         $actions = [];
         foreach ($this->read($raw, 'ac', []) as $actionName => $action) {
+            $params = [];
+            foreach ($this->read($action, 'p', []) as $paramName => $param) {
+                $params[] = new ParamSchema(
+                    $paramName,
+                    new HttpParamSchema(
+                        $this->read($param, 'h.g', true),
+                        $this->read($param, 'h.i', 'query'),
+                        $this->read($param, 'h.p', $paramName)
+                    ),
+                    new ParamType(
+                        $this->read($param, 't', 'string'),
+                        $this->read($param, 'f', ''),
+                        $this->read($param, 'af', 'csv'),
+                        $this->read($param, 'i', '')
+                    ),
+                    new ParamExpectation(
+                        $this->read($param, 'd', null),
+                        $this->read($param, 'r', false),
+                        $this->read($param, 'e', false)
+                    ),
+                    new ParamValidation(
+                        $this->read($param, 'p', ''),
+                        $this->read($param, 'mx', PHP_INT_MAX),
+                        $this->read($param, 'ex', false),
+                        $this->read($param, 'mn', ~PHP_INT_MAX),
+                        $this->read($param, 'en', false),
+                        $this->read($param, 'xl', -1),
+                        $this->read($param, 'nl', -1),
+                        $this->read($param, 'xi', -1),
+                        $this->read($param, 'ni', -1),
+                        $this->read($param, 'ui', false),
+                        $this->read($param, 'em', []),
+                        $this->read($param, 'mo', -1)
+                    )
+                );
+            }
+
             $actions[] = new ActionSchema(
                 $actionName,
                 new ActionEntity(
@@ -75,7 +117,8 @@ class SchemaMapper
                     $this->read($action, 'h.i', 'query'),
                     $this->read($action, 'h.b', 'text/plain')
                 ),
-                $this->read($action, 'D', false)
+                $this->read($action, 'D', false),
+                $params
             );
         }
 
