@@ -73,7 +73,8 @@ class ExecutorFactory
         return new InputExecutor(
             new JsonResponder(),
             $this->mapper,
-            $this->logger
+            $this->logger,
+            $this->mapping
         );
     }
 
