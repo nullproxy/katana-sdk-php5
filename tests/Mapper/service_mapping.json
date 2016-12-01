@@ -15,8 +15,9 @@
           "h": {
             "p": "/posts/{user_id}"
           },
-          "p": {
-            "user_id": {
+          "p": [
+            {
+              "n": "user_id",
               "t": "string",
               "f": "uuid",
               "r": true,
@@ -25,7 +26,8 @@
                 "i": "path"
               }
             },
-            "tags": {
+            {
+              "n": "tags",
               "t": "array",
               "i": "string",
               "af": "ssv",
@@ -42,7 +44,8 @@
                 "p": "user_tags"
               }
             },
-            "identifier": {
+            {
+              "n": "identifier",
               "t": "string",
               "p": "^\\d{5}-\\w{5,8}$",
               "d": "12345-qwer456",
@@ -50,7 +53,7 @@
                 "g": false
               }
             }
-          }
+          ]
         }
       }
     },
@@ -73,8 +76,9 @@
             "input": "form-data",
             "body": "application/json"
           },
-          "p": {
-            "user_id": {
+          "p": [
+            {
+              "n": "user_id",
               "t": "string",
               "f": "uuid",
               "e": false,
@@ -82,7 +86,7 @@
                 "i": "path"
               }
             }
-          }
+          ]
         }
       }
     }
@@ -100,8 +104,9 @@
           "d": ":",
           "k": "uid",
           "c": true,
-          "p": {
-            "user_id": {
+          "p": [
+            {
+              "n": "user_id",
               "t": "string",
               "f": "uuid",
               "e": false,
@@ -109,15 +114,16 @@
                 "i": "path"
               }
             }
-          },
-          "f": {
-            "rules": {
+          ],
+          "f": [
+            {
+              "n": "rules",
               "m": "text/plain,text/csv",
               "r": true,
               "mx": 128000,
               "mn": 256
             }
-          }
+          ]
         }
       }
     }

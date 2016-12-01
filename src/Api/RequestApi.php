@@ -22,6 +22,7 @@ use Katana\Sdk\Api\Protocol\Http\HttpStatus;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Request;
+use Katana\Sdk\Schema\Mapping;
 
 class RequestApi extends Api implements Request
 {
@@ -44,6 +45,7 @@ class RequestApi extends Api implements Request
      * Response constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
+     * @param Mapping $mapping
      * @param string $path
      * @param string $name
      * @param string $version
@@ -57,6 +59,7 @@ class RequestApi extends Api implements Request
     public function __construct(
         KatanaLogger $logger,
         AbstractComponent $component,
+        Mapping $mapping,
         $path,
         $name,
         $version,
@@ -70,6 +73,7 @@ class RequestApi extends Api implements Request
         parent::__construct(
             $logger,
             $component,
+            $mapping,
             $path,
             $name,
             $version,

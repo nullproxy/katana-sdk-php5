@@ -20,8 +20,11 @@ use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Mapper\SchemaMapper;
 use Katana\Sdk\Messaging\MessagePackSerializer;
 use Katana\Sdk\Messaging\Responder\ResponderInterface;
+use Katana\Sdk\Schema\ActionSchema;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * Executor that sets up an event loop listening to ZeroMQ
@@ -38,6 +41,11 @@ class ZeroMqLoopExecutor extends AbstractExecutor
      * @var MessagePackSerializer
      */
     private $serializer;
+
+    /**
+     * @var Mapping
+     */
+    private $mapping;
 
     /**
      * @return Closure
@@ -71,6 +79,7 @@ class ZeroMqLoopExecutor extends AbstractExecutor
      * @param ResponderInterface $responder
      * @param PayloadWriterInterface $mapper
      * @param KatanaLogger $logger
+     * @param Mapping $mapping
      */
     public function __construct(
         $loop,
@@ -78,11 +87,13 @@ class ZeroMqLoopExecutor extends AbstractExecutor
         MessagePackSerializer $serializer,
         ResponderInterface $responder,
         PayloadWriterInterface $mapper,
-        KatanaLogger $logger
+        KatanaLogger $logger,
+        Mapping $mapping
     ) {
         $this->loop = $loop;
         $this->socket = $socket;
         $this->serializer = $serializer;
+        $this->mapping = $mapping;
         parent::__construct($responder, $mapper, $logger);
     }
 
@@ -102,16 +113,28 @@ class ZeroMqLoopExecutor extends AbstractExecutor
             'messages',
             function ($message) use ($callbacks, $factory, $input, $errorCallback) {
 
-                list($action, $payload) = $message;
+                $msg = new MessagePackSerializer();
+                list($action, $mappingPayload, $payload) = $message;
+
+                if ($mappingPayload) {
+                    $this->logger->info('Received new mapping');
+                    $mapper = new SchemaMapper();
+                    $services = [];
+                    foreach ($msg->unserialize($mappingPayload) as $serviceName => $serviceData) {
+                        foreach ($serviceData as $version => $service) {
+                            $services[] = $mapper->getServiceSchema($serviceName, $version, $service);
+                        }
+                    }
+                    $this->mapping->load($services);
+                }
 
                 if (!isset($callbacks[$action])) {
                     return $this->sendError("Unregistered callback $action");
                 }
 
-                $msg = new MessagePackSerializer();
                 $command = $msg->unserialize($payload);
 
-                $api = $factory->build($action, $command, $input);
+                $api = $factory->build($action, $command, $input, $this->mapping);
                 $this->executeCallback($api, $action, $callbacks, $errorCallback);
 
                 return true;

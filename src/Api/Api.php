@@ -14,11 +14,10 @@
  */
 
 namespace Katana\Sdk\Api;
-use Closure;
 use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
 use Katana\Sdk\Schema\ServiceSchema;
-use Katana\Sdk\Logger\KatanaLogger;
 
 /**
  * Base class for Api classes.
@@ -72,6 +71,7 @@ abstract class Api
     /**
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
+     * @param Mapping $mapping
      * @param string $path
      * @param string $name
      * @param string $version
@@ -82,6 +82,7 @@ abstract class Api
     public function __construct(
         KatanaLogger $logger,
         AbstractComponent $component,
+        Mapping $mapping,
         $path,
         $name,
         $version,
@@ -91,6 +92,7 @@ abstract class Api
     ) {
         $this->logger = $logger;
         $this->component = $component;
+        $this->mapping = $mapping;
         $this->path = $path;
         $this->name = $name;
         $this->version = $version;

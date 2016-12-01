@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Schema\ServiceSchema;
+
 interface ApiInterface
 {
     /**
@@ -70,4 +72,11 @@ interface ApiInterface
      * @return boolean
      */
     public function log($value);
+
+    /**
+     * @param string $name
+     * @param string $version
+     * @return ServiceSchema
+     */
+    public function getServiceSchema($name, $version);
 }

@@ -19,6 +19,7 @@ use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\RequestApi;
 use Katana\Sdk\Api\ResponseApi;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * @package Katana\Sdk\Api\Factory
@@ -31,14 +32,21 @@ class MiddlewareApiFactory extends ApiFactory
      * @param string $action
      * @param array $data
      * @param CliInput $input
+     * @param Mapping $mapping
      * @return Api
      */
-    public function build($action, array $data, CliInput $input)
+    public function build(
+        $action,
+        array $data,
+        CliInput $input,
+        Mapping $mapping
+    )
     {
         if ($action === 'request') {
             return new RequestApi(
                 $this->logger,
                 $this->component,
+                $mapping,
                 dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
                 $input->getName(),
                 $input->getVersion(),
@@ -54,6 +62,7 @@ class MiddlewareApiFactory extends ApiFactory
             return new ResponseApi(
                 $this->logger,
                 $this->component,
+                $mapping,
                 dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
                 $input->getName(),
                 $input->getVersion(),

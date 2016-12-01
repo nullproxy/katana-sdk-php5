@@ -31,6 +31,12 @@ use Katana\Sdk\Schema\ServiceSchema;
 
 class SchemaMapper
 {
+    /**
+     * @param array $source
+     * @param string $path
+     * @param mixed $default
+     * @return mixed
+     */
     private function read(array $source, $path, $default = null)
     {
         if (strpos($path, '.') !== false) {
@@ -69,7 +75,8 @@ class SchemaMapper
         $actions = [];
         foreach ($this->read($raw, 'ac', []) as $actionName => $action) {
             $params = [];
-            foreach ($this->read($action, 'p', []) as $paramName => $param) {
+            foreach ($this->read($action, 'p', []) as $param) {
+                $paramName = $this->read($param, 'n');
                 $params[] = new ParamSchema(
                     $paramName,
                     new HttpParamSchema(
@@ -106,7 +113,8 @@ class SchemaMapper
             }
 
             $files = [];
-            foreach ($this->read($action, 'f', []) as $fileName => $file) {
+            foreach ($this->read($action, 'f', []) as $file) {
+                $fileName = $this->read($file, 'n');
                 $files[] = new FileSchema(
                     $fileName,
                     $this->read($file, 'm', 'text/plain'),

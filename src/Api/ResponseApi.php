@@ -20,6 +20,7 @@ use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Response;
+use Katana\Sdk\Schema\Mapping;
 use Katana\Sdk\Transport as TransportInterface;
 
 class ResponseApi extends Api implements Response
@@ -48,6 +49,7 @@ class ResponseApi extends Api implements Response
      * Response constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
+     * @param Mapping $mapping
      * @param string $path
      * @param string $name
      * @param string $version
@@ -62,6 +64,7 @@ class ResponseApi extends Api implements Response
     public function __construct(
         KatanaLogger $logger,
         AbstractComponent $component,
+        Mapping $mapping,
         $path,
         $name,
         $version,
@@ -76,6 +79,7 @@ class ResponseApi extends Api implements Response
         parent::__construct(
             $logger,
             $component,
+            $mapping,
             $path,
             $name,
             $version,

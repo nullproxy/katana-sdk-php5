@@ -20,6 +20,7 @@ use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Schema\Mapping;
 
 class ActionApi extends Api implements Action
 {
@@ -39,6 +40,7 @@ class ActionApi extends Api implements Action
      * Action constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
+     * @param Mapping $mapping
      * @param string $path
      * @param string $name
      * @param string $version
@@ -52,6 +54,7 @@ class ActionApi extends Api implements Action
     public function __construct(
         KatanaLogger $logger,
         AbstractComponent $component,
+        Mapping $mapping,
         $path,
         $name,
         $version,
@@ -65,6 +68,7 @@ class ActionApi extends Api implements Action
         parent::__construct(
             $logger,
             $component,
+            $mapping,
             $path,
             $name,
             $version,

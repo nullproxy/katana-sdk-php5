@@ -20,6 +20,7 @@ use Katana\Sdk\Api\Mapper\PayloadReaderInterface;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * Provides methods to get factories for any Api class.
@@ -99,7 +100,13 @@ abstract class ApiFactory
      * @param string $action
      * @param array $command
      * @param CliInput $input
+     * @param Mapping $mapping
      * @return Api
      */
-    abstract public function build($action, array $command, CliInput $input);
+    abstract public function build(
+        $action,
+        array $command,
+        CliInput $input,
+        Mapping $mapping
+    );
 }

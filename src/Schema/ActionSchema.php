@@ -157,11 +157,11 @@ class ActionSchema
     }
 
     /**
-     * @return ParamSchema[]
+     * @return array
      */
     public function getParams()
     {
-        return $this->params;
+        return array_keys($this->params);
     }
 
     /**
@@ -188,11 +188,11 @@ class ActionSchema
     }
 
     /**
-     * @return FileSchema[]
+     * @return array
      */
     public function getFiles()
     {
-        return $this->files;
+        return array_keys($this->files);
     }
 
     /**

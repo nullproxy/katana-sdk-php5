@@ -17,6 +17,7 @@ namespace Katana\Sdk\Api\Factory;
 
 use Katana\Sdk\Api\ActionApi;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * @package Katana\Sdk\Api\Factory
@@ -29,13 +30,19 @@ class ServiceApiFactory extends ApiFactory
      * @param string $action
      * @param array $data
      * @param CliInput $input
+     * @param Mapping $mapping
      * @return ActionApi
      */
-    public function build($action, array $data, CliInput $input)
-    {
+    public function build(
+        $action,
+        array $data,
+        CliInput $input,
+        Mapping $mapping
+    ) {
         return new ActionApi(
             $this->logger,
             $this->component,
+            $mapping,
             dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
             $input->getName(),
             $input->getVersion(),
