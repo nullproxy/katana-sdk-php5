@@ -64,9 +64,12 @@ class TransportData
      * @param string $version
      * @param string $action
      * @param array $data
+     * @return bool
      */
     public function set($service, $version, $action, array $data)
     {
         $this->data[$service][$version][$action][] = $data;
+
+        return true;
     }
 }

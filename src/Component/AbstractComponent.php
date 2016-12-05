@@ -25,6 +25,7 @@ use Katana\Sdk\Exception\ConsoleException;
 use Katana\Sdk\Executor\AbstractExecutor;
 use Katana\Sdk\Executor\ExecutorFactory;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * Base class for Components
@@ -96,9 +97,12 @@ abstract class AbstractComponent
         $mapper = $this->input->getMapping() === 'compact'
             ? new CompactPayloadMapper()
             : new ExtendedPayloadMapper();
+
+        $mapping = new Mapping();
+
         $this->apiFactory = $this->getApiFactory($mapper);
 
-        $executorFactory = new ExecutorFactory($mapper, $this->logger);
+        $executorFactory = new ExecutorFactory($mapper, $this->logger, $mapping);
         $this->executor = $executorFactory->build($this->input);
     }
 

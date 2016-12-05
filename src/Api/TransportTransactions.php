@@ -36,10 +36,13 @@ class TransportTransactions
 
     /**
      * @param Transaction $transaction
+     * @return bool
      */
     public function add(Transaction $transaction)
     {
         $this->transactions[] = $transaction;
+
+        return true;
     }
 
     /**
@@ -81,7 +84,6 @@ class TransportTransactions
                 'a' => $transaction->getAction(),
                 'p' => array_map(function (Param $param) {
                     return [
-                        'l' => $param->getLocation(),
                         'n' => $param->getName(),
                         'v' => $param->getValue(),
                         't' => $param->getType(),

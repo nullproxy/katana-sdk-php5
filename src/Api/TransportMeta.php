@@ -159,10 +159,13 @@ class TransportMeta
     /**
      * @param string $name
      * @param $value
+     * @return bool
      */
     public function setProperty($name, $value)
     {
         $this->properties[$name] = $value;
+
+        return true;
     }
 
     /**

@@ -20,6 +20,7 @@ use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\AbstractComponent;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Schema\Mapping;
 
 class ActionApi extends Api implements Action
 {
@@ -39,6 +40,7 @@ class ActionApi extends Api implements Action
      * Action constructor.
      * @param KatanaLogger $logger
      * @param AbstractComponent $component
+     * @param Mapping $mapping
      * @param string $path
      * @param string $name
      * @param string $version
@@ -52,6 +54,7 @@ class ActionApi extends Api implements Action
     public function __construct(
         KatanaLogger $logger,
         AbstractComponent $component,
+        Mapping $mapping,
         $path,
         $name,
         $version,
@@ -65,6 +68,7 @@ class ActionApi extends Api implements Action
         parent::__construct(
             $logger,
             $component,
+            $mapping,
             $path,
             $name,
             $version,
@@ -105,10 +109,11 @@ class ActionApi extends Api implements Action
     /**
      * @param string $name
      * @param string $value
+     * @return bool
      */
     public function setProperty($name, $value)
     {
-        $this->transport->getMeta()->setProperty($name, $value);
+        return $this->transport->getMeta()->setProperty($name, $value);
     }
 
     /**
@@ -164,14 +169,16 @@ class ActionApi extends Api implements Action
 
     /**
      * @param File $file
+     * @return bool
      */
     public function setDownload(File $file)
     {
-        $this->transport->setBody($file);
+        return $this->transport->setBody($file);
     }
 
     /**
      * @param array $entity
+     * @return bool
      * @throws TransportException
      */
     public function setEntity(array $entity)
@@ -180,11 +187,12 @@ class ActionApi extends Api implements Action
             throw new TransportException('Unexpected collection');
         }
 
-        $this->transport->setData($this->name, $this->version, $this->actionName, $entity);
+        return $this->transport->setData($this->name, $this->version, $this->actionName, $entity);
     }
 
     /**
      * @param array $collection
+     * @return bool
      * @throws TransportException
      */
     public function setCollection(array $collection)
@@ -193,36 +201,39 @@ class ActionApi extends Api implements Action
             throw new TransportException('Unexpected entity');
         }
 
-        $this->transport->setCollection($this->name, $this->version, $this->actionName, $collection);
+        return $this->transport->setCollection($this->name, $this->version, $this->actionName, $collection);
     }
 
     /**
      * @param string $primaryKey
      * @param string $service
      * @param string $foreignKey
+     * @return bool
      */
     public function relateOne($primaryKey, $service, $foreignKey)
     {
-        $this->transport->addSimpleRelation($this->name, $primaryKey, $service, $foreignKey);
+        return $this->transport->addSimpleRelation($this->name, $primaryKey, $service, $foreignKey);
     }
 
     /**
      * @param string $primaryKey
      * @param string $service
      * @param array $foreignKeys
+     * @return bool
      */
     public function relateMany($primaryKey, $service, array $foreignKeys)
     {
-        $this->transport->addMultipleRelation($this->name, $primaryKey, $service, $foreignKeys);
+        return $this->transport->addMultipleRelation($this->name, $primaryKey, $service, $foreignKeys);
     }
 
     /**
      * @param string $link
      * @param string $uri
+     * @return bool
      */
     public function setLink($link, $uri)
     {
-        $this->transport->setLink($this->name, $link, $uri);
+        return $this->transport->setLink($this->name, $link, $uri);
     }
 
     /**
@@ -232,7 +243,7 @@ class ActionApi extends Api implements Action
      */
     public function commit($action, $params = [])
     {
-        $this->transport->addTransaction(
+        return $this->transport->addTransaction(
             new Transaction(
                 'commit',
                 new ServiceOrigin($this->name, $this->version),
@@ -249,7 +260,7 @@ class ActionApi extends Api implements Action
      */
     public function rollback($action, $params = [])
     {
-        $this->transport->addTransaction(
+        return $this->transport->addTransaction(
             new Transaction(
                 'rollback',
                 new ServiceOrigin($this->name, $this->version),
@@ -266,7 +277,7 @@ class ActionApi extends Api implements Action
      */
     public function complete($action, $params = [])
     {
-        $this->transport->addTransaction(
+        return $this->transport->addTransaction(
             new Transaction(
                 'complete',
                 new ServiceOrigin($this->name, $this->version),
@@ -282,6 +293,7 @@ class ActionApi extends Api implements Action
      * @param string $action
      * @param Param[] $params
      * @param File[] $files
+     * @return bool
      */
     public function call(
         $service,
@@ -291,7 +303,7 @@ class ActionApi extends Api implements Action
         array $files = []
     ) {
         $versionString = new VersionString($version);
-        $this->transport->addCall(new Call(
+        $result = $this->transport->addCall(new Call(
             new ServiceOrigin($this->name, $this->version),
             $service,
             $versionString,
@@ -302,15 +314,18 @@ class ActionApi extends Api implements Action
         foreach ($files as $file) {
             $this->transport->addFile($service, $versionString, $action, $file);
         }
+
+        return $result;
     }
 
     /**
      * @param string $message
      * @param int $code
      * @param string $status
+     * @return bool
      */
     public function error($message, $code = 0, $status = '')
     {
-        $this->transport->addError(new Error($this->name, $this->version, $message, $code, $status));
+        return $this->transport->addError(new Error($this->name, $this->version, $message, $code, $status));
     }
 }

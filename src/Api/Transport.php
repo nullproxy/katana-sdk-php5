@@ -131,10 +131,13 @@ class Transport
 
     /**
      * @param File $file
+     * @return bool
      */
     public function setBody(File $file)
     {
         $this->body = $file;
+
+        return true;
     }
 
     /**
@@ -250,10 +253,11 @@ class Transport
      * @param VersionString $version
      * @param string $action
      * @param File $file
+     * @return bool
      */
     public function addFile($service, VersionString $version, $action, File $file)
     {
-        $this->files->add($service, $version, $action, $file);
+        return $this->files->add($service, $version, $action, $file);
     }
 
     /**
@@ -273,10 +277,11 @@ class Transport
      * @param string $version
      * @param string $action
      * @param array $data
+     * @return bool
      */
     public function setData($service, $version, $action, array $data)
     {
-        $this->data->set($service, $version, $action, $data);
+        return $this->data->set($service, $version, $action, $data);
     }
 
     /**
@@ -284,10 +289,11 @@ class Transport
      * @param string $version
      * @param string $action
      * @param array $collection
+     * @return bool
      */
     public function setCollection($service, $version, $action, array $collection)
     {
-        $this->data->set($service, $version, $action, $collection);
+        return $this->data->set($service, $version, $action, $collection);
     }
 
     /**
@@ -295,10 +301,11 @@ class Transport
      * @param string $idFrom
      * @param string $serviceTo
      * @param string $idTo
+     * @return bool
      */
     public function addSimpleRelation($serviceFrom, $idFrom, $serviceTo, $idTo)
     {
-        $this->relations->addSimple($serviceFrom, $idFrom, $serviceTo, $idTo);
+        return $this->relations->addSimple($serviceFrom, $idFrom, $serviceTo, $idTo);
     }
 
     /**
@@ -306,43 +313,48 @@ class Transport
      * @param string $idFrom
      * @param string $serviceTo
      * @param array $idsTo
+     * @return bool
      */
     public function addMultipleRelation($serviceFrom, $idFrom, $serviceTo, array $idsTo)
     {
-        $this->relations->addMultipleRelation($serviceFrom, $idFrom, $serviceTo, $idsTo);
+        return $this->relations->addMultipleRelation($serviceFrom, $idFrom, $serviceTo, $idsTo);
     }
 
     /**
      * @param string $namespace
      * @param string $link
      * @param string $uri
+     * @return bool
      */
     public function setLink($namespace, $link, $uri)
     {
-        $this->links->setLink($namespace, $link, $uri);
+        return $this->links->setLink($namespace, $link, $uri);
     }
 
     /**
      * @param Transaction $transaction
+     * @return bool
      */
     public function addTransaction(Transaction $transaction)
     {
-        $this->transactions->add($transaction);
+        return $this->transactions->add($transaction);
     }
 
     /**
      * @param Call $call
+     * @return bool
      */
     public function addCall(Call $call)
     {
-        $this->calls->add($call);
+        return $this->calls->add($call);
     }
 
     /**
      * @param Error $error
+     * @return bool
      */
     public function addError(Error $error)
     {
-        $this->errors->add($error);
+        return $this->errors->add($error);
     }
 }

@@ -18,7 +18,11 @@ namespace Katana\Sdk\Executor;
 use Exception;
 use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Factory\ApiFactory;
+use Katana\Sdk\Api\Mapper\PayloadWriterInterface;
 use Katana\Sdk\Console\CliInput;
+use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Messaging\Responder\ResponderInterface;
+use Katana\Sdk\Schema\Mapping;
 
 /**
  * Executor that gets a single input from cli
@@ -27,6 +31,27 @@ use Katana\Sdk\Console\CliInput;
  */
 class InputExecutor extends AbstractExecutor
 {
+    /**
+     * @var Mapping
+     */
+    private $mapping;
+
+    /**
+     * @param ResponderInterface $responder
+     * @param PayloadWriterInterface $mapper
+     * @param KatanaLogger $logger
+     * @param Mapping $mapping
+     */
+    public function __construct(
+        ResponderInterface $responder,
+        PayloadWriterInterface $mapper,
+        KatanaLogger $logger,
+        Mapping $mapping
+    ) {
+        $this->mapping = $mapping;
+        parent::__construct($responder, $mapper, $logger);
+    }
+
     /**
      * @param ApiFactory $factory
      * @param CliInput $input
@@ -46,7 +71,7 @@ class InputExecutor extends AbstractExecutor
             return $this->sendError("Unregistered callback {$input->getAction()}");
         }
 
-        $api = $factory->build($action, $command, $input);
+        $api = $factory->build($action, $command, $input, $this->mapping);
         $this->executeCallback($api, $action, $callbacks, $errorCallback);
     }
 }

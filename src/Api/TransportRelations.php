@@ -53,10 +53,13 @@ class TransportRelations
      * @param string $idFrom
      * @param string $serviceTo
      * @param string $idTo
+     * @return bool
      */
     public function addSimple($serviceFrom, $idFrom, $serviceTo, $idTo)
     {
         $this->relations[$serviceFrom][$idFrom][$serviceTo] = $idTo;
+
+        return true;
     }
 
     /**
@@ -64,9 +67,12 @@ class TransportRelations
      * @param string $idFrom
      * @param string $serviceTo
      * @param array $idsTo
+     * @return bool
      */
     public function addMultipleRelation($serviceFrom, $idFrom, $serviceTo, array $idsTo)
     {
         $this->relations[$serviceFrom][$idFrom][$serviceTo] = $idsTo;
+
+        return true;
     }
 }

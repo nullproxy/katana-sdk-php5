@@ -22,6 +22,7 @@ use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Messaging\MessagePackSerializer;
 use Katana\Sdk\Messaging\Responder\JsonResponder;
 use Katana\Sdk\Messaging\Responder\ZeroMqMultipartResponder;
+use Katana\Sdk\Schema\Mapping;
 use MKraemer\ReactPCNTL\PCNTL;
 use React\EventLoop\Factory;
 use React\ZMQ\Context;
@@ -45,13 +46,23 @@ class ExecutorFactory
     protected $logger;
 
     /**
+     * @var Mapping
+     */
+    protected $mapping;
+
+    /**
      * @param PayloadMapperInterface $mapper
      * @param KatanaLogger $logger
+     * @param Mapping $mapping
      */
-    public function __construct(PayloadMapperInterface $mapper, KatanaLogger $logger)
-    {
+    public function __construct(
+        PayloadMapperInterface $mapper,
+        KatanaLogger $logger,
+        Mapping $mapping
+    ) {
         $this->mapper = $mapper;
         $this->logger = $logger;
+        $this->mapping = $mapping;
     }
 
     /**
@@ -62,7 +73,8 @@ class ExecutorFactory
         return new InputExecutor(
             new JsonResponder(),
             $this->mapper,
-            $this->logger
+            $this->logger,
+            $this->mapping
         );
     }
 
@@ -100,7 +112,8 @@ class ExecutorFactory
             $serializer,
             $responder,
             $this->mapper,
-            $this->logger
+            $this->logger,
+            $this->mapping
         );
     }
 
