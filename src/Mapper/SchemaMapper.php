@@ -75,8 +75,7 @@ class SchemaMapper
         $actions = [];
         foreach ($this->read($raw, 'ac', []) as $actionName => $action) {
             $params = [];
-            foreach ($this->read($action, 'p', []) as $param) {
-                $paramName = $this->read($param, 'n');
+            foreach ($this->read($action, 'p', []) as $paramName => $param) {
                 $params[] = new ParamSchema(
                     $paramName,
                     new HttpParamSchema(
@@ -113,8 +112,7 @@ class SchemaMapper
             }
 
             $files = [];
-            foreach ($this->read($action, 'f', []) as $file) {
-                $fileName = $this->read($file, 'n');
+            foreach ($this->read($action, 'f', []) as $fileName => $file) {
                 $files[] = new FileSchema(
                     $fileName,
                     $this->read($file, 'm', 'text/plain'),
