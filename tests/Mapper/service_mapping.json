@@ -82,7 +82,35 @@
                 "i": "path"
               }
             }
-          }
+          },
+          "entity": [
+            {
+              "fields": [
+                {
+                  "name": "details",
+                  "field": [
+                    {
+                      "name": "name",
+                      "type": "string",
+                      "optional": false
+                    },
+                    {
+                      "name": "active",
+                      "type": "boolean",
+                      "optional": true
+                    }
+                  ]
+                }
+              ],
+              "validate": "true",
+              "field": [
+                {
+                  "name": "id",
+                  "type": "integer"
+                }
+              ]
+            }
+          ]
         }
       }
     }
@@ -96,8 +124,6 @@
       "ac": {
         "check": {
           "x": 1000,
-          "e": "entity:data",
-          "d": ":",
           "k": "uid",
           "c": true,
           "p": {

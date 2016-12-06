@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Schema;
 
+use Katana\Sdk\Exception\SchemaException;
+
 class ActionEntity
 {
     /**
@@ -46,17 +48,59 @@ class ActionEntity
     private $collection = false;
 
     /**
+     * @var array
+     */
+    private $definition = [];
+
+    /**
+     * @param array $definition
+     * @return array
+     */
+    private function parseDefinition(array $definition)
+    {
+        if (empty($definition)) {
+            return [];
+        }
+
+        $result = [];
+        if (isset($definition['field'])) {
+            foreach ($definition['field'] as $field) {
+                $result[$field['name']] = $field['type'];
+            }
+        }
+
+
+        if (isset($definition['fields'])) {
+            foreach($definition['fields'] as $fields) {
+                $result[$fields['name']] = $this->parseDefinition($fields);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @param string $entityPath
      * @param string $pathDelimiter
      * @param string $primaryKey
      * @param bool $collection
+     * @param array $definition
      */
-    public function __construct($entityPath, $pathDelimiter, $primaryKey, $collection)
-    {
+    public function __construct(
+        $entityPath,
+        $pathDelimiter,
+        $primaryKey,
+        $collection,
+        $definition = []
+    ) {
         $this->entityPath = $entityPath;
         $this->pathDelimiter = $pathDelimiter;
         $this->primaryKey = $primaryKey;
         $this->collection = $collection;
+        if ($definition) {
+            // Definition stops being sent as an array in next alpha
+            $this->definition = $this->parseDefinition($definition[0]);
+        }
     }
 
     /**
@@ -89,5 +133,45 @@ class ActionEntity
     public function isCollection()
     {
         return $this->collection;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDefinition()
+    {
+        return !empty($this->definition);
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefinition()
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     * @throws SchemaException
+     */
+    public function resolveEntity(array $data)
+    {
+        if (!$this->entityPath) {
+            return $data;
+        }
+
+        $keys = explode($this->pathDelimiter, $this->entityPath);
+
+        foreach ($keys as $key) {
+            if (!isset($data[$key])) {
+                throw new SchemaException("Cannot resolve entity");
+            }
+
+            $data = $data[$key];
+        }
+
+        return $data;
     }
 }

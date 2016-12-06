@@ -136,7 +136,8 @@ class SchemaMapper
                     $this->read($action, 'e', ''),
                     $this->read($action, 'd', '/'),
                     $this->read($action, 'k', 'id'),
-                    $this->read($action, 'c', false)
+                    $this->read($action, 'c', false),
+                    $this->read($action, 'entity', [])
                 ),
                 new HttpActionSchema(
                     $this->read($action, 'h.g', true),

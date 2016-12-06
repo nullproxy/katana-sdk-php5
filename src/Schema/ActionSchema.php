@@ -131,19 +131,34 @@ class ActionSchema
         return $this->entity->getPrimaryKey();
     }
 
-    public function resolveEntity(array $entity)
+    /**
+     * @param array $data
+     * @return array
+     * @throws SchemaException
+     */
+    public function resolveEntity(array $data)
     {
-        
+        try {
+            return $this->entity->resolveEntity($data);
+        } catch(SchemaException $e) {
+            throw new SchemaException("Cannot resolve entity for action: $this->name");
+        }
     }
 
+    /**
+     * @return bool
+     */
     public function hasEntity()
     {
-
+        return $this->entity->hasDefinition();
     }
 
+    /**
+     * @return array
+     */
     public function getEntity()
     {
-
+        return $this->entity->getDefinition();
     }
 
     public function hasRelations()
