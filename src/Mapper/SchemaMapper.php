@@ -16,6 +16,7 @@
 namespace Katana\Sdk\Mapper;
 
 use Katana\Sdk\Schema\ActionEntity;
+use Katana\Sdk\Schema\ActionRelation;
 use Katana\Sdk\Schema\ActionSchema;
 use Katana\Sdk\Schema\FileSchema;
 use Katana\Sdk\Schema\FileValidation;
@@ -130,6 +131,17 @@ class SchemaMapper
                 );
             }
 
+            $relations = [];
+            foreach ($this->read($action, 'relation', []) as $relation) {
+                $relations[] = new ActionRelation(
+                    $this->read($relation, 'name', ''),
+                    $this->read($relation, 'version', ''),
+                    $this->read($relation, 'action', ''),
+                    $this->read($relation, 'type', 'one'),
+                    $this->read($relation, 'validate', false)
+                );
+            }
+
             $actions[] = new ActionSchema(
                 $actionName,
                 new ActionEntity(
@@ -148,7 +160,8 @@ class SchemaMapper
                 ),
                 $this->read($action, 'D', false),
                 $params,
-                $files
+                $files,
+                $relations
             );
         }
 

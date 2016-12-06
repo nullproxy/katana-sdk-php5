@@ -110,6 +110,20 @@
                 }
               ]
             }
+          ],
+          "relation": [
+            {
+              "validate": true,
+              "name": "accounts",
+              "version": "1.0.0"
+            },
+            {
+              "validate": true,
+              "type": "many",
+              "version": "1.0.0",
+              "name": "posts",
+              "action": "delete"
+            }
           ]
         }
       }
