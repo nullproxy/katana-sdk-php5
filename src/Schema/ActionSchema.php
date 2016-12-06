@@ -51,12 +51,18 @@ class ActionSchema
     private $files = [];
 
     /**
+     * @var ActionRelation[]
+     */
+    private $relations = [];
+
+    /**
      * @param string $name
      * @param ActionEntity $entity
      * @param HttpActionSchema $http
      * @param bool $deprecated
      * @param ParamSchema[] $params
      * @param FileSchema[] $files
+     * @param ActionRelation[] $relations
      */
     public function __construct(
         $name,
@@ -64,7 +70,8 @@ class ActionSchema
         HttpActionSchema $http,
         $deprecated,
         array $params,
-        array $files
+        array $files,
+        array $relations
     ) {
         $paramNames = array_map(function (ParamSchema $param) {
             return $param->getName();
@@ -81,6 +88,7 @@ class ActionSchema
         $this->params = $params;
         $this->params = array_combine($paramNames, $params);
         $this->files = array_combine($fileNames, $files);
+        $this->relations = $relations;
     }
 
     /**
@@ -131,29 +139,58 @@ class ActionSchema
         return $this->entity->getPrimaryKey();
     }
 
-    public function resolveEntity(array $entity)
+    /**
+     * @param array $data
+     * @return array
+     * @throws SchemaException
+     */
+    public function resolveEntity(array $data)
     {
-        
+        try {
+            return $this->entity->resolveEntity($data);
+        } catch(SchemaException $e) {
+            throw new SchemaException("Cannot resolve entity for action: $this->name");
+        }
     }
 
+    /**
+     * @return bool
+     */
     public function hasEntity()
     {
-
+        return $this->entity->hasDefinition();
     }
 
+    /**
+     * @return array
+     */
     public function getEntity()
     {
-
+        return $this->entity->getDefinition();
     }
 
+    /**
+     * @return bool
+     */
     public function hasRelations()
     {
-
+        return !empty($this->relations);
     }
 
+    /**
+     * @return array
+     */
     public function getRelations()
     {
-
+        return array_map(function (ActionRelation $relation) {
+            return [
+                'type' => $relation->getType(),
+                'name' => $relation->getService(),
+                'version' => $relation->getVersion(),
+                'action' => $relation->getAction(),
+                'validate' => $relation->isValidate(),
+            ];
+        }, $this->relations);
     }
 
     /**

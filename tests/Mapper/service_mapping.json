@@ -82,7 +82,49 @@
                 "i": "path"
               }
             }
-          }
+          },
+          "entity": [
+            {
+              "fields": [
+                {
+                  "name": "details",
+                  "field": [
+                    {
+                      "name": "name",
+                      "type": "string",
+                      "optional": false
+                    },
+                    {
+                      "name": "active",
+                      "type": "boolean",
+                      "optional": true
+                    }
+                  ]
+                }
+              ],
+              "validate": "true",
+              "field": [
+                {
+                  "name": "id",
+                  "type": "integer"
+                }
+              ]
+            }
+          ],
+          "relation": [
+            {
+              "validate": true,
+              "name": "accounts",
+              "version": "1.0.0"
+            },
+            {
+              "validate": true,
+              "type": "many",
+              "version": "1.0.0",
+              "name": "posts",
+              "action": "delete"
+            }
+          ]
         }
       }
     }
@@ -96,8 +138,6 @@
       "ac": {
         "check": {
           "x": 1000,
-          "e": "entity:data",
-          "d": ":",
           "k": "uid",
           "c": true,
           "p": {

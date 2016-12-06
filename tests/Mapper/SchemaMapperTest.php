@@ -240,6 +240,115 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $http = $file->getHttpSchema();
         $this->assertEquals(true, $http->isAccessible());
         $this->assertEquals('rules', $http->getParam());
+    }
 
+    public function testEntityMapping()
+    {
+        $service = $this->mapping->find('posts', '0.2.3');
+        $action = $service->getActionSchema('list');
+        $this->assertTrue($action->hasEntity());
+
+        $entity = $action->getEntity();
+        $this->assertCount(2, $entity);
+        $this->assertEquals('integer', $entity['id']);
+        $this->assertCount(2, $entity['details']);
+        $this->assertEquals('string', $entity['details']['name']);
+        $this->assertEquals('boolean', $entity['details']['active']);
+    }
+
+    public function testResolveEntity()
+    {
+        $service = $this->mapping->find('posts', '0.2.3');
+        $action = $service->getActionSchema('list');
+
+        $data = [
+            'meta' => ['id' => '1234-1qwe'],
+            'entity' => [
+                'data' => [
+                    'name' => 'test',
+                    'age' => 20,
+                ],
+                'relation' => [
+                    'client' => 'ads3-45rt',
+                ],
+            ],
+        ];
+
+        $this->assertEquals([
+            'name' => 'test',
+            'age' => 20,
+        ], $action->resolveEntity($data));
+    }
+
+    public function testResolveEntityFailure()
+    {
+        $service = $this->mapping->find('posts', '0.2.3');
+        $action = $service->getActionSchema('list');
+
+        $data = [
+            'data' => [
+                'name' => 'test',
+                'age' => 20,
+            ],
+            'relation' => [
+                'client' => 'ads3-45rt',
+            ],
+        ];
+
+        $this->expectException(SchemaException::class);
+        $this->expectExceptionMessage('Cannot resolve entity for action: list');
+        $action->resolveEntity($data);
+    }
+
+    public function testNoEntity()
+    {
+        $service = $this->mapping->find('admin', '1.0.0');
+        $action = $service->getActionSchema('check');
+        $this->assertFalse($action->hasEntity());
+        $this->assertEquals([], $action->getEntity());
+
+        $data = [
+            'data' => [
+                'name' => 'test',
+                'age' => 20,
+            ],
+            'relation' => [
+                'client' => 'ads3-45rt',
+            ],
+        ];
+
+        $this->assertEquals($data, $action->resolveEntity($data));
+    }
+
+    public function testRelationMapping()
+    {
+        $service = $this->mapping->find('posts', '0.2.3');
+        $action = $service->getActionSchema('list');
+        $this->assertTrue($action->hasRelations());
+
+        $relations = $action->getRelations();
+        $this->assertCount(2, $relations);
+
+        $this->assertEquals('accounts', $relations[0]['name']);
+        $this->assertEquals('1.0.0', $relations[0]['version']);
+        $this->assertEquals('', $relations[0]['action']);
+        $this->assertEquals('one', $relations[0]['type']);
+        $this->assertEquals(true, $relations[0]['validate']);
+
+        $this->assertEquals('posts', $relations[1]['name']);
+        $this->assertEquals('1.0.0', $relations[1]['version']);
+        $this->assertEquals('delete', $relations[1]['action']);
+        $this->assertEquals('many', $relations[1]['type']);
+        $this->assertEquals(true, $relations[1]['validate']);
+    }
+
+    public function testEmptyRelations()
+    {
+        $service = $this->mapping->find('posts', '1.0.0');
+        $action = $service->getActionSchema('list');
+        $this->assertFalse($action->hasRelations());
+
+        $relations = $action->getRelations();
+        $this->assertCount(0, $relations);
     }
 }
