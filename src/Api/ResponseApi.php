@@ -17,7 +17,7 @@ namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Response;
 use Katana\Sdk\Schema\Mapping;
@@ -48,7 +48,7 @@ class ResponseApi extends Api implements Response
     /**
      * Response constructor.
      * @param KatanaLogger $logger
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param Mapping $mapping
      * @param string $path
      * @param string $name
@@ -63,7 +63,7 @@ class ResponseApi extends Api implements Response
      */
     public function __construct(
         KatanaLogger $logger,
-        AbstractComponent $component,
+        Component $component,
         Mapping $mapping,
         $path,
         $name,

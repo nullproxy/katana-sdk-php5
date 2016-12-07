@@ -17,16 +17,15 @@ namespace Katana\Sdk;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Factory\ServiceApiFactory;
-use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
 use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 
 /**
  * Service class that can run actions
  *
  * @package Katana\Sdk
  */
-class Service extends AbstractComponent
+class Service extends Component
 {
     /**
      * @param string $name

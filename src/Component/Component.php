@@ -32,7 +32,7 @@ use Katana\Sdk\Schema\Mapping;
  *
  * @package Katana\Sdk\Component
  */
-abstract class AbstractComponent
+abstract class Component
 {
     use ApiLoggerTrait;
 
@@ -194,34 +194,34 @@ abstract class AbstractComponent
 
     /**
      * @param callable $startup
-     * @return bool
+     * @return Component
      */
     public function startup(callable $startup)
     {
         $this->startup = $startup;
 
-        return true;
+        return $this;
     }
 
     /**
      * @param callable $shutdown
-     * @return bool
+     * @return Component
      */
     public function shutdown(callable $shutdown)
     {
         $this->shutdown = $shutdown;
 
-        return true;
+        return $this;
     }
 
     /**
      * @param callable $error
-     * @return bool
+     * @return Component
      */
     public function error(callable $error)
     {
         $this->error = $error;
 
-        return true;
+        return $this;
     }
 }

@@ -17,7 +17,7 @@ namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Action;
 use Katana\Sdk\Api\Value\VersionString;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
@@ -39,7 +39,7 @@ class ActionApi extends Api implements Action
     /**
      * Action constructor.
      * @param KatanaLogger $logger
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param Mapping $mapping
      * @param string $path
      * @param string $name
@@ -53,7 +53,7 @@ class ActionApi extends Api implements Action
      */
     public function __construct(
         KatanaLogger $logger,
-        AbstractComponent $component,
+        Component $component,
         Mapping $mapping,
         $path,
         $name,
@@ -109,11 +109,13 @@ class ActionApi extends Api implements Action
     /**
      * @param string $name
      * @param string $value
-     * @return bool
+     * @return Action
      */
     public function setProperty($name, $value)
     {
-        return $this->transport->getMeta()->setProperty($name, $value);
+        $this->transport->getMeta()->setProperty($name, $value);
+
+        return $this;
     }
 
     /**
@@ -169,16 +171,18 @@ class ActionApi extends Api implements Action
 
     /**
      * @param File $file
-     * @return bool
+     * @return Action
      */
     public function setDownload(File $file)
     {
-        return $this->transport->setBody($file);
+        $this->transport->setBody($file);
+
+        return $this;
     }
 
     /**
      * @param array $entity
-     * @return bool
+     * @return Action
      * @throws TransportException
      */
     public function setEntity(array $entity)
@@ -187,12 +191,14 @@ class ActionApi extends Api implements Action
             throw new TransportException('Unexpected collection');
         }
 
-        return $this->transport->setData($this->name, $this->version, $this->actionName, $entity);
+        $this->transport->setData($this->name, $this->version, $this->actionName, $entity);
+
+        return $this;
     }
 
     /**
      * @param array $collection
-     * @return bool
+     * @return Action
      * @throws TransportException
      */
     public function setCollection(array $collection)
@@ -201,49 +207,57 @@ class ActionApi extends Api implements Action
             throw new TransportException('Unexpected entity');
         }
 
-        return $this->transport->setCollection($this->name, $this->version, $this->actionName, $collection);
+        $this->transport->setCollection($this->name, $this->version, $this->actionName, $collection);
+
+        return $this;
     }
 
     /**
      * @param string $primaryKey
      * @param string $service
      * @param string $foreignKey
-     * @return bool
+     * @return Action
      */
     public function relateOne($primaryKey, $service, $foreignKey)
     {
-        return $this->transport->addSimpleRelation($this->name, $primaryKey, $service, $foreignKey);
+        $this->transport->addSimpleRelation($this->name, $primaryKey, $service, $foreignKey);
+
+        return $this;
     }
 
     /**
      * @param string $primaryKey
      * @param string $service
      * @param array $foreignKeys
-     * @return bool
+     * @return Action
      */
     public function relateMany($primaryKey, $service, array $foreignKeys)
     {
-        return $this->transport->addMultipleRelation($this->name, $primaryKey, $service, $foreignKeys);
+        $this->transport->addMultipleRelation($this->name, $primaryKey, $service, $foreignKeys);
+
+        return $this;
     }
 
     /**
      * @param string $link
      * @param string $uri
-     * @return bool
+     * @return Action
      */
     public function setLink($link, $uri)
     {
-        return $this->transport->setLink($this->name, $link, $uri);
+        $this->transport->setLink($this->name, $link, $uri);
+
+        return $this;
     }
 
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function commit($action, $params = [])
     {
-        return $this->transport->addTransaction(
+        $this->transport->addTransaction(
             new Transaction(
                 'commit',
                 new ServiceOrigin($this->name, $this->version),
@@ -251,16 +265,18 @@ class ActionApi extends Api implements Action
                 $params
             )
         );
+
+        return $this;
     }
 
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function rollback($action, $params = [])
     {
-        return $this->transport->addTransaction(
+        $this->transport->addTransaction(
             new Transaction(
                 'rollback',
                 new ServiceOrigin($this->name, $this->version),
@@ -268,16 +284,18 @@ class ActionApi extends Api implements Action
                 $params
             )
         );
+
+        return $this;
     }
 
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function complete($action, $params = [])
     {
-        return $this->transport->addTransaction(
+        $this->transport->addTransaction(
             new Transaction(
                 'complete',
                 new ServiceOrigin($this->name, $this->version),
@@ -285,6 +303,8 @@ class ActionApi extends Api implements Action
                 $params
             )
         );
+
+        return $this;
     }
 
     /**
@@ -293,7 +313,7 @@ class ActionApi extends Api implements Action
      * @param string $action
      * @param Param[] $params
      * @param File[] $files
-     * @return bool
+     * @return Action
      */
     public function call(
         $service,
@@ -303,7 +323,7 @@ class ActionApi extends Api implements Action
         array $files = []
     ) {
         $versionString = new VersionString($version);
-        $result = $this->transport->addCall(new Call(
+        $this->transport->addCall(new Call(
             new ServiceOrigin($this->name, $this->version),
             $service,
             $versionString,
@@ -315,17 +335,19 @@ class ActionApi extends Api implements Action
             $this->transport->addFile($service, $versionString, $action, $file);
         }
 
-        return $result;
+        return $this;
     }
 
     /**
      * @param string $message
      * @param int $code
      * @param string $status
-     * @return bool
+     * @return Action
      */
     public function error($message, $code = 0, $status = '')
     {
-        return $this->transport->addError(new Error($this->name, $this->version, $message, $code, $status));
+        $this->transport->addError(new Error($this->name, $this->version, $message, $code, $status));
+
+        return $this;
     }
 }

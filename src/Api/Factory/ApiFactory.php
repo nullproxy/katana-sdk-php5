@@ -17,7 +17,7 @@ namespace Katana\Sdk\Api\Factory;
 
 use Katana\Sdk\Api\Api;
 use Katana\Sdk\Api\Mapper\PayloadReaderInterface;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 use Katana\Sdk\Console\CliInput;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
@@ -29,7 +29,7 @@ use Katana\Sdk\Schema\Mapping;
 abstract class ApiFactory
 {
     /**
-     * @var AbstractComponent
+     * @var Component
      */
     protected $component;
 
@@ -46,13 +46,13 @@ abstract class ApiFactory
     protected $logger;
 
     /**
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param PayloadReaderInterface $mapper
      * @param KatanaLogger $logger
      * @return ServiceApiFactory
      */
     public static function getServiceFactory(
-        AbstractComponent $component,
+        Component $component,
         PayloadReaderInterface $mapper,
         KatanaLogger $logger
     ) {
@@ -60,13 +60,13 @@ abstract class ApiFactory
     }
 
     /**
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param PayloadReaderInterface $mapper
      * @param KatanaLogger $logger
      * @return MiddlewareApiFactory
      */
     public static function getMiddlewareFactory(
-        AbstractComponent $component,
+        Component $component,
         PayloadReaderInterface $mapper,
         KatanaLogger $logger
     ) {
@@ -74,12 +74,12 @@ abstract class ApiFactory
     }
 
     /**
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param PayloadReaderInterface $mapper
      * @param KatanaLogger $logger
      */
     public function __construct(
-        AbstractComponent $component,
+        Component $component,
         PayloadReaderInterface $mapper,
         KatanaLogger $logger
     ) {

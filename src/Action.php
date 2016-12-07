@@ -35,6 +35,7 @@ interface Action extends ApiInterface
     /**
      * @param string $name
      * @param string $value
+     * @return Action
      */
     public function setProperty($name, $value);
 
@@ -88,17 +89,20 @@ interface Action extends ApiInterface
 
     /**
      * @param File $file
+     * @return Action
      */
     public function setDownload(File $file);
 
     /**
      * @param array $entity
+     * @return Action
      * @throws TransportException
      */
     public function setEntity(array $entity);
 
     /**
      * @param array $collection
+     * @return Action
      * @throws TransportException
      */
     public function setCollection(array $collection);
@@ -107,6 +111,7 @@ interface Action extends ApiInterface
      * @param string $primaryKey
      * @param string $service
      * @param string $foreignKey
+     * @return Action
      */
     public function relateOne($primaryKey, $service, $foreignKey);
 
@@ -114,6 +119,7 @@ interface Action extends ApiInterface
      * @param string $primaryKey
      * @param string $service
      * @param array $foreignKeys
+     * @return Action
      */
     public function relateMany($primaryKey, $service, array $foreignKeys);
 
@@ -126,21 +132,21 @@ interface Action extends ApiInterface
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function commit($action, $params = []);
 
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function rollback($action, $params = []);
 
     /**
      * @param string $action
      * @param array $params
-     * @return boolean
+     * @return Action
      */
     public function complete($action, $params = []);
 
@@ -149,6 +155,7 @@ interface Action extends ApiInterface
      * @param $version
      * @param $action
      * @param Param[] $params
+     * @return Action
      */
     public function call($service, $version, $action, array $params = []);
 
@@ -156,6 +163,7 @@ interface Action extends ApiInterface
      * @param string $message
      * @param int $code
      * @param string $status
+     * @return Action
      */
     public function error($message, $code = 0, $status = '');
 }

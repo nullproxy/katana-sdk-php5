@@ -79,13 +79,13 @@ class HttpResponse
 
     /**
      * @param string $version
-     * @return bool
+     * @return HttpResponse
      */
     public function setProtocolVersion($version)
     {
         $this->version = $version;
 
-        return true;
+        return $this;
     }
 
     /**
@@ -124,13 +124,13 @@ class HttpResponse
     /**
      * @param int $code
      * @param string $text
-     * @return bool
+     * @return HttpResponse
      */
     public function setStatus($code, $text)
     {
         $this->status = new HttpStatus($code, $text);
 
-        return true;
+        return $this;
     }
 
     /**
@@ -162,13 +162,13 @@ class HttpResponse
     /**
      * @param string $header
      * @param string $value
-     * @return bool
+     * @return HttpResponse
      */
     public function setHeader($header, $value)
     {
         $this->headers[$header] = $value;
 
-        return true;
+        return $this;
     }
 
     /**
@@ -189,12 +189,12 @@ class HttpResponse
 
     /**
      * @param string $body
-     * @return bool
+     * @return HttpResponse
      */
     public function setBody($body)
     {
         $this->body = $body;
 
-        return true;
+        return $this;
     }
 }

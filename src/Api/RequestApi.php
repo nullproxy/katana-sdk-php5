@@ -15,11 +15,11 @@
 
 namespace Katana\Sdk\Api;
 
-use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Protocol\Http\HttpRequest;
 use Katana\Sdk\Api\Protocol\Http\HttpResponse;
 use Katana\Sdk\Api\Protocol\Http\HttpStatus;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Api\Value\VersionString;
+use Katana\Sdk\Component\Component;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Request;
 use Katana\Sdk\Schema\Mapping;
@@ -44,7 +44,7 @@ class RequestApi extends Api implements Request
     /**
      * Response constructor.
      * @param KatanaLogger $logger
-     * @param AbstractComponent $component
+     * @param Component $component
      * @param Mapping $mapping
      * @param string $path
      * @param string $name
@@ -58,7 +58,7 @@ class RequestApi extends Api implements Request
      */
     public function __construct(
         KatanaLogger $logger,
-        AbstractComponent $component,
+        Component $component,
         Mapping $mapping,
         $path,
         $name,
@@ -96,13 +96,13 @@ class RequestApi extends Api implements Request
 
     /**
      * @param string $service
-     * @return bool
+     * @return Request
      */
     public function setServiceName($service)
     {
         $this->call->setService($service);
 
-        return true;
+        return $this;
     }
 
     /**
@@ -115,13 +115,13 @@ class RequestApi extends Api implements Request
 
     /**
      * @param string $version
-     * @return bool
+     * @return Request
      */
     public function setServiceVersion($version)
     {
         $this->call->setVersion(new VersionString($version));
 
-        return true;
+        return $this;
     }
 
     /**
@@ -134,13 +134,13 @@ class RequestApi extends Api implements Request
 
     /**
      * @param string $action
-     * @return bool
+     * @return Request
      */
     public function setActionName($action)
     {
         $this->call->setAction($action);
 
-        return true;
+        return $this;
     }
 
     /**
@@ -232,11 +232,13 @@ class RequestApi extends Api implements Request
 
     /**
      * @param Param $param
-     * @return bool
+     * @return Request
      */
     public function setParam(Param $param)
     {
-        return $this->call->setParam($param);
+        $this->call->setParam($param);
+
+        return $this;
     }
 
 }
