@@ -15,6 +15,8 @@
 
 namespace Katana\Sdk\Api;
 
+use Katana\Sdk\Exception\InvalidValueException;
+
 /**
  * Api class that encapsulate a file
  * @package Katana\Sdk\Api
@@ -59,6 +61,7 @@ class File
      * @param string $filename
      * @param int $size
      * @param string $token
+     * @throws InvalidValueException
      */
     public function __construct(
         $name,
@@ -68,6 +71,10 @@ class File
         $size = 0,
         $token = ''
     ) {
+        if (strpos($path, 'http://') !== 0 && strpos($path, 'file://') !== 0) {
+            throw new InvalidValueException("Invalid path for File: $path");
+        }
+
         $this->name = $name;
         $this->path = $path;
 

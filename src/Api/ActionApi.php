@@ -164,6 +164,10 @@ class ActionApi extends Api implements Action
      */
     public function newFile($name, $path, $mime = '')
     {
+        if (strpos($path, 'file://') !== 0) {
+            $path = "file://$path";
+        }
+
         return new File($name, $path, $mime);
     }
 
