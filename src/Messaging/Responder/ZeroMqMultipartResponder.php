@@ -85,6 +85,10 @@ class ZeroMqMultipartResponder implements ResponderInterface
             $controlString .= "\x03";
         }
 
+        if ($action->getTransport()->hasBody()) {
+            $controlString .= "\x04";
+        }
+
         if ($controlString === '') {
             $controlString = "\x00";
         }
