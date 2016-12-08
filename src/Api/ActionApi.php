@@ -18,6 +18,8 @@ namespace Katana\Sdk\Api;
 use Katana\Sdk\Action;
 use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\Component;
+use Katana\Sdk\Exception\InvalidValueException;
+use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
@@ -166,19 +168,27 @@ class ActionApi extends Api implements Action
      */
     public function newFile($name, $path, $mime = '')
     {
-        if (strpos($path, 'file://') !== 0) {
-            $path = "file://$path";
-        }
-
         return new File($name, $path, $mime);
     }
 
     /**
      * @param File $file
      * @return Action
+     * @throws InvalidValueException
+     * @throws SchemaException
      */
     public function setDownload(File $file)
     {
+        $service = $this->getServiceSchema($this->name, $this->version);
+
+        if ($file->isLocal() && !$service->hasFileServer()) {
+            throw new InvalidValueException(sprintf(
+                'File server not configured: "%s" (%s)',
+                $this->name,
+                $this->version
+            ));
+        }
+
         $this->transport->setBody($file);
 
         return $this;
@@ -335,7 +345,17 @@ class ActionApi extends Api implements Action
             $params
         ));
 
+        $service = $this->getServiceSchema($this->name, $this->version);
+
         foreach ($files as $file) {
+            if ($file->isLocal() && !$service->hasFileServer()) {
+                throw new InvalidValueException(sprintf(
+                    'File server not configured: "%s" (%s)',
+                    $this->name,
+                    $this->version
+                ));
+            }
+
             $this->transport->addFile($service, $versionString, $action, $file);
         }
 

@@ -65,36 +65,65 @@ class File
      */
     public function __construct(
         $name,
-        $path,
+        $path = '',
         $mime = '',
         $filename = '',
         $size = 0,
         $token = ''
     ) {
-        if (strpos($path, 'http://') !== 0 && strpos($path, 'file://') !== 0) {
-            throw new InvalidValueException("Invalid path for File: $path");
-        }
-
         $this->name = $name;
-        $this->path = $path;
-
-        if ($path && !$mime) {
-            $mime = $mime ?: mime_content_type($path);
-        }
-
-        if (!$filename) {
-            $filename = basename($path);
-        }
-
-        if (!$size) {
-            $file = new \SplFileInfo($path);
-            $size = $file->getSize();
+        if (!$path) {
+            return;
         }
 
         $this->filename = $filename;
         $this->size = $size;
         $this->mime = $mime;
         $this->token = $token;
+
+        if (strpos($path, 'http://') === 0) {
+            if (!$mime) {
+                throw new InvalidValueException("Missing mime for File: $name");
+            }
+            if (!$filename) {
+                throw new InvalidValueException("Missing filename for File: $name");
+            }
+            if (!$size) {
+                throw new InvalidValueException("Missing size for File: $name");
+            }
+            if (!$token) {
+                throw new InvalidValueException("Missing token for File: $name");
+            }
+        } else {
+            if (strpos($path, 'file://') === 0) {
+                $filePath = substr($path, 7);
+            } else {
+                $filePath = $path;
+            }
+            $path = 'file://' . realpath($filePath);
+
+            if (!file_exists($filePath)) {
+                throw new InvalidValueException("File does not exist in path: $filePath");
+            }
+            if ($token) {
+                throw new InvalidValueException("Unexpected token for File: $name");
+            }
+
+            if (!$mime) {
+                $this->mime = mime_content_type($filePath);
+            }
+
+            if (!$filename) {
+                $this->filename = basename($filePath);
+            }
+
+            if (!$size) {
+                $file = new \SplFileInfo($filePath);
+                $this->size = $file->getSize();
+            }
+        }
+
+        $this->path = $path;
     }
 
     /**
@@ -148,23 +177,21 @@ class File
     /**
      * Returns true if the file exists.
      *
-     * File is considered to exist if the path begins with "file://" and
-     * a file is found in that path in the filesystem or if path does not
-     * begin with "file://".
+     * File is considered to exist if it has non empty path
      *
      * @return boolean
      */
     public function exists()
     {
-        if (!$this->path) {
-            return false;
-        }
+        return (bool) $this->path;
+    }
 
-        if (strpos($this->path, 'file://') === 0) {
-            return file_exists($this->path);
-        }
-
-        return true;
+    /**
+     * @return bool
+     */
+    public function isLocal()
+    {
+        return strpos($this->path, 'file://') === 0;
     }
 
     /**

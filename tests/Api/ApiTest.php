@@ -16,8 +16,9 @@
 namespace Katana\Sdk\Tests\Api;
 
 use Katana\Sdk\Api\Api;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Schema\Mapping;
 use Prophecy\Argument;
 
 function foo() {}
@@ -38,10 +39,12 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->logger = $this->prophesize(KatanaLogger::class);
+        $this->logger->getLevel()->willReturn(KatanaLogger::LOG_DEBUG);
 
         $this->api = new ApiStub(
             $this->logger->reveal(),
-            $this->prophesize(AbstractComponent::class)->reveal(),
+            $this->prophesize(Component::class)->reveal(),
+            $this->prophesize(Mapping::class)->reveal(),
             '/',
             'test',
             '1.0',
@@ -160,7 +163,8 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
         $this->api = new ApiStub(
             $this->logger->reveal(),
-            $this->prophesize(AbstractComponent::class)->reveal(),
+            $this->prophesize(Component::class)->reveal(),
+            $this->prophesize(Mapping::class)->reveal(),
             '/',
             'test',
             '1.0',
@@ -170,6 +174,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->logger->debug(Argument::any())->shouldNotBeCalled();
+        $this->logger->getLevel()->willReturn(KatanaLogger::LOG_INFO);
         $this->assertEquals(false, $this->api->log('test'));
     }
 }
