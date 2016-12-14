@@ -31,6 +31,13 @@ class ServiceSchema
     private $version;
 
     /**
+     * Determines if the Service has a file server configured.
+     *
+     * @var bool
+     */
+    private $fileServer = false;
+
+    /**
      * @var HttpServiceSchema
      */
     private $http;
@@ -45,12 +52,14 @@ class ServiceSchema
      * @param string $version
      * @param HttpServiceSchema $http
      * @param ActionSchema[] $actions
+     * @param bool $fileServer
      */
     public function __construct(
         $name,
         $version,
         HttpServiceSchema $http,
-        array $actions
+        array $actions,
+        $fileServer = false
     ) {
         $actionNames = array_map(function (ActionSchema $action) {
             return $action->getName();
@@ -60,6 +69,7 @@ class ServiceSchema
         $this->version = $version;
         $this->http = $http;
         $this->actions = array_combine($actionNames, $actions);
+        $this->fileServer = $fileServer;
     }
 
     /**
@@ -76,6 +86,14 @@ class ServiceSchema
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFileServer()
+    {
+        return $this->fileServer;
     }
 
     /**

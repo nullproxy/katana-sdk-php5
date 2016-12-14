@@ -165,6 +165,12 @@ class SchemaMapper
             );
         }
 
-        return new ServiceSchema($name, $version, $http, $actions);
+        return new ServiceSchema(
+            $name,
+            $version,
+            $http,
+            $actions,
+            $this->read($raw, 'f', false)
+        );
     }
 }
