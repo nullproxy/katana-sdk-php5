@@ -19,7 +19,7 @@ interface ParamContainerInterface extends ParamAccessorInterface
 {
     /**
      * @param Param $param
-     * @return bool
+     * @return ParamContainerInterface
      */
     public function setParam(Param $param);
 }

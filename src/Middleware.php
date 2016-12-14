@@ -17,16 +17,15 @@ namespace Katana\Sdk;
 
 use Katana\Sdk\Api\Factory\ApiFactory;
 use Katana\Sdk\Api\Factory\MiddlewareApiFactory;
-use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
 use Katana\Sdk\Api\Mapper\PayloadMapperInterface;
-use Katana\Sdk\Component\AbstractComponent;
+use Katana\Sdk\Component\Component;
 
 /**
  * Middleware class that can run requests and responses
  *
  * @package Katana\Sdk
  */
-class Middleware extends AbstractComponent
+class Middleware extends Component
 {
     /**
      * @param callable $callback

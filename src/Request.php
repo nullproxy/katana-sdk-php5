@@ -28,7 +28,7 @@ interface Request extends ApiInterface, ParamContainerInterface
 
     /**
      * @param string $service
-     * @return bool
+     * @return Request
      */
     public function setServiceName($service);
 
@@ -39,7 +39,7 @@ interface Request extends ApiInterface, ParamContainerInterface
 
     /**
      * @param string $version
-     * @return bool
+     * @return Request
      */
     public function setServiceVersion($version);
 
@@ -50,7 +50,7 @@ interface Request extends ApiInterface, ParamContainerInterface
 
     /**
      * @param string $action
-     * @return bool
+     * @return Request
      */
     public function setActionName($action);
 
