@@ -2,6 +2,7 @@
 use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Mapper\SchemaMapper;
 use Katana\Sdk\Schema\Mapping;
+use Katana\Sdk\Schema\ServiceSchema;
 
 /**
  * PHP 5 SDK for the KATANA(tm) Platform (http://katana.kusanagi.io)
@@ -66,6 +67,7 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $service = $this->mapping->find('posts', '1.0.0');
         $this->assertEquals('posts', $service->getName());
         $this->assertEquals('1.0.0', $service->getVersion());
+        $this->assertTrue($service->hasFileServer());
 
         $this->assertCount(1, $service->getActions());
         $this->assertTrue($service->hasAction('list'));
@@ -73,19 +75,27 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($service->getHttpSchema()->isAccessible());
         $this->assertEquals('/1.0.0', $service->getHttpSchema()->getBasePath());
+
+        return $service;
     }
 
-    public function testActionNotFound()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testActionNotFound(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $this->expectException(SchemaException::class);
         $this->expectExceptionMessage('Cannot resolve schema for action: foo');
         $service->getActionSchema('foo');
     }
 
-    public function testActionMapping()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testActionMapping(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $action = $service->getActionSchema('list');
 
         $this->assertEquals('list', $action->getName());
@@ -109,18 +119,24 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('text/plain', $http->getBody());
     }
 
-    public function testParamNotFound()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testParamNotFound(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $action = $service->getActionSchema('list');
         $this->expectException(SchemaException::class);
         $this->expectExceptionMessage('Cannot resolve schema for parameter: foo');
         $action->getParamSchema('foo');
     }
 
-    public function testParameterMapping()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testParameterMapping(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $action = $service->getActionSchema('list');
         $param = $action->getParamSchema('user_id');
 
@@ -161,9 +177,12 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(-1, $param->getMultipleOf());
     }
 
-    public function testArrayParameterMapping()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testArrayParameterMapping(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $action = $service->getActionSchema('list');
         $param = $action->getParamSchema('tags');
 
@@ -342,9 +361,12 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $relations[1]['validate']);
     }
 
-    public function testEmptyRelations()
+    /**
+     * @depends testServiceMapping
+     * @param ServiceSchema $service
+     */
+    public function testEmptyRelations(ServiceSchema $service)
     {
-        $service = $this->mapping->find('posts', '1.0.0');
         $action = $service->getActionSchema('list');
         $this->assertFalse($action->hasRelations());
 
