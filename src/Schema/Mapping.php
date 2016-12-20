@@ -15,6 +15,7 @@
 
 namespace Katana\Sdk\Schema;
 
+use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Exception\SchemaException;
 
 class Mapping
@@ -43,15 +44,20 @@ class Mapping
         $search = array_filter(
             $this->services,
             function (ServiceSchema $serviceSchema) use ($service, $version) {
-                return $serviceSchema->getName() === $service
-                    && $serviceSchema->getVersion() === $version;
+                return $serviceSchema->getName() === $service;
             }
         );
 
-        if (!$search) {
+        $loadedVersions = array_map(function (ServiceSchema $service) {
+            return $service->getVersion();
+        }, $search);
+
+        $resolvedVersion = (new VersionString($version))->resolve($loadedVersions);
+
+        if (!$resolvedVersion) {
             throw new SchemaException("Cannot resolve schema for Service: $service ($version)");
         }
 
-        return current($search);
+        return $search[array_search($resolvedVersion, $loadedVersions)];
     }
 }
