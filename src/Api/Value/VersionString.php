@@ -44,4 +44,121 @@ class VersionString
     {
         return $this->version;
     }
+
+    /**
+     * @param string $version
+     * @return int
+     */
+    public function match($version)
+    {
+        $regex = preg_replace('/\*+/', '[^*.]+', $this->version);
+
+        return (bool) preg_match("/^$regex$/", $version);
+    }
+
+    /**
+     * @param array $versions
+     * @return string
+     */
+    public function resolve(array $versions)
+    {
+        $valid = array_filter($versions, [$this, 'match']);
+        usort($valid, [$this, 'compare']);
+
+        return end($valid) ?: '';
+    }
+
+    /**
+     * @param mixed $a
+     * @param mixed $b
+     * @return int
+     */
+    private function compareNull($a, $b)
+    {
+        if ($a === null && $b === null) {
+            return 0;
+        }
+
+        if ($b === null) {
+            return -1;
+        }
+
+        if ($a === null) {
+            return 1;
+        }
+    }
+
+    /**
+     * @param string $a
+     * @param string $b
+     * @return int
+     */
+    private function compare($a, $b)
+    {
+        if ($a === $b) {
+            return 0;
+        }
+
+        $a = explode('.', $a);
+        $b = explode('.', $b);
+
+        while(true) {
+            $partA = array_shift($a);
+            $partB = array_shift($b);
+
+            if ($partA === null || $partB === null) {
+                return $this->compareNull($partA, $partB);
+            }
+
+            $subA = explode('-', $partA);
+            $subB = explode('-', $partB);
+
+            while(true) {
+                $currentA = array_shift($subA);
+                $currentB = array_shift($subB);
+
+                if ($currentA === null || $currentB === null) {
+                    $compare = $this->compareNull($currentA, $currentB);
+                    if ($compare === 0) {
+                        break;
+                    } else {
+                        return $compare;
+                    }
+                }
+
+                $compare = $this->compareParts($currentA, $currentB);
+
+                if ($compare !== 0) {
+                    return $compare;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param string $a
+     * @param string $b
+     * @return int
+     */
+    private function compareParts($a, $b)
+    {
+        if ($a === $b) {
+            return 0;
+        }
+
+        $isIntA = is_numeric($a);
+        $isIntB = is_numeric($b);
+
+        if ($isIntA !== $isIntB) {
+            return $isIntA ? 1 : -1;
+        }
+
+        if ($isIntA && $isIntB) {
+            return ((int) $a < (int) $b) ? -1 : 1;
+        }
+
+        return ($a > $b) ? -1 : 1;
+    }
 }
