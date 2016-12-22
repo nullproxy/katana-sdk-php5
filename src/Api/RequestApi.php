@@ -153,6 +153,7 @@ class RequestApi extends Api implements Request
         return new ResponseApi(
             $this->logger,
             $this->component,
+            $this->mapping,
             $this->path,
             $this->name,
             $this->version,
