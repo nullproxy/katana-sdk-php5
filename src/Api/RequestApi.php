@@ -166,7 +166,8 @@ class RequestApi extends Api implements Request
                 new HttpStatus($code, $text),
                 ''
             ),
-            Transport::newEmpty()
+            Transport::newEmpty(),
+            $this->protocol
         );
     }
 
