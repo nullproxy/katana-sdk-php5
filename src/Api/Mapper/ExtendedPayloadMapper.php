@@ -633,6 +633,15 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getClientAddress(array $raw)
+    {
+        return $raw['command']['arguments']['meta']['client'];
+    }
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw)
