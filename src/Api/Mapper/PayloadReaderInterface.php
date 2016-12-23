@@ -117,6 +117,12 @@ interface PayloadReaderInterface
 
     /**
      * @param array $raw
+     * @return string
+     */
+    public function getClientAddress(array $raw);
+
+    /**
+     * @param array $raw
      * @return HttpResponse
      */
     public function getHttpResponse(array $raw);
