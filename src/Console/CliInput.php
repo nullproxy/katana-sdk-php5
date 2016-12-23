@@ -108,8 +108,7 @@ class CliInput
             'debug' => new CliOption('D', 'debug', CliOption::VALUE_NONE),
             'var' => new CliOption('V', 'var', CliOption::VALUE_MULTIPLE),
             'disable-compact-names' => new CliOption('d', 'disable-compact-names', CliOption::VALUE_NONE),
-            'input' => new CliOption('i', 'input', CliOption::VALUE_SINGLE),
-            'action' => new CliOption('a', 'action', CliOption::VALUE_SINGLE),
+            'callback' => new CliOption('C', 'callback', CliOption::VALUE_SINGLE),
             'quiet' => new CliOption('q', 'quiet', CliOption::VALUE_NONE),
         ];
 
@@ -141,8 +140,7 @@ class CliInput
             $optionValues['debug'],
             $optionValues['var'],
             $optionValues['disable-compact-names'] ? 'extended' : 'compact',
-            $optionValues['input'],
-            $optionValues['action'],
+            $optionValues['callback'],
             $optionValues['quiet']
         );
     }
@@ -157,8 +155,7 @@ class CliInput
      * @param bool $debug
      * @param array $variables
      * @param string $mapping
-     * @param string $input
-     * @param string $action
+     * @param string $callback
      * @param bool $quiet
      * @throws ConsoleException
      */
@@ -171,8 +168,7 @@ class CliInput
         $debug = false,
         array $variables = [],
         $mapping = 'compact',
-        $input = '',
-        $action = '',
+        $callback = '',
         $quiet = false
     ) {
         $this->component = $component;
@@ -183,15 +179,18 @@ class CliInput
         $this->socket = $socket ?: "@katana-$component-$name-$socketVersion";
         $this->debug = $debug;
         $this->variables = $variables;
-        $this->variables = $variables;
         if (!in_array($mapping, self::MAPPINGS)) {
             throw new ConsoleException("Invalid mapping $mapping");
         }
         $this->mapping = $mapping;
-        if ($input && file_exists($input)) {
+        if ($callback) {
+            list($action, $input) = explode(':', $callback);
+            if (!file_exists($input)) {
+                throw new ConsoleException("Callback file not found: $input");
+            }
             $this->input = file_get_contents($input);
+            $this->action = $action;
         }
-        $this->action = $action;
         $this->quiet = $quiet;
     }
 
