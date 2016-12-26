@@ -55,7 +55,8 @@ class MiddlewareApiFactory extends ApiFactory
                 $input->isDebug(),
                 $this->mapper->getHttpRequest($data),
                 $this->mapper->getServiceCall($data),
-                $this->mapper->getGatewayProtocol($data)
+                $this->mapper->getGatewayProtocol($data),
+                $this->mapper->getClientAddress($data)
             );
 
         } elseif($action === 'response') {
