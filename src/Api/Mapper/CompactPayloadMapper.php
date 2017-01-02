@@ -653,6 +653,15 @@ class CompactPayloadMapper implements PayloadMapperInterface
      * @param array $raw
      * @return string
      */
+    public function getGatewayAddress(array $raw)
+    {
+        return $raw['c']['a']['m']['g'][1];
+    }
+
+    /**
+     * @param array $raw
+     * @return string
+     */
     public function getClientAddress(array $raw)
     {
         return $raw['c']['a']['m']['c'];

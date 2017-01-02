@@ -41,4 +41,9 @@ interface Response extends ApiInterface
      * @return string
      */
     public function getGatewayProtocol();
+
+    /**
+     * @return string
+     */
+    public function getGatewayAddress();
 }

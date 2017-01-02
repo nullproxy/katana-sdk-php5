@@ -44,6 +44,11 @@ class RequestApi extends Api implements Request
     /**
      * @var string
      */
+    private $gatewayAddress;
+
+    /**
+     * @var string
+     */
     private $client;
 
     /**
@@ -60,6 +65,7 @@ class RequestApi extends Api implements Request
      * @param HttpRequest $httpRequest
      * @param ServiceCall $call
      * @param string $protocol
+     * @param string $gatewayAddress
      * @param $client
      */
     public function __construct(
@@ -75,6 +81,7 @@ class RequestApi extends Api implements Request
         HttpRequest $httpRequest,
         ServiceCall $call,
         $protocol,
+        $gatewayAddress,
         $client
     ) {
         parent::__construct(
@@ -91,6 +98,7 @@ class RequestApi extends Api implements Request
         $this->httpRequest = $httpRequest;
         $this->call = $call;
         $this->protocol = $protocol;
+        $this->gatewayAddress = $gatewayAddress;
         $this->client = $client;
     }
 
@@ -175,7 +183,8 @@ class RequestApi extends Api implements Request
                 ''
             ),
             Transport::newEmpty(),
-            $this->protocol
+            $this->protocol,
+            $this->gatewayAddress
         );
     }
 
@@ -201,6 +210,14 @@ class RequestApi extends Api implements Request
     public function getGatewayProtocol()
     {
         return $this->protocol;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayAddress()
+    {
+        return $this->gatewayAddress;
     }
 
     /**

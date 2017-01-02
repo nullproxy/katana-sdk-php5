@@ -46,6 +46,11 @@ class ResponseApi extends Api implements Response
     private $protocol;
 
     /**
+     * @var string
+     */
+    private $gatewayAddress;
+
+    /**
      * Response constructor.
      * @param KatanaLogger $logger
      * @param Component $component
@@ -60,6 +65,7 @@ class ResponseApi extends Api implements Response
      * @param HttpResponse $response
      * @param Transport $transport
      * @param string $protocol
+     * @param string $gatewayAddress
      */
     public function __construct(
         KatanaLogger $logger,
@@ -74,7 +80,8 @@ class ResponseApi extends Api implements Response
         HttpRequest $request,
         HttpResponse $response,
         Transport $transport,
-        $protocol
+        $protocol,
+        $gatewayAddress
     ) {
         parent::__construct(
             $logger,
@@ -91,6 +98,7 @@ class ResponseApi extends Api implements Response
         $this->response = $response;
         $this->transport = $transport;
         $this->protocol = $protocol;
+        $this->gatewayAddress = $gatewayAddress;
     }
 
     /**
@@ -123,5 +131,13 @@ class ResponseApi extends Api implements Response
     public function getGatewayProtocol()
     {
         return $this->protocol;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGatewayAddress()
+    {
+        return $this->gatewayAddress;
     }
 }
