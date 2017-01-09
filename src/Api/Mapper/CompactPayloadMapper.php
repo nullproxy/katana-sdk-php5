@@ -443,17 +443,19 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $calls = [];
-        foreach ($rawCalls as $service => $serviceCalls) {
-            foreach ($serviceCalls as $version => $versionCalls) {
-                $calls += array_map(function (array $callData) use ($service, $version) {
-                    return new Call(
-                        new ServiceOrigin($service, $version),
-                        $callData['n'],
-                        new VersionString($callData['v']),
-                        $callData['a'],
-                        isset($callData['p'])? array_map([$this, 'getParam'], $callData['p']) : []
-                    );
-                }, $versionCalls);
+        foreach ($rawCalls as $address => $addressCalls) {
+            foreach ($addressCalls as $service => $serviceCalls) {
+                foreach ($serviceCalls as $version => $versionCalls) {
+                    $calls += array_map(function (array $callData) use ($address, $service, $version) {
+                        return new Call(
+                            new ServiceOrigin($address, $service, $version),
+                            $callData['n'],
+                            new VersionString($callData['v']),
+                            $callData['a'],
+                            isset($callData['p'])? array_map([$this, 'getParam'], $callData['p']) : []
+                        );
+                    }, $versionCalls);
+                }
             }
         }
 
@@ -480,7 +482,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 $callData['p'] = [];
             }
 
-            $output['cr']['r']['T']['c'][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
+            $output['cr']['r']['T']['c'][$call->getOrigin()->getAddress()][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
         }
 
         return $output;
@@ -499,21 +501,23 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $transactions = [];
-        foreach ($rawTransactions as $type => $typeTransactions) {
-            $transactions = array_merge($transactions, array_map(function ($transactionData) use ($type) {
-                $type = [
-                    'c' => 'commit',
-                    'r' => 'rollback',
-                    'C' => 'complete',
-                ][$type];
+        foreach ($rawTransactions as $address => $addressTransactions) {
+            foreach ($addressTransactions as $type => $typeTransactions) {
+                $transactions = array_merge($transactions, array_map(function ($transactionData) use ($address, $type) {
+                    $type = [
+                        'c' => 'commit',
+                        'r' => 'rollback',
+                        'C' => 'complete',
+                    ][$type];
 
-                return new Transaction(
-                    $type,
-                    new ServiceOrigin($transactionData['s'], $transactionData['v']),
-                    $transactionData['a'],
-                    isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
-                );
-            }, $typeTransactions));
+                    return new Transaction(
+                        $type,
+                        new ServiceOrigin($address, $transactionData['n'], $transactionData['v']),
+                        $transactionData['a'],
+                        isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
+                    );
+                }, $typeTransactions));
+            }
         }
 
         return new TransportTransactions($transactions);
@@ -546,7 +550,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 'complete' => 'C',
             ][$transaction->getType()];
 
-            $output['cr']['r']['T']['t'][$type][] = $transactionData;
+            $output['cr']['r']['T']['t'][$transaction->getOrigin()->getAddress()][$type] = $transactionData;
         }
 
         return $output;
@@ -647,6 +651,15 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function getGatewayProtocol(array $raw)
     {
         return $raw['c']['a']['m']['p'];
+    }
+
+    /**
+     * @param array $raw
+     * @return string
+     */
+    public function getGatewayAddress(array $raw)
+    {
+        return $raw['c']['a']['m']['g'][1];
     }
 
     /**

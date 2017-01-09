@@ -35,28 +35,34 @@ class TransportLinks
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function get($service = '')
+    public function get($address = '', $service = '')
     {
         $links = $this->links;
-        if ($service) {
-            $links = isset($links[$service])? $links[$service] : [];
+        if ($address) {
+            $links = isset($links[$address])? $links[$address] : [];
+
+            if ($service) {
+                $links = isset($links[$service])? $links[$service] : [];
+            }
         }
 
         return $links;
     }
 
     /**
+     * @param string $address
      * @param string $namespace
      * @param string $link
      * @param string $uri
      * @return bool
      */
-    public function setLink($namespace, $link, $uri)
+    public function setLink($address, $namespace, $link, $uri)
     {
-        $this->links[$namespace][$link] = $uri;
+        $this->links[$address][$namespace][$link] = $uri;
 
         return true;
     }

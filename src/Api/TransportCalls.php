@@ -69,15 +69,18 @@ class TransportCalls
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getArray($service = '')
+    public function getArray($address = '', $service = '')
     {
         $calls = [];
         foreach ($this->calls as $call) {
             $origin = $call->getOrigin();
-            if ($service && $origin->getName() !== $service) {
+            if ($address && $origin->getAddress() !== $address) {
+                continue;
+            } elseif ($service && $origin->getName() !== $service) {
                 continue;
             }
 

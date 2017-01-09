@@ -119,6 +119,12 @@ interface PayloadReaderInterface
      * @param array $raw
      * @return string
      */
+    public function getGatewayAddress(array $raw);
+
+    /**
+     * @param array $raw
+     * @return string
+     */
     public function getClientAddress(array $raw);
 
     /**

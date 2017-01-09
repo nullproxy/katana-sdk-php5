@@ -36,22 +36,27 @@ class TransportData
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param string $version
      * @param string $action
      * @return array
      */
-    public function get($service = '', $version = '', $action = '')
+    public function get($address = '', $service = '', $version = '', $action = '')
     {
         $data = $this->data;
-        if ($service) {
-            $data = isset($data[$service])? $data[$service] : [];
+        if ($address) {
+            $data = isset($data[$address])? $data[$address] : [];
 
-            if ($version) {
-                $data = isset($data[$version])? $data[$version] : [];
+            if ($service) {
+                $data = isset($data[$service])? $data[$service] : [];
 
-                if (isset($data[$action])) {
-                    $data = isset($data[$action])? $data[$action] : [];
+                if ($version) {
+                    $data = isset($data[$version])? $data[$version] : [];
+
+                    if (isset($data[$action])) {
+                        $data = isset($data[$action])? $data[$action] : [];
+                    }
                 }
             }
         }
@@ -60,15 +65,16 @@ class TransportData
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param string $version
      * @param string $action
      * @param array $data
      * @return bool
      */
-    public function set($service, $version, $action, array $data)
+    public function set($address, $service, $version, $action, array $data)
     {
-        $this->data[$service][$version][$action][] = $data;
+        $this->data[$address][$service][$version][$action][] = $data;
 
         return true;
     }

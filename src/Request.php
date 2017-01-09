@@ -74,5 +74,10 @@ interface Request extends ApiInterface, ParamContainerInterface
     /**
      * @return string
      */
+    public function getGatewayAddress();
+
+    /**
+     * @return string
+     */
     public function getClientAddress();
 }
