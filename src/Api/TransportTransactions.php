@@ -54,29 +54,38 @@ class TransportTransactions
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return Transaction[]
      */
-    public function get($service = '')
+    public function get($address = '', $service = '')
     {
         $transactions = $this->transactions;
-        if ($service) {
-            $transactions = isset($transactions[$service])? $transactions[$service] : [];
+
+        if ($address) {
+            $transactions = isset($transactions[$address]) ? $transactions[$address] : [];
+
+            if ($service) {
+                $transactions = isset($transactions[$service]) ? $transactions[$service] : [];
+            }
         }
 
         return $transactions;
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getArray($service = '')
+    public function getArray($address = '', $service = '')
     {
         $transactions = [];
         foreach ($this->transactions as $transaction) {
             $origin = $transaction->getOrigin();
-            if ($service && $origin->getName() !== $service) {
+            if ($address && $origin->getAddress() !== $service) {
+                continue;
+            } elseif ($service && $origin->getName() !== $service) {
                 continue;
             }
 
@@ -95,8 +104,10 @@ class TransportTransactions
 
             if ($service) {
                 $transactions[$type][$origin->getVersion()][] = $transactionOutput;
-            } else {
+            } elseif ($address) {
                 $transactions[$type][$origin->getName()][$origin->getVersion()][] = $transactionOutput;
+            } else {
+                $transactions[$type][$origin->getAddress()][$origin->getName()][$origin->getVersion()][] = $transactionOutput;
             }
         }
 

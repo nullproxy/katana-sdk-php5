@@ -271,10 +271,11 @@ class ActionApi extends Api implements Action
      */
     public function commit($action, $params = [])
     {
+        $address = $this->transport->getMeta()->getGateway()[1];
         $this->transport->addTransaction(
             new Transaction(
                 'commit',
-                new ServiceOrigin($this->name, $this->version),
+                new ServiceOrigin($address, $this->name, $this->version),
                 $action,
                 $params
             )
@@ -290,10 +291,11 @@ class ActionApi extends Api implements Action
      */
     public function rollback($action, $params = [])
     {
+        $address = $this->transport->getMeta()->getGateway()[1];
         $this->transport->addTransaction(
             new Transaction(
                 'rollback',
-                new ServiceOrigin($this->name, $this->version),
+                new ServiceOrigin($address, $this->name, $this->version),
                 $action,
                 $params
             )
@@ -309,10 +311,11 @@ class ActionApi extends Api implements Action
      */
     public function complete($action, $params = [])
     {
+        $address = $this->transport->getMeta()->getGateway()[1];
         $this->transport->addTransaction(
             new Transaction(
                 'complete',
-                new ServiceOrigin($this->name, $this->version),
+                new ServiceOrigin($address, $this->name, $this->version),
                 $action,
                 $params
             )
@@ -328,6 +331,7 @@ class ActionApi extends Api implements Action
      * @param Param[] $params
      * @param File[] $files
      * @return Action
+     * @throws InvalidValueException
      */
     public function call(
         $service,
@@ -337,8 +341,9 @@ class ActionApi extends Api implements Action
         array $files = []
     ) {
         $versionString = new VersionString($version);
+        $address = $this->transport->getMeta()->getGateway()[1];
         $this->transport->addCall(new Call(
-            new ServiceOrigin($this->name, $this->version),
+            new ServiceOrigin($address, $this->name, $this->version),
             $service,
             $versionString,
             $action,

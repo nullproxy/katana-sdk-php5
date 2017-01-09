@@ -91,41 +91,45 @@ class TransportReader implements TransportInterface
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param string $version
      * @param string $action
      * @return array
      */
-    public function getData($service = '', $version = '', $action = '')
+    public function getData($address = '', $service = '', $version = '', $action = '')
     {
-        return $this->transport->getData()->get($service, $version, $action);
+        return $this->transport->getData()->get($address, $service, $version, $action);
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getRelations($service = '')
+    public function getRelations($address = '', $service = '')
     {
-        return $this->transport->getRelations()->get($service);
+        return $this->transport->getRelations()->get($address, $service);
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getLinks($service = '')
+    public function getLinks($address = '', $service = '')
     {
-        return $this->transport->getLinks()->get($service);
+        return $this->transport->getLinks()->get($address, $service);
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getCalls($service = '')
+    public function getCalls($address = '', $service = '')
     {
-        return $this->transport->getCalls()->getArray($service);
+        return $this->transport->getCalls()->getArray($address, $service);
     }
 
     /**

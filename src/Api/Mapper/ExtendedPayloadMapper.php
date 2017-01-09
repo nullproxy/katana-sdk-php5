@@ -437,17 +437,19 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         }
 
         $calls = [];
-        foreach ($rawCalls as $service => $serviceCalls) {
-            foreach ($serviceCalls as $version => $versionCalls) {
-                $calls += array_map(function (array $callData) use ($service, $version) {
-                    return new Call(
-                        new ServiceOrigin($service, $version),
-                        $callData['name'],
-                        new VersionString($callData['version']),
-                        $callData['action'],
-                        isset($callData['params'])? array_map([$this, 'getParam'], $callData['params']) : []
-                    );
-                }, $versionCalls);
+        foreach ($rawCalls as $address => $addressCalls) {
+            foreach ($addressCalls as $service => $serviceCalls) {
+                foreach ($serviceCalls as $version => $versionCalls) {
+                    $calls += array_map(function (array $callData) use ($address, $service, $version) {
+                        return new Call(
+                            new ServiceOrigin($address, $service, $version),
+                            $callData['name'],
+                            new VersionString($callData['version']),
+                            $callData['action'],
+                            isset($callData['params'])? array_map([$this, 'getParam'], $callData['params']) : []
+                        );
+                    }, $versionCalls);
+                }
             }
         }
 
@@ -472,7 +474,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                 $callData['params'] = array_map([$this, 'writeParam'], $call->getParams());
             }
 
-            $output['command_reply']['response']['transport']['calls'][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
+            $output['command_reply']['response']['transport']['calls'][$call->getOrigin()->getAddress()][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
         }
 
         return $output;
@@ -491,15 +493,17 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
         }
 
         $transactions = [];
-        foreach ($rawTransactions as $type => $typeTransactions) {
-            $transactions += array_map(function ($transactionData) use ($type) {
-                return new Transaction(
-                    $type,
-                    new ServiceOrigin($transactionData['service'], $transactionData['version']),
-                    $transactionData['action'],
-                    isset($transactionData['params']) ? array_map([$this, 'getParam'], $transactionData['params']) : []
-                );
-            }, $typeTransactions);
+        foreach ($rawTransactions as $address => $addressTransactions) {
+            foreach ($addressTransactions as $type => $typeTransactions) {
+                $transactions += array_map(function ($transactionData) use ($address, $type) {
+                    return new Transaction(
+                        $type,
+                        new ServiceOrigin($address, $transactionData['service'], $transactionData['version']),
+                        $transactionData['action'],
+                        isset($transactionData['params']) ? array_map([$this, 'getParam'], $transactionData['params']) : []
+                    );
+                }, $typeTransactions);
+            }
         }
 
         return new TransportTransactions($transactions);
@@ -528,7 +532,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
 
             $type = $transaction->getType();
 
-            $output['command_reply']['response']['transport']['transactions'][$type][] = $transactionData;
+            $output['command_reply']['response']['transport']['transactions'][$transaction->getOrigin()->getName()][$type][] = $transactionData;
         }
 
         return $output;

@@ -281,7 +281,7 @@ class Transport
      */
     public function setData($service, $version, $action, array $data)
     {
-        return $this->data->set($service, $version, $action, $data);
+        return $this->data->set($this->meta->getGateway()[1], $service, $version, $action, $data);
     }
 
     /**
@@ -293,7 +293,7 @@ class Transport
      */
     public function setCollection($service, $version, $action, array $collection)
     {
-        return $this->data->set($service, $version, $action, $collection);
+        return $this->data->set($this->meta->getGateway()[1], $service, $version, $action, $collection);
     }
 
     /**
@@ -305,7 +305,7 @@ class Transport
      */
     public function addSimpleRelation($serviceFrom, $idFrom, $serviceTo, $idTo)
     {
-        return $this->relations->addSimple($serviceFrom, $idFrom, $serviceTo, $idTo);
+        return $this->relations->addSimple($this->meta->getGateway()[1], $serviceFrom, $idFrom, $serviceTo, $idTo);
     }
 
     /**
@@ -317,7 +317,7 @@ class Transport
      */
     public function addMultipleRelation($serviceFrom, $idFrom, $serviceTo, array $idsTo)
     {
-        return $this->relations->addMultipleRelation($serviceFrom, $idFrom, $serviceTo, $idsTo);
+        return $this->relations->addMultipleRelation($this->meta->getGateway()[1], $serviceFrom, $idFrom, $serviceTo, $idsTo);
     }
 
     /**
@@ -328,7 +328,7 @@ class Transport
      */
     public function setLink($namespace, $link, $uri)
     {
-        return $this->links->setLink($namespace, $link, $uri);
+        return $this->links->setLink($this->meta->getGateway()[1], $namespace, $link, $uri);
     }
 
     /**

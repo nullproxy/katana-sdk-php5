@@ -15,7 +15,17 @@
 
 namespace Katana\Sdk\Tests\Api\Mapper;
 
+use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Mapper\CompactPayloadMapper;
+use Katana\Sdk\Api\Transport;
+use Katana\Sdk\Api\TransportCalls;
+use Katana\Sdk\Api\TransportData;
+use Katana\Sdk\Api\TransportErrors;
+use Katana\Sdk\Api\TransportFiles;
+use Katana\Sdk\Api\TransportLinks;
+use Katana\Sdk\Api\TransportMeta;
+use Katana\Sdk\Api\TransportRelations;
+use Katana\Sdk\Api\TransportTransactions;
 
 class CompactPayloadMapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,5 +53,27 @@ class CompactPayloadMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http', $mapper->getGatewayProtocol($command));
         $this->assertEquals('http://127.0.0.1:80', $mapper->getGatewayAddress($command));
         $this->assertEquals('205.81.5.62:7681', $mapper->getClientAddress($command));
+    }
+
+    public function testTransportMapping()
+    {
+        $command = json_decode(
+            file_get_contents(__DIR__ . '/response.json'),
+            true
+        );
+
+        $mapper = new CompactPayloadMapper();
+
+        $transport = $mapper->getTransport($command);
+        $this->assertInstanceOf(Transport::class, $transport);
+        $this->assertInstanceOf(TransportMeta::class, $transport->getMeta());
+        $this->assertInstanceOf(TransportFiles::class, $transport->getFiles());
+        $this->assertInstanceOf(TransportData::class, $transport->getData());
+        $this->assertInstanceOf(TransportRelations::class, $transport->getRelations());
+        $this->assertInstanceOf(TransportLinks::class, $transport->getLinks());
+        $this->assertInstanceOf(TransportCalls::class, $transport->getCalls());
+        $this->assertInstanceOf(TransportTransactions::class, $transport->getTransactions());
+        $this->assertInstanceOf(TransportErrors::class, $transport->getErrors());
+        $this->assertInstanceOf(File::class, $transport->getBody());
     }
 }

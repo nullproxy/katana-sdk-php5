@@ -16,8 +16,10 @@
 namespace Katana\Sdk\Tests\Api;
 
 use Katana\Sdk\Api\ActionApi;
+use Katana\Sdk\Api\Call;
 use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Transport;
+use Katana\Sdk\Api\TransportMeta;
 use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\InvalidValueException;
 use Katana\Sdk\Logger\KatanaLogger;
@@ -59,7 +61,11 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
             Argument::any(), Argument::any()
         )->willReturn($this->service->reveal());
 
+        $meta = $this->prophesize(TransportMeta::class);
+        $meta->getGateway()->willReturn('127.0.0.1:80');
+
         $this->transport = $this->prophesize(Transport::class);
+        $this->transport->getMeta()->willReturn($meta);
 
         $this->action = new ActionApi(
             $this->logger->reveal(),
@@ -137,6 +143,8 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
     public function testCallWithLocalFilesWithoutServer()
     {
         $this->service->hasFileServer()->willReturn(false);
+
+        $this->transport->addCall(Argument::type(Call::class))->shouldBeCalled();
 
         /** @var File $file */
         $file = $this->prophesize(File::class);

@@ -25,6 +25,11 @@ class ServiceOrigin
     /**
      * @var string
      */
+    private $address = '';
+
+    /**
+     * @var string
+     */
     private $name = '';
 
     /**
@@ -33,13 +38,23 @@ class ServiceOrigin
     private $version = '';
 
     /**
+     * @param string $address
      * @param string $name
      * @param string $version
      */
-    public function __construct($name, $version)
+    public function __construct($address, $name, $version)
     {
+        $this->address = $address;
         $this->name = $name;
         $this->version = $version;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
     }
 
     /**
