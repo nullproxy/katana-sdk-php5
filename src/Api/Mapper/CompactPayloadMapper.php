@@ -255,19 +255,21 @@ class CompactPayloadMapper implements PayloadMapperInterface
             $data = [];
         }
 
-        foreach ($data as $service => $serviceFiles) {
-            foreach ($serviceFiles as $version => $versionFiles) {
-                foreach ($versionFiles as $action => $actionFiles) {
-                    foreach ($actionFiles as $name => $fileData) {
-                        $token = isset($fileData['t']) ? $fileData['t'] : '';
-                        $data[$service][$version][$action][$name] = new File(
-                            $name,
-                            $fileData['p'],
-                            $fileData['m'],
-                            $fileData['f'],
-                            $fileData['s'],
-                            $token
-                        );
+        foreach ($data as $address => $addressFiles) {
+            foreach ($addressFiles as $service => $serviceFiles) {
+                foreach ($serviceFiles as $version => $versionFiles) {
+                    foreach ($versionFiles as $action => $actionFiles) {
+                        foreach ($actionFiles as $name => $fileData) {
+                            $token = isset($fileData['t']) ? $fileData['t'] : '';
+                            $data[$address][$service][$version][$action][$name] = new File(
+                                $name,
+                                $fileData['p'],
+                                $fileData['m'],
+                                $fileData['f'],
+                                $fileData['s'],
+                                $token
+                            );
+                        }
                     }
                 }
             }
@@ -283,18 +285,20 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function writeTransportFiles(TransportFiles $files, array $output)
     {
-        foreach ($files->getAll() as $service => $serviceFiles) {
-            foreach ($serviceFiles as $version => $versionFiles) {
-                foreach ($versionFiles as $action => $actionFiles) {
-                    /** @var File $file */
-                    foreach ($actionFiles as $name => $file) {
-                        $output['cr']['r']['T']['f'][$service][$version][$action][$name] = [
-                            'p' => $file->getPath(),
-                            'm' => $file->getMime(),
-                            'f' => $file->getFilename(),
-                            's' => $file->getSize(),
-                            't' => $file->getToken(),
-                        ];
+        foreach ($files->getAll() as $address => $addressFiles) {
+            foreach ($addressFiles as $service => $serviceFiles) {
+                foreach ($serviceFiles as $version => $versionFiles) {
+                    foreach ($versionFiles as $action => $actionFiles) {
+                        /** @var File $file */
+                        foreach ($actionFiles as $name => $file) {
+                            $output['cr']['r']['T']['f'][$address][$service][$version][$action][$name] = [
+                                'p' => $file->getPath(),
+                                'm' => $file->getMime(),
+                                'f' => $file->getFilename(),
+                                's' => $file->getSize(),
+                                't' => $file->getToken(),
+                            ];
+                        }
                     }
                 }
             }
@@ -378,7 +382,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportRelations(array $raw)
     {
-        if (isset($raw['c']['a']['T']['r'])) {
+        if (isset($raw['c']['a']['T']['r']) && (array) $raw['c']['a']['T']['r']) {
             $relations = $raw['c']['a']['T']['r'];
         } else {
             $relations = [];
@@ -407,7 +411,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportLinks(array $raw)
     {
-        if (isset($raw['c']['a']['T']['l'])) {
+        if (isset($raw['c']['a']['T']['l']) && (array) $raw['c']['a']['T']['l']) {
             $links = $raw['c']['a']['T']['l'];
         } else {
             $links = [];
@@ -436,26 +440,24 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportCalls(array $raw)
     {
-        if (isset($raw['c']['a']['T']['c'])) {
+        if (isset($raw['c']['a']['T']['c']) && (array) $raw['c']['a']['T']['c']) {
             $rawCalls = $raw['c']['a']['T']['c'];
         } else {
             $rawCalls = [];
         }
 
         $calls = [];
-        foreach ($rawCalls as $address => $addressCalls) {
-            foreach ($addressCalls as $service => $serviceCalls) {
-                foreach ($serviceCalls as $version => $versionCalls) {
-                    $calls += array_map(function (array $callData) use ($address, $service, $version) {
-                        return new Call(
-                            new ServiceOrigin($address, $service, $version),
-                            $callData['n'],
-                            new VersionString($callData['v']),
-                            $callData['a'],
-                            isset($callData['p'])? array_map([$this, 'getParam'], $callData['p']) : []
-                        );
-                    }, $versionCalls);
-                }
+        foreach ($rawCalls as $service => $serviceCalls) {
+            foreach ($serviceCalls as $version => $versionCalls) {
+                $calls += array_map(function (array $callData) use ($service, $version) {
+                    return new Call(
+                        new ServiceOrigin('', $service, $version),
+                        $callData['n'],
+                        new VersionString($callData['v']),
+                        $callData['a'],
+                        isset($callData['p'])? array_map([$this, 'getParam'], $callData['p']) : []
+                    );
+                }, $versionCalls);
             }
         }
 
@@ -482,7 +484,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 $callData['p'] = [];
             }
 
-            $output['cr']['r']['T']['c'][$call->getOrigin()->getAddress()][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
+            $output['cr']['r']['T']['c'][$call->getOrigin()->getName()][$call->getOrigin()->getVersion()][] = $callData;
         }
 
         return $output;
@@ -501,23 +503,21 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $transactions = [];
-        foreach ($rawTransactions as $address => $addressTransactions) {
-            foreach ($addressTransactions as $type => $typeTransactions) {
-                $transactions = array_merge($transactions, array_map(function ($transactionData) use ($address, $type) {
-                    $type = [
-                        'c' => 'commit',
-                        'r' => 'rollback',
-                        'C' => 'complete',
-                    ][$type];
+        foreach ($rawTransactions as $type => $typeTransactions) {
+            $transactions = array_merge($transactions, array_map(function ($transactionData) use ($type) {
+                $type = [
+                    'c' => 'commit',
+                    'r' => 'rollback',
+                    'C' => 'complete',
+                ][$type];
 
-                    return new Transaction(
-                        $type,
-                        new ServiceOrigin($address, $transactionData['n'], $transactionData['v']),
-                        $transactionData['a'],
-                        isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
-                    );
-                }, $typeTransactions));
-            }
+                return new Transaction(
+                    $type,
+                    new ServiceOrigin('', $transactionData['n'], $transactionData['v']),
+                    $transactionData['a'],
+                    isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
+                );
+            }, $typeTransactions));
         }
 
         return new TransportTransactions($transactions);
@@ -550,7 +550,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 'complete' => 'C',
             ][$transaction->getType()];
 
-            $output['cr']['r']['T']['t'][$transaction->getOrigin()->getAddress()][$type] = $transactionData;
+            $output['cr']['r']['T']['t'][$type] = $transactionData;
         }
 
         return $output;
@@ -569,17 +569,20 @@ class CompactPayloadMapper implements PayloadMapperInterface
         }
 
         $errors = [];
-        foreach ($rawErrors as $service => $serviceErrors) {
-            foreach ($serviceErrors as $version => $versionErrors) {
-                $errors += array_map(function ($errorData) use ($service, $version) {
-                    return new Error(
-                        $service,
-                        $version,
-                        $errorData['m'],
-                        $errorData['c'],
-                        $errorData['s']
-                    );
-                }, $versionErrors);
+        foreach ($rawErrors as $address => $addressErrors) {
+            foreach ($addressErrors as $service => $serviceErrors) {
+                foreach ($serviceErrors as $version => $versionErrors) {
+                    $errors += array_map(function ($errorData) use ($address, $service, $version) {
+                        return new Error(
+                            $address,
+                            $service,
+                            $version,
+                            $errorData['m'],
+                            $errorData['c'],
+                            $errorData['s']
+                        );
+                    }, $versionErrors);
+                }
             }
         }
 
@@ -594,7 +597,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
     public function writeTransportErrors(TransportErrors $errors, array $output)
     {
         foreach ($errors->get() as $error) {
-            $output['cr']['r']['T']['e'][$error->getService()][$error->getVersion()][] = [
+            $output['cr']['r']['T']['e'][$error->getAddress()][$error->getService()][$error->getVersion()][] = [
                 'm' => $error->getMessage(),
                 'c' => $error->getCode(),
                 's' => $error->getStatus(),

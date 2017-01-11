@@ -45,39 +45,42 @@ class TransportFiles
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param string $version
      * @param string $action
      * @param string $name
      * @return File
      */
-    public function get($service, $version, $action, $name)
+    public function get($address, $service, $version, $action, $name)
     {
-        return $this->files[$service][$version][$action][$name];
+        return $this->files[$address][$service][$version][$action][$name];
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param $version
      * @param string $action
      * @param string $name
      * @return bool
      */
-    public function has($service, $version, $action, $name)
+    public function has($address, $service, $version, $action, $name)
     {
-        return isset($this->files[$service][$version][$action][$name]);
+        return isset($this->files[$address][$service][$version][$action][$name]);
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @param VersionString $version
      * @param string $action
      * @param File $file
      * @return bool
      */
-    public function add($service, VersionString $version, $action, File $file)
+    public function add($address, $service, VersionString $version, $action, File $file)
     {
-        $this->files[$service][$version->getVersion()][$action][$file->getName()] = $file;
+        $this->files[$address][$service][$version->getVersion()][$action][$file->getName()] = $file;
 
         return true;
     }

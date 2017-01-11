@@ -46,28 +46,40 @@ class TransportErrors
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return Error[]
      */
-    public function get($service = '')
+    public function get($address = '', $service = '')
     {
         $errors = $this->errors;
-        if ($service) {
-            $errors = isset($errors[$service])? $errors[$service] : [];
+        if ($address) {
+            $errors = isset($errors[$address])? $errors[$address] : [];
+
+            if ($service) {
+                $errors = isset($errors[$service])? $errors[$service] : [];
+            }
         }
+
+        var_dump($errors);
 
         return $errors;
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getArray($service = '')
+    public function getArray($address = '', $service = '')
     {
         $errors = [];
         foreach ($this->errors as $error) {
-            if ($service && $error->getService() !== $service) {
+            if ($address && $error->getAddress() !== $address) {
+                echo "Skip address $address\n";
+                continue;
+            } elseif ($service && $error->getService() !== $service) {
+                echo "Skip service $service\n";
                 continue;
             }
 
@@ -77,10 +89,12 @@ class TransportErrors
                 's' => $error->getStatus(),
             ];
 
-            if ($service) {
+            if ($address) {
                 $errors[$error->getVersion()][] = $errorOutput;
+            } elseif ($service) {
+                $errors[$error->getVersion()][$error->getAddress()][] = $errorOutput;
             } else {
-                $errors[$error->getService()][$error->getVersion()][] = $errorOutput;
+                $errors[$error->getService()][$error->getAddress()][$error->getVersion()][] = $errorOutput;
             }
         }
 

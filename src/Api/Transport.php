@@ -229,7 +229,7 @@ class Transport
      */
     public function hasFile($service, $version, $action, $name)
     {
-        return $this->files->has($service, $version, $action, $name);
+        return $this->files->has($this->meta->getGateway()[1], $service, $version, $action, $name);
     }
 
     /**
@@ -257,7 +257,7 @@ class Transport
      */
     public function addFile($service, VersionString $version, $action, File $file)
     {
-        return $this->files->add($service, $version, $action, $file);
+        return $this->files->add($this->meta->getGateway()[1], $service, $version, $action, $file);
     }
 
     /**
@@ -269,7 +269,7 @@ class Transport
      */
     public function getFile($service, $version, $action, $name)
     {
-        return $this->files->get($service, $version, $action, $name);
+        return $this->files->get($this->meta->getGateway()[1], $service, $version, $action, $name);
     }
 
     /**

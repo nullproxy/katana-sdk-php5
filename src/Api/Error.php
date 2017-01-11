@@ -24,6 +24,11 @@ class Error
     /**
      * @var string
      */
+    private $address;
+
+    /**
+     * @var string
+     */
     private $service;
 
     /**
@@ -48,19 +53,35 @@ class Error
 
     /**
      * Error constructor.
+     * @param string $address
      * @param string $service
      * @param string $version
      * @param string $message
      * @param int $code
      * @param string $status
      */
-    public function __construct($service, $version, $message, $code = 0, $status = '')
-    {
+    public function __construct(
+        $address,
+        $service,
+        $version,
+        $message,
+        $code = 0,
+        $status = ''
+    ) {
+        $this->address = $address;
         $this->service = $service;
         $this->version = $version;
         $this->message = $message;
         $this->code = $code;
         $this->status = $status ?: '500 Internal Server Error';
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
     }
 
     /**

@@ -199,7 +199,14 @@ class File
      */
     public function read()
     {
-        return file_get_contents($this->path);
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => "X-Token: $this->token"
+            ]
+        ]);
+
+        return file_get_contents($this->path, null, $context);
     }
 
     /**

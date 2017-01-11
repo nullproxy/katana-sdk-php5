@@ -63,7 +63,7 @@ class TransportRelations
      */
     public function addSimple($address, $serviceFrom, $idFrom, $serviceTo, $idTo)
     {
-        $this->relations[$address][$serviceFrom][$idFrom][$serviceTo] = $idTo;
+        $this->relations[$address][$serviceFrom][$idFrom][$address][$serviceTo] = $idTo;
 
         return true;
     }
@@ -78,7 +78,7 @@ class TransportRelations
      */
     public function addMultipleRelation($address, $serviceFrom, $idFrom, $serviceTo, array $idsTo)
     {
-        $this->relations[$address][$serviceFrom][$idFrom][$serviceTo] = $idsTo;
+        $this->relations[$address][$serviceFrom][$idFrom][$address][$serviceTo] = $idsTo;
 
         return true;
     }
