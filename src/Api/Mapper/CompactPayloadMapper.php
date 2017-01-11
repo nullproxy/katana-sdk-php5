@@ -255,19 +255,21 @@ class CompactPayloadMapper implements PayloadMapperInterface
             $data = [];
         }
 
-        foreach ($data as $service => $serviceFiles) {
-            foreach ($serviceFiles as $version => $versionFiles) {
-                foreach ($versionFiles as $action => $actionFiles) {
-                    foreach ($actionFiles as $name => $fileData) {
-                        $token = isset($fileData['t']) ? $fileData['t'] : '';
-                        $data[$service][$version][$action][$name] = new File(
-                            $name,
-                            $fileData['p'],
-                            $fileData['m'],
-                            $fileData['f'],
-                            $fileData['s'],
-                            $token
-                        );
+        foreach ($data as $address => $addressFiles) {
+            foreach ($addressFiles as $service => $serviceFiles) {
+                foreach ($serviceFiles as $version => $versionFiles) {
+                    foreach ($versionFiles as $action => $actionFiles) {
+                        foreach ($actionFiles as $name => $fileData) {
+                            $token = isset($fileData['t']) ? $fileData['t'] : '';
+                            $data[$address][$service][$version][$action][$name] = new File(
+                                $name,
+                                $fileData['p'],
+                                $fileData['m'],
+                                $fileData['f'],
+                                $fileData['s'],
+                                $token
+                            );
+                        }
                     }
                 }
             }
@@ -283,18 +285,20 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function writeTransportFiles(TransportFiles $files, array $output)
     {
-        foreach ($files->getAll() as $service => $serviceFiles) {
-            foreach ($serviceFiles as $version => $versionFiles) {
-                foreach ($versionFiles as $action => $actionFiles) {
-                    /** @var File $file */
-                    foreach ($actionFiles as $name => $file) {
-                        $output['cr']['r']['T']['f'][$service][$version][$action][$name] = [
-                            'p' => $file->getPath(),
-                            'm' => $file->getMime(),
-                            'f' => $file->getFilename(),
-                            's' => $file->getSize(),
-                            't' => $file->getToken(),
-                        ];
+        foreach ($files->getAll() as $address => $addressFiles) {
+            foreach ($addressFiles as $service => $serviceFiles) {
+                foreach ($serviceFiles as $version => $versionFiles) {
+                    foreach ($versionFiles as $action => $actionFiles) {
+                        /** @var File $file */
+                        foreach ($actionFiles as $name => $file) {
+                            $output['cr']['r']['T']['f'][$address][$service][$version][$action][$name] = [
+                                'p' => $file->getPath(),
+                                'm' => $file->getMime(),
+                                'f' => $file->getFilename(),
+                                's' => $file->getSize(),
+                                't' => $file->getToken(),
+                            ];
+                        }
                     }
                 }
             }
