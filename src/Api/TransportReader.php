@@ -142,11 +142,12 @@ class TransportReader implements TransportInterface
     }
 
     /**
+     * @param string $address
      * @param string $service
      * @return Error[]
      */
-    public function getErrors($service = '')
+    public function getErrors($address = '', $service = '')
     {
-        return $this->transport->getErrors()->getArray($service);
+        return $this->transport->getErrors()->getArray($address, $service);
     }
 }

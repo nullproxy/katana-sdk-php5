@@ -375,7 +375,15 @@ class ActionApi extends Api implements Action
      */
     public function error($message, $code = 0, $status = '')
     {
-        $this->transport->addError(new Error($this->name, $this->version, $message, $code, $status));
+        $address = $this->transport->getMeta()->getGateway()[1];
+        $this->transport->addError(new Error(
+            $address,
+            $this->name,
+            $this->version,
+            $message,
+            $code,
+            $status
+        ));
 
         return $this;
     }
