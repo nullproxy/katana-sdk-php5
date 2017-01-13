@@ -85,46 +85,38 @@
               }
             }
           },
-          "entity": [
+          "E": {
+            "F": [
+              {
+                "n": "details",
+                "f": [
+                  {
+                    "n": "name",
+                    "t": "string"
+                  },
+                  {
+                    "n": "active",
+                    "t": "boolean",
+                    "o": true
+                  }
+                ]
+              }
+            ],
+            "f": [
+              {
+                "n": "id",
+                "t": "integer"
+              }
+            ],
+            "V": true
+          },
+          "r": [
             {
-              "fields": [
-                {
-                  "name": "details",
-                  "field": [
-                    {
-                      "name": "name",
-                      "type": "string",
-                      "optional": false
-                    },
-                    {
-                      "name": "active",
-                      "type": "boolean",
-                      "optional": true
-                    }
-                  ]
-                }
-              ],
-              "validate": "true",
-              "field": [
-                {
-                  "name": "id",
-                  "type": "integer"
-                }
-              ]
-            }
-          ],
-          "relation": [
-            {
-              "validate": true,
-              "name": "accounts",
-              "version": "1.0.0"
+              "n": "accounts"
             },
             {
-              "validate": true,
-              "type": "many",
-              "version": "1.0.0",
-              "name": "posts",
-              "action": "delete"
+              "n": "posts",
+              "t": "many"
             }
           ]
         }

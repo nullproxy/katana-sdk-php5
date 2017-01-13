@@ -186,9 +186,6 @@ class ActionSchema
             return [
                 'type' => $relation->getType(),
                 'name' => $relation->getService(),
-                'version' => $relation->getVersion(),
-                'action' => $relation->getAction(),
-                'validate' => $relation->isValidate(),
             ];
         }, $this->relations);
     }

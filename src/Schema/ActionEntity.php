@@ -53,6 +53,45 @@ class ActionEntity
     private $definition = [];
 
     /**
+     * @param array $field
+     * @return array
+     */
+    private function parseField(array $field)
+    {
+        $result = [
+            'name' => $field['n'],
+            'type' => $field['t'],
+        ];
+
+        if (isset($field['o'])) {
+            $result['optional'] = $field['o'];
+        }
+
+        return $result;
+    }
+
+    private function parseObjectField(array $objectField)
+    {
+        $result = [
+            'name' => $objectField['n'],
+        ];
+
+        if (isset($objectField['o'])) {
+            $result['optional'] = $objectField['o'];
+        }
+
+        if (isset($objectField['f'])) {
+            $result['field'] = array_map([$this, 'parseField'], $objectField['f']);
+        }
+
+        if (isset($objectField['F'])) {
+            $result['fields'] = array_map([$this, 'parseObjectField'], $objectField['F']);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param array $definition
      * @return array
      */
@@ -63,17 +102,16 @@ class ActionEntity
         }
 
         $result = [];
-        if (isset($definition['field'])) {
-            foreach ($definition['field'] as $field) {
-                $result[$field['name']] = $field['type'];
-            }
+        if (isset($definition['f'])) {
+            $result['field'] = array_map([$this, 'parseField'], $definition['f']);
         }
 
+        if (isset($definition['F'])) {
+            $result['fields'] = array_map([$this, 'parseObjectField'], $definition['F']);
+        }
 
-        if (isset($definition['fields'])) {
-            foreach($definition['fields'] as $fields) {
-                $result[$fields['name']] = $this->parseDefinition($fields);
-            }
+        if (isset($definition['V'])) {
+            $result['validate'] = $definition['V'];
         }
 
         return $result;
@@ -99,7 +137,7 @@ class ActionEntity
         $this->collection = $collection;
         if ($definition) {
             // Definition stops being sent as an array in next alpha
-            $this->definition = $this->parseDefinition($definition[0]);
+            $this->definition = $this->parseDefinition($definition);
         }
     }
 

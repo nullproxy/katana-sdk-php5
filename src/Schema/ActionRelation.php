@@ -25,42 +25,18 @@ class ActionRelation
     /**
      * @var string
      */
-    private $version = '';
-
-    /**
-     * @var string
-     */
-    private $action = '';
-
-    /**
-     * @var string
-     */
     private $type = 'one';
 
     /**
-     * @var bool
-     */
-    private $validate = false;
-
-    /**
      * @param string $service
-     * @param string $version
-     * @param string $action
      * @param string $type
-     * @param bool $validate
      */
     public function __construct(
         $service,
-        $version,
-        $action,
-        $type = 'one',
-        $validate = false
+        $type = 'one'
     ) {
         $this->service = $service;
-        $this->version = $version;
-        $this->action = $action;
         $this->type = $type;
-        $this->validate = $validate;
     }
 
     /**
@@ -74,32 +50,8 @@ class ActionRelation
     /**
      * @return string
      */
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isValidate()
-    {
-        return $this->validate;
     }
 }

@@ -132,13 +132,10 @@ class SchemaMapper
             }
 
             $relations = [];
-            foreach ($this->read($action, 'relation', []) as $relation) {
+            foreach ($this->read($action, 'r', []) as $relation) {
                 $relations[] = new ActionRelation(
-                    $this->read($relation, 'name', ''),
-                    $this->read($relation, 'version', ''),
-                    $this->read($relation, 'action', ''),
-                    $this->read($relation, 'type', 'one'),
-                    $this->read($relation, 'validate', false)
+                    $this->read($relation, 'n', ''),
+                    $this->read($relation, 't', 'one')
                 );
             }
 
@@ -149,7 +146,7 @@ class SchemaMapper
                     $this->read($action, 'd', '/'),
                     $this->read($action, 'k', 'id'),
                     $this->read($action, 'c', false),
-                    $this->read($action, 'entity', [])
+                    $this->read($action, 'E', [])
                 ),
                 new HttpActionSchema(
                     $this->read($action, 'h.g', true),
