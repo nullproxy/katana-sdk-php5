@@ -267,12 +267,33 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $action = $service->getActionSchema('list');
         $this->assertTrue($action->hasEntity());
 
-        $entity = $action->getEntity();
-        $this->assertCount(2, $entity);
-        $this->assertEquals('integer', $entity['id']);
-        $this->assertCount(2, $entity['details']);
-        $this->assertEquals('string', $entity['details']['name']);
-        $this->assertEquals('boolean', $entity['details']['active']);
+        $entityExpectation = [
+            "fields" => [
+                [
+                    "name" => "details",
+                    "field" => [
+                        [
+                            "name" => "name",
+                            "type" => "string"
+                        ],
+                        [
+                            "name" => "active",
+                            "type" => "boolean",
+                            "optional" => true
+                        ],
+                    ],
+                ],
+            ],
+            "field" => [
+                [
+                    "name" => "id",
+                    "type" => "integer",
+                ]
+            ],
+            "validate" => true,
+        ];
+
+        $this->assertEquals($entityExpectation, $action->getEntity());
     }
 
     public function testResolveEntity()
@@ -349,16 +370,10 @@ class SchemaMapperTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $relations);
 
         $this->assertEquals('accounts', $relations[0]['name']);
-        $this->assertEquals('1.0.0', $relations[0]['version']);
-        $this->assertEquals('', $relations[0]['action']);
         $this->assertEquals('one', $relations[0]['type']);
-        $this->assertEquals(true, $relations[0]['validate']);
 
         $this->assertEquals('posts', $relations[1]['name']);
-        $this->assertEquals('1.0.0', $relations[1]['version']);
-        $this->assertEquals('delete', $relations[1]['action']);
         $this->assertEquals('many', $relations[1]['type']);
-        $this->assertEquals(true, $relations[1]['validate']);
     }
 
     /**
