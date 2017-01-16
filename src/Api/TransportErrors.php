@@ -61,8 +61,6 @@ class TransportErrors
             }
         }
 
-        var_dump($errors);
-
         return $errors;
     }
 
@@ -90,11 +88,11 @@ class TransportErrors
             ];
 
             if ($address) {
-                $errors[$error->getVersion()][] = $errorOutput;
+                $errors[$error->getService()][$error->getVersion()][] = $errorOutput;
             } elseif ($service) {
-                $errors[$error->getVersion()][$error->getAddress()][] = $errorOutput;
+                $errors[$error->getService()][] = $errorOutput;
             } else {
-                $errors[$error->getService()][$error->getAddress()][$error->getVersion()][] = $errorOutput;
+                $errors[$error->getAddress()][$error->getService()][$error->getVersion()][] = $errorOutput;
             }
         }
 
