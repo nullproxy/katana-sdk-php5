@@ -550,7 +550,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 'complete' => 'C',
             ][$transaction->getType()];
 
-            $output['cr']['r']['T']['t'][$type] = $transactionData;
+            $output['cr']['r']['T']['t'][$type][] = $transactionData;
         }
 
         return $output;
