@@ -14,7 +14,6 @@
  */
 
 namespace Katana\Sdk\Logger;
-use Katana\Sdk\Exception\ConsoleException;
 
 /**
  * Logger class

@@ -117,6 +117,8 @@ abstract class Component
 
     /**
      * Run the SDK.
+     *
+     * @return bool
      */
     public function run()
     {
@@ -138,6 +140,8 @@ abstract class Component
             $this->logger->debug('Calling shutdown callback');
             call_user_func($this->shutdown, $this);
         }
+
+        return true;
     }
 
     /**
