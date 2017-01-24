@@ -86,7 +86,7 @@ class TransportMeta
         $id,
         $datetime,
         $gateway,
-        $origin,
+        array $origin,
         $level,
         array $properties = []
     ) {
