@@ -181,6 +181,19 @@ abstract class Api
     }
 
     /**
+     * @return array
+     */
+    public function getServices()
+    {
+        return array_map(function (ServiceSchema $service) {
+            return [
+                'service' => $service->getName(),
+                'version' => $service->getVersion(),
+            ];
+        }, $this->mapping->getAll());
+    }
+
+    /**
      * @param string $name
      * @param string $version
      * @return ServiceSchema

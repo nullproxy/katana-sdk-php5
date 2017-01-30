@@ -71,4 +71,13 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals($this->services[2], $this->mapping->find('test', '1.*.*'));
     }
+
+    public function testGetAllServices()
+    {
+        $this->assertEquals([
+            $this->services[1],
+            $this->services[2],
+            $this->services[3],
+        ], $this->mapping->getAll());
+    }
 }
