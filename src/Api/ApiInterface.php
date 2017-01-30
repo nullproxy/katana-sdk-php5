@@ -74,6 +74,11 @@ interface ApiInterface
     public function log($value);
 
     /**
+     * @return array
+     */
+    public function getServices();
+
+    /**
      * @param string $name
      * @param string $version
      * @return ServiceSchema
