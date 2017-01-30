@@ -30,7 +30,7 @@ class Mapping
      */
     public function load(array $services)
     {
-        $this->services = $services;
+        $this->services = array_values($services);
     }
 
     /**
@@ -59,5 +59,13 @@ class Mapping
         }
 
         return $search[array_search($resolvedVersion, $loadedVersions)];
+    }
+
+    /**
+     * @return ServiceSchema[]
+     */
+    public function getAll()
+    {
+        return $this->services;
     }
 }

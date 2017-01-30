@@ -19,6 +19,7 @@ use Katana\Sdk\Api\Api;
 use Katana\Sdk\Component\Component;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
+use Katana\Sdk\Schema\ServiceSchema;
 use Prophecy\Argument;
 
 function foo() {}
@@ -32,19 +33,29 @@ class ApiStub extends Api {}
 
 class ApiTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Api
+     */
     private $api;
 
     private $logger;
+
+    /**
+     * @var Mapping
+     */
+    private $mapping;
 
     public function setUp()
     {
         $this->logger = $this->prophesize(KatanaLogger::class);
         $this->logger->getLevel()->willReturn(KatanaLogger::LOG_DEBUG);
 
+        $this->mapping = $this->prophesize(Mapping::class);
+
         $this->api = new ApiStub(
             $this->logger->reveal(),
             $this->prophesize(Component::class)->reveal(),
-            $this->prophesize(Mapping::class)->reveal(),
+            $this->mapping->reveal(),
             '/',
             'test',
             '1.0',
@@ -176,5 +187,31 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->logger->debug(Argument::any())->shouldNotBeCalled();
         $this->logger->getLevel()->willReturn(KatanaLogger::LOG_INFO);
         $this->assertEquals(false, $this->api->log('test'));
+    }
+
+    public function testGetServices()
+    {
+        $service1 = $this->prophesize(ServiceSchema::class);
+        $service1->getName()->willReturn('foo');
+        $service1->getVersion()->willReturn('1.0.0');
+        $service2 = $this->prophesize(ServiceSchema::class);
+        $service2->getName()->willReturn('bar');
+        $service2->getVersion()->willReturn('1.1.2');
+
+        $this->mapping->getAll()->willReturn([
+            $service1,
+            $service2,
+        ]);
+
+        $this->assertEquals([
+            ['service' => 'foo', 'version' => '1.0.0'],
+            ['service' => 'bar', 'version' => '1.1.2'],
+        ], $this->api->getServices());
+    }
+
+    public function testGetEmptyServices()
+    {
+        $this->mapping->getAll()->willReturn([]);
+        $this->assertEquals([], $this->api->getServices());
     }
 }
