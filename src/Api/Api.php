@@ -51,7 +51,7 @@ abstract class Api
     /**
      * @var string
      */
-    protected $platformVersion;
+    protected $frameworkVersion;
 
     /**
      * @var array
@@ -75,7 +75,7 @@ abstract class Api
      * @param string $path
      * @param string $name
      * @param string $version
-     * @param string $platformVersion
+     * @param string $frameworkVersion
      * @param array $variables
      * @param bool $debug
      */
@@ -86,7 +86,7 @@ abstract class Api
         $path,
         $name,
         $version,
-        $platformVersion,
+        $frameworkVersion,
         array $variables = [],
         $debug = false
     ) {
@@ -96,7 +96,7 @@ abstract class Api
         $this->path = $path;
         $this->name = $name;
         $this->version = $version;
-        $this->platformVersion = $platformVersion;
+        $this->frameworkVersion = $frameworkVersion;
         $this->variables = $variables;
         $this->debug = $debug;
     }
@@ -128,9 +128,9 @@ abstract class Api
     /**
      * @return string
      */
-    public function getPlatformVersion()
+    public function getFrameworkVersion()
     {
-        return $this->platformVersion;
+        return $this->frameworkVersion;
     }
 
     /**

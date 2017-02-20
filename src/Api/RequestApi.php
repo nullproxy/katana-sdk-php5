@@ -59,7 +59,7 @@ class RequestApi extends Api implements Request
      * @param string $path
      * @param string $name
      * @param string $version
-     * @param string $platformVersion
+     * @param string $frameworkVersion
      * @param array $variables
      * @param bool $debug
      * @param HttpRequest $httpRequest
@@ -75,7 +75,7 @@ class RequestApi extends Api implements Request
         $path,
         $name,
         $version,
-        $platformVersion,
+        $frameworkVersion,
         array $variables,
         $debug,
         HttpRequest $httpRequest,
@@ -91,7 +91,7 @@ class RequestApi extends Api implements Request
             $path,
             $name,
             $version,
-            $platformVersion,
+            $frameworkVersion,
             $variables,
             $debug
         );
@@ -173,7 +173,7 @@ class RequestApi extends Api implements Request
             $this->path,
             $this->name,
             $this->version,
-            $this->platformVersion,
+            $this->frameworkVersion,
             $this->variables,
             $this->debug,
             $this->httpRequest,
