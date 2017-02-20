@@ -46,7 +46,7 @@ class ActionApi extends Api implements Action
      * @param string $path
      * @param string $name
      * @param string $version
-     * @param string $platformVersion
+     * @param string $frameworkVersion
      * @param array $variables
      * @param bool $debug
      * @param string $actionName
@@ -60,7 +60,7 @@ class ActionApi extends Api implements Action
         $path,
         $name,
         $version,
-        $platformVersion,
+        $frameworkVersion,
         array $variables,
         $debug,
         $actionName,
@@ -74,7 +74,7 @@ class ActionApi extends Api implements Action
             $path,
             $name,
             $version,
-            $platformVersion,
+            $frameworkVersion,
             $variables,
             $debug
         );

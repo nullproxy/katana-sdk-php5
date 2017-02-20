@@ -46,7 +46,7 @@ class ServiceApiFactory extends ApiFactory
             dirname(realpath($_SERVER['SCRIPT_FILENAME'])),
             $input->getName(),
             $input->getVersion(),
-            $input->getPlatformVersion(),
+            $input->getFrameworkVersion(),
             $input->getVariables(),
             $input->isDebug(),
             $action,

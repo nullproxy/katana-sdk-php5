@@ -37,7 +37,7 @@ interface ApiInterface
     /**
      * @return string
      */
-    public function getPlatformVersion();
+    public function getFrameworkVersion();
 
     /**
      * @return array

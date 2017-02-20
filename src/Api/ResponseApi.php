@@ -58,7 +58,7 @@ class ResponseApi extends Api implements Response
      * @param string $path
      * @param string $name
      * @param string $version
-     * @param string $platformVersion
+     * @param string $frameworkVersion
      * @param array $variables
      * @param bool $debug
      * @param HttpRequest $request
@@ -74,7 +74,7 @@ class ResponseApi extends Api implements Response
         $path,
         $name,
         $version,
-        $platformVersion,
+        $frameworkVersion,
         array $variables,
         $debug,
         HttpRequest $request,
@@ -90,7 +90,7 @@ class ResponseApi extends Api implements Response
             $path,
             $name,
             $version,
-            $platformVersion,
+            $frameworkVersion,
             $variables,
             $debug
         );

@@ -54,7 +54,7 @@ class CliInput
      *
      * @var string
      */
-    private $platformVersion;
+    private $frameworkVersion;
 
     /**
      * Socket name for ZeroMQ to open an IPC socket
@@ -103,7 +103,7 @@ class CliInput
             'component' => new CliOption('c', 'component', CliOption::VALUE_SINGLE),
             'name' => new CliOption('n', 'name', CliOption::VALUE_SINGLE),
             'version' => new CliOption('v', 'version', CliOption::VALUE_SINGLE),
-            'platform-version' => new CliOption('p', 'platform-version', CliOption::VALUE_SINGLE),
+            'framework-version' => new CliOption('p', 'framework-version', CliOption::VALUE_SINGLE),
             'socket' => new CliOption('s', 'socket', CliOption::VALUE_SINGLE),
             'debug' => new CliOption('D', 'debug', CliOption::VALUE_NONE),
             'var' => new CliOption('V', 'var', CliOption::VALUE_MULTIPLE),
@@ -131,11 +131,12 @@ class CliInput
             return $option->parse($options);
         }, $definition);
 
+        print_r($optionValues);
         return new self(
             $optionValues['component'],
             $optionValues['name'],
             $optionValues['version'],
-            $optionValues['platform-version'],
+            $optionValues['framework-version'],
             $optionValues['socket'],
             $optionValues['debug'],
             $optionValues['var'],
@@ -150,7 +151,7 @@ class CliInput
      * @param string $component
      * @param string $name
      * @param string $version
-     * @param string $platformVersion
+     * @param string $frameworkVersion
      * @param string $socket
      * @param bool $debug
      * @param array $variables
@@ -163,7 +164,7 @@ class CliInput
         $component,
         $name,
         $version,
-        $platformVersion,
+        $frameworkVersion,
         $socket = '',
         $debug = false,
         array $variables = [],
@@ -174,8 +175,9 @@ class CliInput
         $this->component = $component;
         $this->name = $name;
         $this->version = $version;
-        $this->platformVersion = $platformVersion;
+        $this->frameworkVersion = $frameworkVersion;
         $socketVersion = preg_replace('/[^a-z0-9]/i', '-', $version);
+        //var_dump($frameworkVersion);
         $this->socket = $socket ?: "@katana-$component-$name-$socketVersion";
         $this->debug = $debug;
         $this->variables = $variables;
@@ -213,9 +215,9 @@ class CliInput
     /**
      * @return string
      */
-    public function getPlatformVersion()
+    public function getFrameworkVersion()
     {
-        return $this->platformVersion;
+        return $this->frameworkVersion;
     }
 
     /**
