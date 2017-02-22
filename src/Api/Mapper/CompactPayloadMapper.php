@@ -725,7 +725,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
             's' => $call->getService(),
             'v' => $call->getVersion(),
             'a' => $call->getAction(),
-            'p' => array_map([$this, 'writeParam'], $call->getParams()),
+            'p' => array_map([$this, 'writeParam'], array_values($call->getParams())),
         ];
 
         return $output;
