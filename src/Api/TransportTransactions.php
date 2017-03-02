@@ -78,14 +78,12 @@ class TransportTransactions
      * @param string $service
      * @return array
      */
-    public function getArray($address = '', $service = '')
+    public function getArray($service = '')
     {
         $transactions = [];
         foreach ($this->transactions as $transaction) {
             $origin = $transaction->getOrigin();
-            if ($address && $origin->getAddress() !== $service) {
-                continue;
-            } elseif ($service && $origin->getName() !== $service) {
+            if ($service && $origin->getName() !== $service) {
                 continue;
             }
 
@@ -104,8 +102,6 @@ class TransportTransactions
 
             if ($service) {
                 $transactions[$type][$origin->getVersion()][] = $transactionOutput;
-            } elseif ($address) {
-                $transactions[$type][$origin->getName()][$origin->getVersion()][] = $transactionOutput;
             } else {
                 $transactions[$type][$origin->getAddress()][$origin->getName()][$origin->getVersion()][] = $transactionOutput;
             }

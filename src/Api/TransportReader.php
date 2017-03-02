@@ -123,13 +123,12 @@ class TransportReader implements TransportInterface
     }
 
     /**
-     * @param string $address
      * @param string $service
      * @return array
      */
-    public function getCalls($address = '', $service = '')
+    public function getCalls($service = '')
     {
-        return $this->transport->getCalls()->getArray($address, $service);
+        return $this->transport->getCalls()->getArray($service);
     }
 
     /**

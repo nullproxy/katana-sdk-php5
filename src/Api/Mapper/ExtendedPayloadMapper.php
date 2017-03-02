@@ -442,7 +442,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                 foreach ($serviceCalls as $version => $versionCalls) {
                     $calls += array_map(function (array $callData) use ($address, $service, $version) {
                         return new Call(
-                            new ServiceOrigin($address, $service, $version),
+                            new ServiceOrigin($service, $version),
                             $callData['name'],
                             new VersionString($callData['version']),
                             $callData['action'],
@@ -498,7 +498,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                 $transactions += array_map(function ($transactionData) use ($address, $type) {
                     return new Transaction(
                         $type,
-                        new ServiceOrigin($address, $transactionData['service'], $transactionData['version']),
+                        new ServiceOrigin($transactionData['service'], $transactionData['version']),
                         $transactionData['action'],
                         isset($transactionData['params']) ? array_map([$this, 'getParam'], $transactionData['params']) : []
                     );
