@@ -515,6 +515,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                     $type,
                     new ServiceOrigin($transactionData['n'], $transactionData['v']),
                     $transactionData['a'],
+                    $transactionData['c'],
                     isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
                 );
             }, $typeTransactions));
@@ -535,6 +536,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 's' => $transaction->getOrigin()->getName(),
                 'v' => $transaction->getOrigin()->getVersion(),
                 'a' => $transaction->getAction(),
+                'c' => $transaction->getCallee(),
             ];
 
             if ($transaction->getParams()) {
