@@ -500,6 +500,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                         $type,
                         new ServiceOrigin($transactionData['service'], $transactionData['version']),
                         $transactionData['action'],
+                        $transactionData['callee'],
                         isset($transactionData['params']) ? array_map([$this, 'getParam'], $transactionData['params']) : []
                     );
                 }, $typeTransactions);
@@ -521,6 +522,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                 'service' => $transaction->getOrigin()->getName(),
                 'version' => $transaction->getOrigin()->getVersion(),
                 'action' => $transaction->getAction(),
+                'callee' => $transaction->getCallee(),
             ];
 
             if ($transaction->getParams()) {

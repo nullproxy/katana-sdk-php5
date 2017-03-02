@@ -40,9 +40,18 @@ class Transaction
     private $origin;
 
     /**
+     * Name of the action that register the transaction.
+     *
      * @var string
      */
     private $action = '';
+
+    /**
+     * Name of the action to call.
+     *
+     * @var string
+     */
+    private $callee = '';
 
     /**
      * @var Param[]
@@ -53,6 +62,7 @@ class Transaction
      * @param string $type
      * @param ServiceOrigin $origin
      * @param string $action
+     * @param string $callee
      * @param Param[] $params
      * @throws InvalidValueException
      */
@@ -60,6 +70,7 @@ class Transaction
         $type,
         ServiceOrigin $origin,
         $action,
+        $callee,
         array $params = []
     ) {
         if (!in_array($type, self::VALID_TYPES)) {
@@ -68,6 +79,7 @@ class Transaction
         $this->type = $type;
         $this->origin = $origin;
         $this->action = $action;
+        $this->callee = $callee;
         $this->params = $params;
     }
 
@@ -93,6 +105,14 @@ class Transaction
     public function getAction()
     {
         return $this->action;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCallee()
+    {
+        return $this->callee;
     }
 
     /**
