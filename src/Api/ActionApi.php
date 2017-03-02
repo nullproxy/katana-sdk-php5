@@ -275,7 +275,7 @@ class ActionApi extends Api implements Action
         $this->transport->addTransaction(
             new Transaction(
                 'commit',
-                new ServiceOrigin($address, $this->name, $this->version),
+                new ServiceOrigin($this->name, $this->version),
                 $action,
                 $params
             )
@@ -295,7 +295,7 @@ class ActionApi extends Api implements Action
         $this->transport->addTransaction(
             new Transaction(
                 'rollback',
-                new ServiceOrigin($address, $this->name, $this->version),
+                new ServiceOrigin($this->name, $this->version),
                 $action,
                 $params
             )
@@ -315,7 +315,7 @@ class ActionApi extends Api implements Action
         $this->transport->addTransaction(
             new Transaction(
                 'complete',
-                new ServiceOrigin($address, $this->name, $this->version),
+                new ServiceOrigin($this->name, $this->version),
                 $action,
                 $params
             )
@@ -343,7 +343,7 @@ class ActionApi extends Api implements Action
         $versionString = new VersionString($version);
         $address = $this->transport->getMeta()->getGateway()[1];
         $this->transport->addCall(new Call(
-            new ServiceOrigin($address, $this->name, $this->version),
+            new ServiceOrigin($this->name, $this->version),
             $service,
             $versionString,
             $action,

@@ -451,7 +451,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
             foreach ($serviceCalls as $version => $versionCalls) {
                 $calls += array_map(function (array $callData) use ($service, $version) {
                     return new Call(
-                        new ServiceOrigin('', $service, $version),
+                        new ServiceOrigin($service, $version),
                         $callData['n'],
                         new VersionString($callData['v']),
                         $callData['a'],
@@ -513,7 +513,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
 
                 return new Transaction(
                     $type,
-                    new ServiceOrigin('', $transactionData['n'], $transactionData['v']),
+                    new ServiceOrigin($transactionData['n'], $transactionData['v']),
                     $transactionData['a'],
                     isset($transactionData['p']) ? array_map([$this, 'getParam'], $transactionData['p']) : []
                 );
