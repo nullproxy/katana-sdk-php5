@@ -440,8 +440,8 @@ class CompactPayloadMapper implements PayloadMapperInterface
      */
     public function getTransportCalls(array $raw)
     {
-        if (isset($raw['C']['a']['T']['c']) && (array) $raw['C']['a']['T']['c']) {
-            $rawCalls = $raw['C']['a']['T']['c'];
+        if (isset($raw['c']['a']['T']['C']) && (array) $raw['c']['a']['T']['C']) {
+            $rawCalls = $raw['c']['a']['T']['C'];
         } else {
             $rawCalls = [];
         }
