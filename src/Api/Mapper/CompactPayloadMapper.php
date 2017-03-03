@@ -16,7 +16,8 @@
 namespace Katana\Sdk\Api\Mapper;
 
 use Katana\Sdk\Api\ActionApi;
-use Katana\Sdk\Api\Call;
+use Katana\Sdk\Api\DeferCall;
+use Katana\Sdk\Api\RemoteCall;
 use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Error;
 use Katana\Sdk\Api\File;
@@ -454,7 +455,7 @@ class CompactPayloadMapper implements PayloadMapperInterface
         foreach ($rawCalls as $service => $serviceCalls) {
             foreach ($serviceCalls as $version => $versionCalls) {
                 $calls += array_map(function (array $callData) use ($service, $version) {
-                    return new Call(
+                    return new DeferCall(
                         new ServiceOrigin($service, $version),
                         $callData['n'],
                         new VersionString($callData['v']),
@@ -481,6 +482,11 @@ class CompactPayloadMapper implements PayloadMapperInterface
                 'v' => $call->getVersion(),
                 'a' => $call->getAction(),
             ];
+
+            if ($call instanceof RemoteCall) {
+                $callData['g'] = $call->getAddress();
+                $callData['t'] = $call->getTimeout();
+            }
 
             if ($call->getParams()) {
                 $callData['p'] = array_map([$this, 'writeParam'], $call->getParams());

@@ -155,9 +155,48 @@ interface Action extends ApiInterface
      * @param $version
      * @param $action
      * @param Param[] $params
+     * @param File[] $files
+     * @param int $timeout
      * @return Action
      */
-    public function call($service, $version, $action, array $params = []);
+    public function call(
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    );
+
+    /**
+     * @param $service
+     * @param $version
+     * @param $action
+     * @param Param[] $params
+     * @param File[] $files
+     * @return Action
+     */
+    public function deferCall($service, $version, $action, array $params = [], array $files = []);
+
+    /**
+     * @param $address
+     * @param $service
+     * @param $version
+     * @param $action
+     * @param Param[] $params
+     * @param File[] $files
+     * @param int $timeout
+     * @return Action
+     */
+    public function remoteCall(
+        $address,
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    );
 
     /**
      * @param string $message

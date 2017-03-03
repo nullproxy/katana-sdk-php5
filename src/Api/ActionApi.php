@@ -347,6 +347,18 @@ class ActionApi extends Api implements Action
         return $this;
     }
 
+    public function call(
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    )
+    {
+        // TODO: Implement call() method.
+    }
+
     /**
      * @param string $service
      * @param string $version
@@ -356,15 +368,27 @@ class ActionApi extends Api implements Action
      * @return Action
      * @throws InvalidValueException
      */
-    public function call(
+    public function deferCall(
         $service,
         $version,
         $action,
         array $params = [],
         array $files = []
     ) {
+        $serviceSchema = $this->getServiceSchema($this->name, $this->version);
+        $actionSchema = $serviceSchema->getActionSchema($this->actionName);
+
+        if (!$actionSchema->hasDeferCall($service, $version, $action)) {
+            throw new InvalidValueException(sprintf(
+                'Deferred call not configured, connection to action on "%s" (%s) aborted: "%s"',
+                $service,
+                $version,
+                $action
+            ));
+        }
+
         $versionString = new VersionString($version);
-        $this->transport->addCall(new Call(
+        $this->transport->addCall(new DeferCall(
             new ServiceOrigin($this->name, $this->version),
             $service,
             $versionString,
@@ -372,10 +396,57 @@ class ActionApi extends Api implements Action
             $params
         ));
 
-        $service = $this->getServiceSchema($this->name, $this->version);
+        foreach ($files as $file) {
+            if ($file->isLocal() && !$serviceSchema->hasFileServer()) {
+                throw new InvalidValueException(sprintf(
+                    'File server not configured: "%s" (%s)',
+                    $this->name,
+                    $this->version
+                ));
+            }
+
+            $this->transport->addFile($service, $versionString, $action, $file);
+        }
+
+        return $this;
+    }
+
+    public function remoteCall(
+        $address,
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    )
+    {
+        $serviceSchema = $this->getServiceSchema($this->name, $this->version);
+        $actionSchema = $serviceSchema->getActionSchema($this->actionName);
+
+        if (!$actionSchema->hasRemoteCall($address, $service, $version, $action)) {
+            throw new InvalidValueException(sprintf(
+                'Remote call not configured, connection to action on ["%s"] "%s" (%s) aborted: "%s"',
+                $address,
+                $service,
+                $version,
+                $action
+            ));
+        }
+
+        $versionString = new VersionString($version);
+        $this->transport->addCall(new RemoteCall(
+            new ServiceOrigin($this->name, $this->version),
+            $address,
+            $service,
+            $versionString,
+            $action,
+            $timeout,
+            $params
+        ));
 
         foreach ($files as $file) {
-            if ($file->isLocal() && !$service->hasFileServer()) {
+            if ($file->isLocal() && !$serviceSchema->hasFileServer()) {
                 throw new InvalidValueException(sprintf(
                     'File server not configured: "%s" (%s)',
                     $this->name,

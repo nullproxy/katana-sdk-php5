@@ -16,7 +16,7 @@
 namespace Katana\Sdk\Api\Mapper;
 
 use Katana\Sdk\Api\ActionApi;
-use Katana\Sdk\Api\Call;
+use Katana\Sdk\Api\DeferCall;
 use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Api\Error;
 use Katana\Sdk\Api\File;
@@ -102,6 +102,10 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
                 'name' => 'test',
             ],
         ];
+
+        if ($action->hasReturn()) {
+            $response['command_reply']['result']['return'] = $action->getReturn();
+        }
 
         return $this->writeTransport($action->getTransport(), $response);
     }
@@ -441,7 +445,7 @@ class ExtendedPayloadMapper implements PayloadMapperInterface
             foreach ($addressCalls as $service => $serviceCalls) {
                 foreach ($serviceCalls as $version => $versionCalls) {
                     $calls += array_map(function (array $callData) use ($address, $service, $version) {
-                        return new Call(
+                        return new DeferCall(
                             new ServiceOrigin($service, $version),
                             $callData['name'],
                             new VersionString($callData['version']),
