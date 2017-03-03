@@ -166,4 +166,10 @@ interface Action extends ApiInterface
      * @return Action
      */
     public function error($message, $code = 0, $status = '');
+
+    /**
+     * @param mixed $value
+     * @return Action
+     */
+    public function setReturn($value);
 }

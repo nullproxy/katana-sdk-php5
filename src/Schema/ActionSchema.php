@@ -56,6 +56,11 @@ class ActionSchema
     private $relations = [];
 
     /**
+     * @var ActionReturn
+     */
+    private $return;
+
+    /**
      * @param string $name
      * @param ActionEntity $entity
      * @param HttpActionSchema $http
@@ -63,6 +68,7 @@ class ActionSchema
      * @param ParamSchema[] $params
      * @param FileSchema[] $files
      * @param ActionRelation[] $relations
+     * @param ActionReturn $return
      */
     public function __construct(
         $name,
@@ -71,7 +77,8 @@ class ActionSchema
         $deprecated,
         array $params,
         array $files,
-        array $relations
+        array $relations,
+        ActionReturn $return = null
     ) {
         $paramNames = array_map(function (ParamSchema $param) {
             return $param->getName();
@@ -89,6 +96,7 @@ class ActionSchema
         $this->params = array_combine($paramNames, $params);
         $this->files = array_combine($fileNames, $files);
         $this->relations = $relations;
+        $this->return = $return;
     }
 
     /**
@@ -258,5 +266,25 @@ class ActionSchema
     public function getHttpSchema()
     {
         return $this->http;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReturn()
+    {
+        return !is_null($this->return);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnType()
+    {
+        if ($this->return) {
+            return $this->return->getType();
+        }
+
+        return '';
     }
 }

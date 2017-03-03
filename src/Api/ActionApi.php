@@ -39,6 +39,11 @@ class ActionApi extends Api implements Action
     private $transport;
 
     /**
+     * @var mixed
+     */
+    private $return;
+
+    /**
      * Action constructor.
      * @param KatanaLogger $logger
      * @param Component $component
@@ -82,6 +87,24 @@ class ActionApi extends Api implements Action
         $this->actionName = $actionName;
         $this->transport = $transport;
         $this->params = $this->prepareParams($params);
+    }
+
+    /**
+     * @param array $value
+     * @return bool
+     */
+    private function isArrayType(array $value)
+    {
+        return array_keys($value) === range(0, count($value) -1);
+    }
+
+    /**
+     * @param array $value
+     * @return bool
+     */
+    private function isObjectType(array $value)
+    {
+        return count(array_filter(array_keys($value), 'is_string')) === count($value);
     }
 
     /**
@@ -201,7 +224,7 @@ class ActionApi extends Api implements Action
      */
     public function setEntity(array $entity)
     {
-        if (count(preg_grep('/^\d+$/', array_keys($entity)))) {
+        if (!$this->isObjectType($entity)) {
             throw new TransportException('Unexpected collection');
         }
 
@@ -217,7 +240,7 @@ class ActionApi extends Api implements Action
      */
     public function setCollection(array $collection)
     {
-        if (count(preg_grep('/^\d+$/', array_keys($collection))) < count($collection)) {
+        if (!$this->isArrayType($collection)) {
             throw new TransportException('Unexpected entity');
         }
 
@@ -385,5 +408,126 @@ class ActionApi extends Api implements Action
         ));
 
         return $this;
+    }
+
+    /**
+     * @param mixed $value
+     * @return Action
+     * @throws InvalidValueException
+     */
+    public function setReturn($value)
+    {
+        try {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            if (!$action->hasReturn()) {
+                throw new InvalidValueException(sprintf(
+                    'Cannot set a return value in "%s" (%s) for action: "%s"',
+                    $this->name,
+                    $this->version,
+                    $this->actionName
+                ));
+            }
+
+            if (!$this->validate($value, $action->getReturnType())) {
+                throw new InvalidValueException(sprintf(
+                    'Invalid return type given in "%s" (%s) for action: "%s"',
+                    $this->name,
+                    $this->version,
+                    $this->actionName
+                ));
+            }
+        } catch (SchemaException $e) {
+            // This is to allow `service action` command which has no schema
+        }
+
+        $this->return = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReturn()
+    {
+        try {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            return $action->hasReturn();
+        } catch (SchemaException $e) {
+            // This is to allow `service action` command which has no schema
+            return true;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReturn()
+    {
+        if ($this->return) {
+            return $this->return;
+        } else {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            return $this->getDefaultReturn($action->getReturnType());
+        }
+    }
+
+    /**
+     * @param string $type
+     * @return mixed
+     * @throws InvalidValueException
+     */
+    private function getDefaultReturn($type)
+    {
+        switch ($type) {
+            case 'null':
+                return null;
+            case 'boolean':
+                return false;
+            case 'integer':
+            case 'float':
+                return 0;
+            case 'string':
+                return '';
+            case 'array':
+            case 'object':
+                return [];
+        }
+
+        throw new InvalidValueException("Invalid value type: $type");
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $type
+     * @return bool
+     * @throws InvalidValueException
+     */
+    private function validate($value, $type)
+    {
+        switch ($type) {
+            case 'null':
+                return is_null($value);
+            case 'boolean':
+                return is_bool($value);
+            case 'integer':
+                return is_integer($value);
+            case 'float':
+                return is_float($value);
+            case 'string':
+                return is_string($value);
+            case 'array':
+                return $this->isArrayType($value);
+            case 'object':
+                return $this->isObjectType($value);
+        }
+
+        throw new InvalidValueException("Invalid value type: $type");
     }
 }

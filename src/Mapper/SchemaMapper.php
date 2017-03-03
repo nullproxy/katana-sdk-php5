@@ -17,6 +17,7 @@ namespace Katana\Sdk\Mapper;
 
 use Katana\Sdk\Schema\ActionEntity;
 use Katana\Sdk\Schema\ActionRelation;
+use Katana\Sdk\Schema\ActionReturn;
 use Katana\Sdk\Schema\ActionSchema;
 use Katana\Sdk\Schema\FileSchema;
 use Katana\Sdk\Schema\FileValidation;
@@ -139,6 +140,15 @@ class SchemaMapper
                 );
             }
 
+            if ($this->read($action, 'R')) {
+                $return = new ActionReturn(
+                    $this->read($action, 'R.t'),
+                    $this->read($action, 'R.e', false)
+                );
+            } else {
+                $return = null;
+            }
+
             $actions[] = new ActionSchema(
                 $actionName,
                 new ActionEntity(
@@ -158,7 +168,8 @@ class SchemaMapper
                 $this->read($action, 'D', false),
                 $params,
                 $files,
-                $relations
+                $relations,
+                $return
             );
         }
 

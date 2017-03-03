@@ -103,6 +103,10 @@ class CompactPayloadMapper implements PayloadMapperInterface
             ],
         ];
 
+        if ($action->hasReturn()) {
+            $response['cr']['r']['R'] = $action->getReturn();
+        }
+
         return $this->writeTransport($action->getTransport(), $response);
     }
 
