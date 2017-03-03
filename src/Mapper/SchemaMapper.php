@@ -169,6 +169,9 @@ class SchemaMapper
                 $params,
                 $files,
                 $relations,
+                $this->read($action, 'C', []),
+                $this->read($action, 'dc', []),
+                $this->read($action, 'rc', []),
                 $return
             );
         }
