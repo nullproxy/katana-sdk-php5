@@ -51,60 +51,6 @@ interface PayloadReaderInterface
 
     /**
      * @param array $raw
-     * @return TransportMeta
-     */
-    public function getTransportMeta(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportFiles
-     */
-    public function getTransportFiles(array $raw);
-
-    /**
-     * @param array $raw
-     * @return File
-     */
-    public function getTransportBody(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportData
-     */
-    public function getTransportData(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportRelations
-     */
-    public function getTransportRelations(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportLinks
-     */
-    public function getTransportLinks(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportCalls
-     */
-    public function getTransportCalls(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportTransactions
-     */
-    public function getTransportTransactions(array $raw);
-
-    /**
-     * @param array $raw
-     * @return TransportErrors
-     */
-    public function getTransportErrors(array $raw);
-
-    /**
-     * @param array $raw
      * @return HttpRequest
      */
     public function getHttpRequest(array $raw);
