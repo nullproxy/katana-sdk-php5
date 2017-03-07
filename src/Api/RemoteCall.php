@@ -31,6 +31,7 @@ class RemoteCall extends DeferCall
 
     /**
      * @param ServiceOrigin $origin
+     * @param string $caller
      * @param string $address
      * @param string $service
      * @param VersionString $version
@@ -41,6 +42,7 @@ class RemoteCall extends DeferCall
      */
     public function __construct(
         ServiceOrigin $origin,
+        $caller,
         $address,
         $service,
         VersionString $version,
@@ -49,7 +51,7 @@ class RemoteCall extends DeferCall
         $params = [],
         $files = []
     ) {
-        parent::__construct($origin, $service, $version, $action, $params, $files);
+        parent::__construct($origin, $caller, $service, $version, $action, $params, $files);
         $this->address = $address;
         $this->timeout = $timeout;
     }

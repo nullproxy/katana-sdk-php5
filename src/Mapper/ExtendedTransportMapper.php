@@ -343,6 +343,7 @@ class ExtendedTransportMapper
                     $calls += array_map(function (array $callData) use ($address, $service, $version) {
                         return new DeferCall(
                             new ServiceOrigin($service, $version),
+                            $callData['caller'],
                             $callData['name'],
                             new VersionString($callData['version']),
                             $callData['action'],

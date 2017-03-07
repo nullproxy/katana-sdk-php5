@@ -353,6 +353,7 @@ class CompactTransportMapper
                 $calls += array_map(function (array $callData) use ($service, $version) {
                     return new DeferCall(
                         new ServiceOrigin($service, $version),
+                        $callData['C'],
                         $callData['n'],
                         new VersionString($callData['v']),
                         $callData['a'],
@@ -600,6 +601,7 @@ class CompactTransportMapper
                 if (isset($vCalls['g'])) {
                     $call = new RemoteCall(
                         new ServiceOrigin($service, $version),
+                        $vCalls['C'],
                         $vCalls['g'],
                         $vCalls['n'],
                         new VersionString($vCalls['v']),
@@ -610,6 +612,7 @@ class CompactTransportMapper
                 } else {
                     $call = new DeferCall(
                         new ServiceOrigin($service, $version),
+                        $vCalls['C'],
                         $vCalls['n'],
                         new VersionString($vCalls['v']),
                         $vCalls['a'],
