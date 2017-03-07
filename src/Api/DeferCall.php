@@ -32,7 +32,12 @@ class DeferCall
     /**
      * @var string
      */
-    private $service;
+    private $caller = '';
+
+    /**
+     * @var string
+     */
+    private $service = '';
 
     /**
      * @var VersionString
@@ -57,6 +62,7 @@ class DeferCall
     /**
      * Call constructor.
      * @param ServiceOrigin $origin
+     * @param string $caller
      * @param string $service
      * @param VersionString $version
      * @param string $action
@@ -65,6 +71,7 @@ class DeferCall
      */
     public function __construct(
         ServiceOrigin $origin,
+        $caller,
         $service,
         VersionString $version,
         $action,
@@ -72,6 +79,7 @@ class DeferCall
         array $files = []
     ) {
         $this->origin = $origin;
+        $this->caller = $caller;
         $this->service = $service;
         $this->version = $version;
         $this->action = $action;
@@ -85,6 +93,14 @@ class DeferCall
     public function getOrigin()
     {
         return $this->origin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCaller()
+    {
+        return $this->caller;
     }
 
     /**
