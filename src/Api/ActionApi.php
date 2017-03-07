@@ -16,12 +16,14 @@
 namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Action;
+use Katana\Sdk\Api\Value\ActionTarget;
 use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\InvalidValueException;
 use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Messaging\RuntimeCaller\ZeroMQRuntimeCaller;
 use Katana\Sdk\Schema\Mapping;
 
 class ActionApi extends Api implements Action
@@ -37,6 +39,11 @@ class ActionApi extends Api implements Action
      * @var Transport
      */
     private $transport;
+
+    /**
+     * @var ZeroMQRuntimeCaller
+     */
+    private $caller;
 
     /**
      * @var mixed
@@ -55,6 +62,7 @@ class ActionApi extends Api implements Action
      * @param array $variables
      * @param bool $debug
      * @param string $actionName
+     * @param ZeroMQRuntimeCaller $caller
      * @param Transport $transport
      * @param Param[] $params
      */
@@ -69,6 +77,7 @@ class ActionApi extends Api implements Action
         array $variables,
         $debug,
         $actionName,
+        ZeroMQRuntimeCaller $caller,
         Transport $transport,
         array $params = []
     ) {
@@ -85,6 +94,7 @@ class ActionApi extends Api implements Action
         );
 
         $this->actionName = $actionName;
+        $this->caller = $caller;
         $this->transport = $transport;
         $this->params = $this->prepareParams($params);
     }
@@ -356,7 +366,21 @@ class ActionApi extends Api implements Action
         $timeout = 1000
     )
     {
-        // TODO: Implement call() method.
+        $address = 'ipc://@katana-' . preg_replace(
+            '/[^a-zA-Z0-9-]/',
+            '-',
+            $this->getServiceSchema($this->name, $this->version)->getAddress()
+        );
+
+        return $this->caller->call(
+            $this->actionName,
+            new ActionTarget($service, new VersionString($version), $action),
+            $this->transport,
+            $address,
+            $params,
+            $files,
+            $timeout
+        );
     }
 
     /**
