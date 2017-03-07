@@ -369,6 +369,7 @@ class ExtendedTransportMapper
                 'name' => $call->getService(),
                 'version' => $call->getVersion(),
                 'action' => $call->getAction(),
+                'caller' => $call->getCaller(),
             ];
 
             if ($call->getParams()) {
