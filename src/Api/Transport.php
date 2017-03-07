@@ -305,7 +305,14 @@ class Transport
      */
     public function addSimpleRelation($serviceFrom, $idFrom, $serviceTo, $idTo)
     {
-        return $this->relations->addSimple($this->meta->getGateway()[1], $serviceFrom, $idFrom, $serviceTo, $idTo);
+        return $this->relations->addSimple(
+            $this->meta->getGateway()[1],
+            $serviceFrom,
+            $idFrom,
+            $this->meta->getGateway()[1],
+            $serviceTo,
+            $idTo
+        );
     }
 
     /**
@@ -317,7 +324,14 @@ class Transport
      */
     public function addMultipleRelation($serviceFrom, $idFrom, $serviceTo, array $idsTo)
     {
-        return $this->relations->addMultipleRelation($this->meta->getGateway()[1], $serviceFrom, $idFrom, $serviceTo, $idsTo);
+        return $this->relations->addMultipleRelation(
+            $this->meta->getGateway()[1],
+            $serviceFrom,
+            $idFrom,
+            $this->meta->getGateway()[1],
+            $serviceTo,
+            $idsTo
+        );
     }
 
     /**

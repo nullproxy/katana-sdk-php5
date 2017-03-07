@@ -54,31 +54,35 @@ class TransportRelations
     }
 
     /**
-     * @param string $address
+     * @param $addressFrom
      * @param string $serviceFrom
      * @param string $idFrom
+     * @param $addressTo
      * @param string $serviceTo
      * @param string $idTo
      * @return bool
+     * @internal param string $address
      */
-    public function addSimple($address, $serviceFrom, $idFrom, $serviceTo, $idTo)
+    public function addSimple($addressFrom, $serviceFrom, $idFrom, $addressTo, $serviceTo, $idTo)
     {
-        $this->relations[$address][$serviceFrom][$idFrom][$address][$serviceTo] = $idTo;
+        $this->relations[$addressFrom][$serviceFrom][$idFrom][$addressTo][$serviceTo] = $idTo;
 
         return true;
     }
 
     /**
-     * @param string $address
+     * @param $addressFrom
      * @param string $serviceFrom
      * @param string $idFrom
+     * @param $addressTo
      * @param string $serviceTo
      * @param array $idsTo
      * @return bool
+     * @internal param string $address
      */
-    public function addMultipleRelation($address, $serviceFrom, $idFrom, $serviceTo, array $idsTo)
+    public function addMultipleRelation($addressFrom, $serviceFrom, $idFrom, $addressTo, $serviceTo, array $idsTo)
     {
-        $this->relations[$address][$serviceFrom][$idFrom][$address][$serviceTo] = $idsTo;
+        $this->relations[$addressFrom][$serviceFrom][$idFrom][$addressTo][$serviceTo] = $idsTo;
 
         return true;
     }

@@ -115,10 +115,12 @@ class ZeroMQRuntimeCaller
             $reply = $this->socket->recv();
             $response = $this->serializer->unserialize($reply);
 
-            if (isset($response['E'])) {
-                throw new RuntimeCallException("Error response: {$response['E']['m']}");
+            if (isset($response['cr']['r']['E'])) {
+                throw new RuntimeCallException("Error response: {$response['cr']['r']['E']['m']}");
             } else {
+                echo json_encode($response), "\n";
                 $return = $response['cr']['r']['R'];
+                $this->mapper->merge($transport, $response['cr']['r']['T']);
             }
 
         } else {

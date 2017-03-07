@@ -179,6 +179,7 @@ class SchemaMapper
         return new ServiceSchema(
             $name,
             $version,
+            $this->read($raw, 'a', ''),
             $http,
             $actions,
             $this->read($raw, 'f', false)

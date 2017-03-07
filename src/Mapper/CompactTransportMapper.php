@@ -514,4 +514,184 @@ class CompactTransportMapper
 
         return $output;
     }
+
+    public function merge(Transport $transport, array $mergeData)
+    {
+        // Merge meta properties and fallbacks
+        $newProperties = array_diff_key(
+            $mergeData['m']['p'],
+            $transport->getMeta()->getProperties()
+        );
+        foreach ($newProperties as $key => $value) {
+            $transport->getMeta()->setProperty($key, $value);
+        }
+
+        $transport->getMeta()->setFallbacks(
+            array_merge_recursive(
+                $transport->getMeta()->getFallbacks(),
+                $mergeData['m']['f']
+            )
+        );
+
+        // Merge data
+        foreach ($mergeData['d'] as $address => $aData) {
+            foreach ($aData as $service => $sData) {
+                foreach ($sData as $version => $vData) {
+                    foreach ($vData as $action => $data) {
+                        $transport->getData()->set(
+                            $address, $service, $version, $action, $data
+                        );
+                    }
+                }
+            }
+        }
+
+        // Merge relations
+        $relations = $transport->getRelations()->get();
+        foreach ($mergeData['r'] as $address1 => $a1Relations) {
+            foreach ($a1Relations as $service1 => $s1Relations) {
+                foreach ($s1Relations as $id1 => $i1Relations) {
+                    foreach ($i1Relations as $address2 => $a2Relations) {
+                        foreach ($a2Relations as $service2 => $s2Relations) {
+                            if (isset($relations[$address1][$service1][$id1][$address2][$service2])) {
+                                continue;
+                            }
+
+                            if (is_array($s2Relations)) {
+                                $transport->getRelations()->addMultipleRelation(
+                                    $address1,
+                                    $service1,
+                                    $id1,
+                                    $address2,
+                                    $service2,
+                                    $s2Relations
+                                );
+                            } else {
+                                $transport->getRelations()->addSimple(
+                                    $address1,
+                                    $service1,
+                                    $id1,
+                                    $address2,
+                                    $service2,
+                                    $s2Relations
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Merge links
+        $links = $transport->getLinks()->get();
+        foreach ($mergeData['l'] as $address => $aLinks) {
+            foreach ($aLinks as $namespace => $nLinks) {
+                foreach ($nLinks as $name => $link) {
+                    if (!isset($links[$address][$namespace][$name])) {
+                        $transport->getLinks()->setLink($address, $namespace, $name, $link);
+                    }
+                }
+            }
+        }
+
+        // Merge calls
+        foreach ($mergeData['C'] as $service => $sCalls) {
+            foreach ($sCalls as $version => $vCalls) {
+                if (isset($vCalls['g'])) {
+                    $call = new RemoteCall(
+                        new ServiceOrigin($service, $version),
+                        $vCalls['g'],
+                        $vCalls['n'],
+                        new VersionString($vCalls['v']),
+                        $vCalls['a'],
+                        $vCalls['t'],
+                        isset($vCalls['p'])? array_map([$this, 'getParam'], $vCalls['p']) : []
+                    );
+                } else {
+                    $call = new DeferCall(
+                        new ServiceOrigin($service, $version),
+                        $vCalls['n'],
+                        new VersionString($vCalls['v']),
+                        $vCalls['a'],
+                        isset($vCalls['p'])? array_map([$this, 'getParam'], $vCalls['p']) : []
+                    );
+                }
+                $transport->addCall($call);
+            }
+        }
+
+        // Merge Transactions
+        foreach ($mergeData['t'] as $type => $transaction) {
+            $type = [
+                'c' => 'commit',
+                'r' => 'rollback',
+                'C' => 'complete',
+            ][$type];
+            $transport->addTransaction(new Transaction(
+                $type,
+                new ServiceOrigin($transaction['n'], $transaction['v']),
+                $transaction['a'],
+                $transaction['c'],
+                isset($transaction['p']) ? array_map([$this, 'getParam'], $transaction['p']) : []
+            ));
+        }
+
+        // Merge errors
+        foreach ($mergeData['e'] as $address => $aErrors) {
+            foreach ($aErrors as $service => $sErrors) {
+                foreach ($sErrors as $version => $vErrors) {
+                    $transport->addError(new Error(
+                        $address,
+                        $service,
+                        $version,
+                        $vErrors['m'],
+                        $vErrors['c'],
+                        $vErrors['s']
+                    ));
+                }
+            }
+        }
+
+        // Merge Body
+        if (!$transport->hasBody()) {
+            $transport->setBody(new File(
+                'body',
+                $mergeData['b']['p'],
+                $mergeData['b']['m'],
+                $mergeData['b']['f'],
+                $mergeData['b']['s'],
+                $mergeData['b']['t']
+            ));
+        }
+
+        $files = $transport->getFiles()->getAll();
+        foreach ($mergeData['f'] as $address => $aFiles) {
+            foreach ($aFiles as $service => $sFiles) {
+                foreach ($sFiles as $version => $vFiles) {
+                    foreach ($vFiles as $action => $aFiles) {
+                        foreach ($aFiles as $name => $file) {
+                            if (isset($files[$address][$service][$version][$action][$name])) {
+                                continue;
+                            }
+
+                            $transport->getFiles()->add(
+                                $address,
+                                $service,
+                                new VersionString($version),
+                                $action,
+                                new File(
+                                    $name,
+                                    $file['p'],
+                                    $file['m'],
+                                    $file['f'],
+                                    $file['s'],
+                                    $file['t']
+                                )
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
