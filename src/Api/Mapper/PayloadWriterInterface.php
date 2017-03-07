@@ -72,69 +72,6 @@ interface PayloadWriterInterface
     public function writeTransport(Transport $transport, array $output);
 
     /**
-     * @param TransportMeta $meta
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportMeta(TransportMeta $meta, array $output);
-
-    /**
-     * @param TransportFiles $files
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportFiles(TransportFiles $files, array $output);
-
-    /**
-     * @param File $body
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportBody(File $body, array $output);
-
-    /**
-     * @param TransportData $data
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportData(TransportData $data, array $output);
-
-    /**
-     * @param TransportRelations $relations
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportRelations(TransportRelations $relations, array $output);
-
-    /**
-     * @param TransportLinks $links
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportLinks(TransportLinks $links, array $output);
-
-    /**
-     * @param TransportCalls $calls
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportCalls(TransportCalls $calls, array $output);
-
-    /**
-     * @param TransportTransactions $transactions
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportTransactions(TransportTransactions $transactions, array $output);
-
-    /**
-     * @param TransportErrors $errors
-     * @param array $output
-     * @return array
-     */
-    public function writeTransportErrors(TransportErrors $errors, array $output);
-
-    /**
      * @param ServiceCall $call
      * @param array $output
      * @return array

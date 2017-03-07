@@ -38,7 +38,7 @@ class VersionString
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVersion()
     {

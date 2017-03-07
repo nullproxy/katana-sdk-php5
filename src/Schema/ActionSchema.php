@@ -56,6 +56,26 @@ class ActionSchema
     private $relations = [];
 
     /**
+     * @var array
+     */
+    private $calls = [];
+
+    /**
+     * @var array
+     */
+    private $deferCalls = [];
+
+    /**
+     * @var array
+     */
+    private $remoteCalls = [];
+
+    /**
+     * @var ActionReturn
+     */
+    private $return;
+
+    /**
      * @param string $name
      * @param ActionEntity $entity
      * @param HttpActionSchema $http
@@ -63,6 +83,10 @@ class ActionSchema
      * @param ParamSchema[] $params
      * @param FileSchema[] $files
      * @param ActionRelation[] $relations
+     * @param array $calls
+     * @param array $deferCalls
+     * @param array $remoteCalls
+     * @param ActionReturn $return
      */
     public function __construct(
         $name,
@@ -71,7 +95,11 @@ class ActionSchema
         $deprecated,
         array $params,
         array $files,
-        array $relations
+        array $relations,
+        array $calls,
+        array $deferCalls,
+        array $remoteCalls,
+        ActionReturn $return = null
     ) {
         $paramNames = array_map(function (ParamSchema $param) {
             return $param->getName();
@@ -89,6 +117,10 @@ class ActionSchema
         $this->params = array_combine($paramNames, $params);
         $this->files = array_combine($fileNames, $files);
         $this->relations = $relations;
+        $this->calls = $calls;
+        $this->deferCalls = $deferCalls;
+        $this->remoteCalls = $remoteCalls;
+        $this->return = $return;
     }
 
     /**
@@ -191,6 +223,107 @@ class ActionSchema
     }
 
     /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @return bool
+     */
+    public function hasCall($service, $version = '', $action = '')
+    {
+        $filter = array_filter($this->calls, function ($call) use ($service, $version, $action) {
+            return $service === $call[0]
+                && (!$version || $version === $call[1])
+                && (!$action || $action === $call[2]);
+        });
+
+        return count($filter) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCalls()
+    {
+        return count($this->calls) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCalls()
+    {
+        return $this->calls;
+    }
+
+    /**
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @return bool
+     */
+    public function hasDeferCall($service, $version = '', $action = '')
+    {
+        $filter = array_filter($this->deferCalls, function ($deferCall) use ($service, $version, $action) {
+            return $service === $deferCall[0]
+                && (!$version || $version === $deferCall[1])
+                && (!$action || $action === $deferCall[2]);
+        });
+
+        return count($filter) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDeferCalls()
+    {
+        return count($this->deferCalls) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDeferCalls()
+    {
+        return $this->deferCalls;
+    }
+
+    /**
+     * @param string $address
+     * @param string $service
+     * @param string $version
+     * @param string $action
+     * @return bool
+     */
+    public function hasRemoteCall($address, $service = '', $version = '', $action = '')
+    {
+        $filter = array_filter($this->remoteCalls, function ($remoteCall) use ($address, $service, $version, $action) {
+            return $address === $remoteCall[0]
+                && (!$service || $service === $remoteCall[1])
+                && (!$version || $version === $remoteCall[2])
+                && (!$action || $action === $remoteCall[3]);
+        });
+
+        return count($filter) > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRemoteCalls()
+    {
+        return count($this->remoteCalls) > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRemoteCalls()
+    {
+        return $this->remoteCalls;
+    }
+
+    /**
      * @return array
      */
     public function getParams()
@@ -258,5 +391,25 @@ class ActionSchema
     public function getHttpSchema()
     {
         return $this->http;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReturn()
+    {
+        return !is_null($this->return);
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnType()
+    {
+        if ($this->return) {
+            return $this->return->getType();
+        }
+
+        return '';
     }
 }

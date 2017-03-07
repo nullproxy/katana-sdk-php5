@@ -16,7 +16,7 @@
 namespace Katana\Sdk\Tests\Api;
 
 use Katana\Sdk\Api\ActionApi;
-use Katana\Sdk\Api\Call;
+use Katana\Sdk\Api\DeferCall;
 use Katana\Sdk\Api\File;
 use Katana\Sdk\Api\Transport;
 use Katana\Sdk\Api\TransportMeta;
@@ -144,7 +144,7 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
     {
         $this->service->hasFileServer()->willReturn(false);
 
-        $this->transport->addCall(Argument::type(Call::class))->shouldBeCalled();
+        $this->transport->addCall(Argument::type(DeferCall::class))->shouldBeCalled();
 
         /** @var File $file */
         $file = $this->prophesize(File::class);

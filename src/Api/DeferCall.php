@@ -22,7 +22,7 @@ use Katana\Sdk\Api\Value\VersionString;
  *
  * @package Katana\Sdk\Api
  */
-class Call
+class DeferCall
 {
     /**
      * @var ServiceOrigin

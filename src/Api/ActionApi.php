@@ -16,12 +16,14 @@
 namespace Katana\Sdk\Api;
 
 use Katana\Sdk\Action;
+use Katana\Sdk\Api\Value\ActionTarget;
 use Katana\Sdk\Api\Value\VersionString;
 use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\InvalidValueException;
 use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Exception\TransportException;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Messaging\RuntimeCaller\ZeroMQRuntimeCaller;
 use Katana\Sdk\Schema\Mapping;
 
 class ActionApi extends Api implements Action
@@ -39,6 +41,23 @@ class ActionApi extends Api implements Action
     private $transport;
 
     /**
+     * Copy of the Transport to send in runtime calls.
+     *
+     * @var Transport
+     */
+    private $transportCopy;
+
+    /**
+     * @var ZeroMQRuntimeCaller
+     */
+    private $caller;
+
+    /**
+     * @var mixed
+     */
+    private $return;
+
+    /**
      * Action constructor.
      * @param KatanaLogger $logger
      * @param Component $component
@@ -50,6 +69,7 @@ class ActionApi extends Api implements Action
      * @param array $variables
      * @param bool $debug
      * @param string $actionName
+     * @param ZeroMQRuntimeCaller $caller
      * @param Transport $transport
      * @param Param[] $params
      */
@@ -64,6 +84,7 @@ class ActionApi extends Api implements Action
         array $variables,
         $debug,
         $actionName,
+        ZeroMQRuntimeCaller $caller,
         Transport $transport,
         array $params = []
     ) {
@@ -80,8 +101,28 @@ class ActionApi extends Api implements Action
         );
 
         $this->actionName = $actionName;
+        $this->caller = $caller;
         $this->transport = $transport;
+        $this->transportCopy = clone $transport;
         $this->params = $this->prepareParams($params);
+    }
+
+    /**
+     * @param array $value
+     * @return bool
+     */
+    private function isArrayType(array $value)
+    {
+        return array_keys($value) === range(0, count($value) -1);
+    }
+
+    /**
+     * @param array $value
+     * @return bool
+     */
+    private function isObjectType(array $value)
+    {
+        return count(array_filter(array_keys($value), 'is_string')) === count($value);
     }
 
     /**
@@ -201,7 +242,7 @@ class ActionApi extends Api implements Action
      */
     public function setEntity(array $entity)
     {
-        if (count(preg_grep('/^\d+$/', array_keys($entity)))) {
+        if (!$this->isObjectType($entity)) {
             throw new TransportException('Unexpected collection');
         }
 
@@ -217,7 +258,7 @@ class ActionApi extends Api implements Action
      */
     public function setCollection(array $collection)
     {
-        if (count(preg_grep('/^\d+$/', array_keys($collection))) < count($collection)) {
+        if (!$this->isArrayType($collection)) {
             throw new TransportException('Unexpected entity');
         }
 
@@ -324,6 +365,32 @@ class ActionApi extends Api implements Action
         return $this;
     }
 
+    public function call(
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    )
+    {
+        $address = 'ipc://@katana-' . preg_replace(
+            '/[^a-zA-Z0-9-]/',
+            '-',
+            $this->getServiceSchema($this->name, $this->version)->getAddress()
+        );
+
+        return $this->caller->call(
+            $this->actionName,
+            new ActionTarget($service, new VersionString($version), $action),
+            $this->transportCopy,
+            $address,
+            $params,
+            $files,
+            $timeout
+        );
+    }
+
     /**
      * @param string $service
      * @param string $version
@@ -333,15 +400,27 @@ class ActionApi extends Api implements Action
      * @return Action
      * @throws InvalidValueException
      */
-    public function call(
+    public function deferCall(
         $service,
         $version,
         $action,
         array $params = [],
         array $files = []
     ) {
+        $serviceSchema = $this->getServiceSchema($this->name, $this->version);
+        $actionSchema = $serviceSchema->getActionSchema($this->actionName);
+
+        if (!$actionSchema->hasDeferCall($service, $version, $action)) {
+            throw new InvalidValueException(sprintf(
+                'Deferred call not configured, connection to action on "%s" (%s) aborted: "%s"',
+                $service,
+                $version,
+                $action
+            ));
+        }
+
         $versionString = new VersionString($version);
-        $this->transport->addCall(new Call(
+        $this->transport->addCall(new DeferCall(
             new ServiceOrigin($this->name, $this->version),
             $service,
             $versionString,
@@ -349,10 +428,57 @@ class ActionApi extends Api implements Action
             $params
         ));
 
-        $service = $this->getServiceSchema($this->name, $this->version);
+        foreach ($files as $file) {
+            if ($file->isLocal() && !$serviceSchema->hasFileServer()) {
+                throw new InvalidValueException(sprintf(
+                    'File server not configured: "%s" (%s)',
+                    $this->name,
+                    $this->version
+                ));
+            }
+
+            $this->transport->addFile($service, $versionString, $action, $file);
+        }
+
+        return $this;
+    }
+
+    public function remoteCall(
+        $address,
+        $service,
+        $version,
+        $action,
+        array $params = [],
+        array $files = [],
+        $timeout = 1000
+    )
+    {
+        $serviceSchema = $this->getServiceSchema($this->name, $this->version);
+        $actionSchema = $serviceSchema->getActionSchema($this->actionName);
+
+        if (!$actionSchema->hasRemoteCall($address, $service, $version, $action)) {
+            throw new InvalidValueException(sprintf(
+                'Remote call not configured, connection to action on ["%s"] "%s" (%s) aborted: "%s"',
+                $address,
+                $service,
+                $version,
+                $action
+            ));
+        }
+
+        $versionString = new VersionString($version);
+        $this->transport->addCall(new RemoteCall(
+            new ServiceOrigin($this->name, $this->version),
+            $address,
+            $service,
+            $versionString,
+            $action,
+            $timeout,
+            $params
+        ));
 
         foreach ($files as $file) {
-            if ($file->isLocal() && !$service->hasFileServer()) {
+            if ($file->isLocal() && !$serviceSchema->hasFileServer()) {
                 throw new InvalidValueException(sprintf(
                     'File server not configured: "%s" (%s)',
                     $this->name,
@@ -385,5 +511,126 @@ class ActionApi extends Api implements Action
         ));
 
         return $this;
+    }
+
+    /**
+     * @param mixed $value
+     * @return Action
+     * @throws InvalidValueException
+     */
+    public function setReturn($value)
+    {
+        try {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            if (!$action->hasReturn()) {
+                throw new InvalidValueException(sprintf(
+                    'Cannot set a return value in "%s" (%s) for action: "%s"',
+                    $this->name,
+                    $this->version,
+                    $this->actionName
+                ));
+            }
+
+            if (!$this->validate($value, $action->getReturnType())) {
+                throw new InvalidValueException(sprintf(
+                    'Invalid return type given in "%s" (%s) for action: "%s"',
+                    $this->name,
+                    $this->version,
+                    $this->actionName
+                ));
+            }
+        } catch (SchemaException $e) {
+            // This is to allow `service action` command which has no schema
+        }
+
+        $this->return = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReturn()
+    {
+        try {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            return $action->hasReturn();
+        } catch (SchemaException $e) {
+            // This is to allow `service action` command which has no schema
+            return true;
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReturn()
+    {
+        if ($this->return) {
+            return $this->return;
+        } else {
+            $service = $this->getServiceSchema($this->name, $this->version);
+            $action = $service->getActionSchema($this->actionName);
+
+            return $this->getDefaultReturn($action->getReturnType());
+        }
+    }
+
+    /**
+     * @param string $type
+     * @return mixed
+     * @throws InvalidValueException
+     */
+    private function getDefaultReturn($type)
+    {
+        switch ($type) {
+            case 'null':
+                return null;
+            case 'boolean':
+                return false;
+            case 'integer':
+            case 'float':
+                return 0;
+            case 'string':
+                return '';
+            case 'array':
+            case 'object':
+                return [];
+        }
+
+        throw new InvalidValueException("Invalid value type: $type");
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $type
+     * @return bool
+     * @throws InvalidValueException
+     */
+    private function validate($value, $type)
+    {
+        switch ($type) {
+            case 'null':
+                return is_null($value);
+            case 'boolean':
+                return is_bool($value);
+            case 'integer':
+                return is_integer($value);
+            case 'float':
+                return is_float($value);
+            case 'string':
+                return is_string($value);
+            case 'array':
+                return $this->isArrayType($value);
+            case 'object':
+                return $this->isObjectType($value);
+        }
+
+        throw new InvalidValueException("Invalid value type: $type");
     }
 }

@@ -73,6 +73,11 @@ class TransportMeta
     private $properties = [];
 
     /**
+     * @var array
+     */
+    private $fallbacks = [];
+
+    /**
      * @param string $version
      * @param string $id
      * @param string $datetime
@@ -80,6 +85,7 @@ class TransportMeta
      * @param array $origin
      * @param int $level
      * @param array $properties
+     * @param array $fallbacks
      */
     public function __construct(
         $version,
@@ -88,7 +94,8 @@ class TransportMeta
         $gateway,
         array $origin,
         $level,
-        array $properties = []
+        array $properties = [],
+        array $fallbacks = []
     ) {
         $this->version = $version;
         $this->id = $id;
@@ -97,6 +104,7 @@ class TransportMeta
         $this->origin = $origin;
         $this->level = $level;
         $this->properties = $properties;
+        $this->fallbacks = $fallbacks;
     }
 
     /**
@@ -182,5 +190,21 @@ class TransportMeta
     public function getProperties()
     {
         return $this->properties;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFallbacks()
+    {
+        return $this->fallbacks;
+    }
+
+    /**
+     * @param array $fallbacks
+     */
+    public function setFallbacks($fallbacks)
+    {
+        $this->fallbacks = $fallbacks;
     }
 }
