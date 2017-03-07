@@ -378,6 +378,7 @@ class CompactTransportMapper
                 'n' => $call->getService(),
                 'v' => $call->getVersion(),
                 'a' => $call->getAction(),
+                'C' => $call->getCaller(),
             ];
 
             if ($call instanceof RemoteCall) {
