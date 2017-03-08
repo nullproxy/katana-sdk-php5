@@ -52,11 +52,6 @@ abstract class Component
     protected $apiFactory;
 
     /**
-     * @var KatanaLogger
-     */
-    protected $logger;
-
-    /**
      * @var callback[]
      */
     private $callbacks = [];
