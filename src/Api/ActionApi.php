@@ -564,7 +564,7 @@ class ActionApi extends Api implements Action
             return $action->hasReturn();
         } catch (SchemaException $e) {
             // This is to allow `service action` command which has no schema
-            return true;
+            return false;
         }
     }
 
