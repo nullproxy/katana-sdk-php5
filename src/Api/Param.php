@@ -20,7 +20,7 @@ namespace Katana\Sdk\Api;
  *
  * @package Katana\Sdk\Api
  */
-class Param
+class Param implements \Katana\Sdk\Param
 {
     const TYPE_NULL = 'null';
     const TYPE_BOOLEAN = 'boolean';

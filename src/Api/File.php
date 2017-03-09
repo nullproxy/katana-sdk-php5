@@ -21,7 +21,7 @@ use Katana\Sdk\Exception\InvalidValueException;
  * Api class that encapsulate a file
  * @package Katana\Sdk\Api
  */
-class File
+class File implements \Katana\Sdk\File
 {
     /**
      * @var string

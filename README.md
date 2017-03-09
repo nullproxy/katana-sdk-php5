@@ -25,9 +25,9 @@ Getting Started
 
 The SDK allow both **Services** and **Middlewares** to be created. Both of them require a source file and a configuration file pointing to it.
 
-The first thing to do in the source file is to include the autoloader, then define the actions and run the component.
+The first step to create a **Service** or a **Middleware** is to generate the configuration file, which will define the behavior of the component. In both cases the configuration include name and version of the component and the engine and source file to run it.
 
-The following example illustrates how to create a **Service**. Given a configuration file like the following, defining a **Service** with an action and pointing to the PHP source code file:
+The configuration file for a **Service** define the different actions it can respond to, and can include http configuration so it can interact with a **Gateway**.
 
 ```yaml
 "@context": urn:katana:service
@@ -44,7 +44,22 @@ action:
     http-path: /action/path
 ```
 
-This configuration will run a source code file located in the same directory and named `example_service.php` like the following:
+The configuration of a **Middleware** defines which kind of action (*request*, *response* or both), it responds to.
+
+```yaml
+"@context": urn:katana:middleware
+name: middleware_name
+version: "0.1"
+request: true
+response: true
+info:
+  title: Example Middleware
+engine:
+  runner: urn:katana:runner:php5
+  path: ./example_middleware.php
+```
+
+The following example illustrates how to create a **Service**. Given the previous configuration file, the source file must be located at `./example_service.php`, define the actions and run the component:
 
 ```php
 <?php
@@ -62,22 +77,7 @@ $service->action('action_name', function (\Katana\Sdk\Action $action) {
 $service->run();
 ```
 
-The following example illustrates how to create a request **middleware**. Given a configuration file like the following, defining a **Middleware** with both a request and a response, and pointing to the PHP source code file:
-
-```yaml
-"@context": urn:katana:middleware
-name: middleware_name
-version: "0.1"
-request: true
-response: true
-info:
-  title: Example Middleware
-engine:
-  runner: urn:katana:runner:php5
-  path: ./example_middleware.php
-```
-
-This configuration will run a source code file located in the same directory and named `example_middleware.php` like the following:
+The following example illustrates how to create a request **middleware**. Given the previous configuration file, the source file must be located at `./example_middleware.php`, define the *request* and *response* and run the component:
 
 ```php
 <?php
@@ -167,7 +167,7 @@ $service->action('delete', function (\Katana\Sdk\Action $action) {
 });
 
 $service->action('create', function (\Katana\Sdk\Action $action) {
-    $repository->create(array_map(function (\Katana\Sdk\Api\Param $param) {
+    $repository->create(array_map(function (\Katana\Sdk\Param $param) {
         return $param->getValue();
     }, $action->getParams()));
 
@@ -175,7 +175,7 @@ $service->action('create', function (\Katana\Sdk\Action $action) {
 });
 
 $service->action('update', function (\Katana\Sdk\Action $action) {
-    $repository->update(array_map(function (\Katana\Sdk\Api\Param $param) {
+    $repository->update(array_map(function (\Katana\Sdk\Param $param) {
         return $param->getValue();
     }, $action->getParams()));
 
