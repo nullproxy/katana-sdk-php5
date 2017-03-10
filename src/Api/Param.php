@@ -22,24 +22,6 @@ namespace Katana\Sdk\Api;
  */
 class Param implements \Katana\Sdk\Param
 {
-    const TYPE_NULL = 'null';
-    const TYPE_BOOLEAN = 'boolean';
-    const TYPE_INTEGER = 'integer';
-    const TYPE_FLOAT = 'float';
-    const TYPE_ARRAY = 'array';
-    const TYPE_OBJECT = 'object';
-    const TYPE_STRING = 'string';
-
-    const TYPE_CLASSES = [
-        self::TYPE_NULL,
-        self::TYPE_BOOLEAN,
-        self::TYPE_INTEGER,
-        self::TYPE_FLOAT,
-        self::TYPE_ARRAY,
-        self::TYPE_OBJECT,
-        self::TYPE_STRING,
-    ];
-
     /**
      * @var string
      */

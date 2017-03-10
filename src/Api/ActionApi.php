@@ -21,6 +21,7 @@ use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\InvalidValueException;
 use Katana\Sdk\Exception\SchemaException;
 use Katana\Sdk\Exception\TransportException;
+use Katana\Sdk\File as FileInterface;
 use Katana\Sdk\Logger\KatanaLogger;
 use Katana\Sdk\Schema\Mapping;
 
@@ -172,12 +173,12 @@ class ActionApi extends Api implements Action
     }
 
     /**
-     * @param File $file
+     * @param FileInterface $file
      * @return Action
      * @throws InvalidValueException
      * @throws SchemaException
      */
-    public function setDownload(File $file)
+    public function setDownload(FileInterface $file)
     {
         $service = $this->getServiceSchema($this->name, $this->version);
 

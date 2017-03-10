@@ -16,8 +16,8 @@
 namespace Katana\Sdk;
 
 use Katana\Sdk\Api\ApiInterface;
-use Katana\Sdk\Api\File;
-use Katana\Sdk\Api\Param;
+use Katana\Sdk\File;
+use Katana\Sdk\Param;
 use Katana\Sdk\Exception\TransportException;
 
 interface Action extends ApiInterface
