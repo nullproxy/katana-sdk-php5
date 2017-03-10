@@ -15,8 +15,6 @@
 
 namespace Katana\Sdk;
 
-use Katana\Sdk\Api\File;
-
 /**
  * Interface to the Transport object contained in a payload
  * @package Katana\Sdk
