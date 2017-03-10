@@ -23,6 +23,8 @@ use Katana\Sdk\Api\TransportMeta;
 use Katana\Sdk\Component\Component;
 use Katana\Sdk\Exception\InvalidValueException;
 use Katana\Sdk\Logger\KatanaLogger;
+use Katana\Sdk\Messaging\RuntimeCaller\ZeroMQRuntimeCaller;
+use Katana\Sdk\Schema\ActionSchema;
 use Katana\Sdk\Schema\Mapping;
 use Katana\Sdk\Schema\ServiceSchema;
 use Prophecy\Argument;
@@ -67,6 +69,8 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
         $this->transport = $this->prophesize(Transport::class);
         $this->transport->getMeta()->willReturn($meta);
 
+        $caller = $this->prophesize(ZeroMQRuntimeCaller::class);
+
         $this->action = new ActionApi(
             $this->logger->reveal(),
             $this->prophesize(Component::class)->reveal(),
@@ -78,6 +82,7 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
             [],
             true,
             'action',
+            $caller->reveal(),
             $this->transport->reveal()
         );
     }
@@ -142,7 +147,13 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
 
     public function testCallWithLocalFilesWithoutServer()
     {
+        $action = $this->prophesize(ActionSchema::class);
+        $action->hasDeferCall(Argument::any(), Argument::any(), Argument::any())
+            ->willReturn(true);
+
         $this->service->hasFileServer()->willReturn(false);
+        $this->service->getAddress()->willReturn('1.1.1.1:11');
+        $this->service->getActionSchema(Argument::any())->willReturn($action->reveal());
 
         $this->transport->addCall(Argument::type(DeferCall::class))->shouldBeCalled();
 
@@ -152,12 +163,18 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(InvalidValueException::class);
         $this->expectExceptionMessage('File server not configured: "test" (1.0)');
-        $this->action->call('service', '1.0.0', 'action', [], [$file->reveal()]);
+        $this->action->deferCall('service', '1.0.0', 'action', [], [$file->reveal()]);
     }
 
     public function testCallWithLocalFilesWithServer()
     {
+        $action = $this->prophesize(ActionSchema::class);
+        $action->hasDeferCall(Argument::any(), Argument::any(), Argument::any())
+            ->willReturn(true);
+
         $this->service->hasFileServer()->willReturn(true);
+        $this->service->getAddress()->willReturn('1.1.1.1:11');
+        $this->service->getActionSchema(Argument::any())->willReturn($action->reveal());
 
         /** @var File $file */
         $file = $this->prophesize(File::class);
@@ -172,12 +189,18 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
             $file
         )->shouldBeCalled();
 
-        $this->action->call('service', '1.0.0', 'action', [], [$file]);
+        $this->action->deferCall('service', '1.0.0', 'action', [], [$file]);
     }
 
     public function testCallWithRemoteFilesWithoutServer()
     {
+        $action = $this->prophesize(ActionSchema::class);
+        $action->hasDeferCall(Argument::any(), Argument::any(), Argument::any())
+            ->willReturn(true);
+
         $this->service->hasFileServer()->willReturn(false);
+        $this->service->getAddress()->willReturn('1.1.1.1:11');
+        $this->service->getActionSchema(Argument::any())->willReturn($action->reveal());
 
         /** @var File $file */
         $file = $this->prophesize(File::class);
@@ -192,6 +215,6 @@ class ActionApiTest extends \PHPUnit_Framework_TestCase
             $file
         )->shouldBeCalled();
 
-        $this->action->call('service', '1.0.0', 'action', [], [$file]);
+        $this->action->deferCall('service', '1.0.0', 'action', [], [$file]);
     }
 }

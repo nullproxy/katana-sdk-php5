@@ -17,6 +17,9 @@ use Katana\Sdk\Messaging\MessagePackSerializer;
 
 class MessagePackSerializerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @requires extension msgpack
+     */
     public function testSerialize()
     {
         $msg = 'test';
@@ -26,6 +29,9 @@ class MessagePackSerializerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(msgpack_pack($msg), $serializer->serialize($msg));
     }
 
+    /**
+     * @requires extension msgpack
+     */
     public function testUnserialize()
     {
         $msg = 'test';

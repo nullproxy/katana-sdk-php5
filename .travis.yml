@@ -1,8 +1,19 @@
-language: php
+dist: trusty
 
+language: php
 php:
   - 5.6
 
-before_script: composer install
+before_script:
+  - sudo apt-get install -y php5-msgpack
+  - echo "extension=msgpack.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+#  - wget zmq-1.1.2.tar.gz https://github.com/mkoppanen/php-zmq/archive/1.1.2.tar.gz
+#  - tar xpvf 1.1.2.tar.gz
+#  - sh -c "cd php-zmq-1.1.2 && phpize && ./configure && make && sudo make install && cd .."
+#  - rm -Rf php-zmq-1.1.2
+#  - rm 1.1.2.tar.gz
+#  - echo "extension=zmq.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+#  - phpenv rehash
+  - composer install --ignore-platform-reqs
 
 script: vendor/bin/phpunit --configuration phpunit.xml.dist
