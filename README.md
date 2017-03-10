@@ -1,6 +1,8 @@
 KATANA SDK for PHP5
 =========================
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/kusanagi/katana-sdk-php5.svg?branch=master)](https://travis-ci.org/kusanagi/katana-sdk-php5) [![Coverage Status](https://coveralls.io/repos/github/kusanagi/katana-sdk-php5/badge.svg?branch=master)](https://coveralls.io/github/kusanagi/katana-sdk-php5?branch=master)
+
 PHP5 SDK to interface with the **KATANA**™ framework (https://katana.kusanagi.io).
 
 Requirements
